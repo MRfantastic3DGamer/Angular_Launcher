@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
+    id("kotlin-kapt")
 }
 
 android {
@@ -67,4 +69,21 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // HILT
+    val hilt = "2.45"
+    implementation ("com.google.dagger:hilt-android:$hilt")
+    implementation ("com.google.dagger:hilt-android-gradle-plugin:$hilt")
+    kapt ("com.google.dagger:hilt-compiler:$hilt")
+    kapt ("com.google.dagger:hilt-android-compiler:$hilt")
+    // For instrumentation tests
+    androidTestImplementation  ("com.google.dagger:hilt-android-testing:$hilt")
+    kaptAndroidTest ("com.google.dagger:hilt-compiler:$hilt")
+    // For local unit tests
+    testImplementation ("com.google.dagger:hilt-android-testing:$hilt")
+    kaptTest ("com.google.dagger:hilt-compiler:$hilt")
+
+    // datastore
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
+    implementation ("com.google.code.gson:gson:2.9.0")
 }

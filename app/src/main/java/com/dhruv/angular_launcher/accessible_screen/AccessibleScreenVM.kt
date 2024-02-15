@@ -7,13 +7,21 @@ import androidx.lifecycle.ViewModel
 import com.dhruv.angular_launcher.accessible_screen.data.ScreenData
 import com.dhruv.angular_launcher.accessible_screen.data.ScreenPersistentData
 import com.dhruv.angular_launcher.accessible_screen.data.ScreenValues
+import com.dhruv.angular_launcher.data.models.NavigationMode
+import com.dhruv.angular_launcher.data.models.NavigationStage
+import com.dhruv.angular_launcher.data.models.SelectionMode
 
 class AccessibleScreenVM(): ViewModel() {
-    var persistentData by mutableStateOf(ScreenPersistentData())
-    var screenData by mutableStateOf(ScreenData())
+
+    var navigationMode: NavigationMode by mutableStateOf(NavigationMode.NotSelected)
+    var selectionMode: SelectionMode by mutableStateOf(SelectionMode.NotSelected)
+    var navigationStage: NavigationStage by mutableStateOf(NavigationStage.ModeSelect)
 
     init {
-        ScreenValues.GetPersistentData.observeForever { persistentData = it }
-        ScreenValues.GetData.observeForever { screenData = it }
+        ScreenValues.GetData.observeForever {
+            navigationMode = it.navigationMode
+            selectionMode = it.selectionMode
+            navigationStage = it.navigationStage
+        }
     }
 }

@@ -4,8 +4,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
- * all data should be stored as Dp
- *
  * all the calculations should be done in px(int/float) and presented using Dp
  */
 object ScreenUtils {
