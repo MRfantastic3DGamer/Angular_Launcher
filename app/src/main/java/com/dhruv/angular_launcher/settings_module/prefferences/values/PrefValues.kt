@@ -1,7 +1,7 @@
 package com.dhruv.angular_launcher.settings_module.prefferences.values
 
 import android.content.Context
-import com.dhruv.angular_launcher.accessible_screen.data.ScreenValues
+import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.settings_module.prefferences.PreferencesManager
 
 /**
@@ -15,11 +15,11 @@ object PrefValues {
     var sl_initialLocation: Float = 0f
     var sl_TopPadding: Float = 0f
     var sl_DownPadding: Float = 0f
-    var sl_firstCut: Float = 0.333f
-    var sl_secondCut: Float = 0.666f
     var sl_movementSpeed: Float = 1f
     var sl_TriggerCurveEdgeCount: Int = 15
     var sl_selectionCurveOffset: Float = 50f
+    var s_firstCut: Float = 0.333f
+    var s_secondCut: Float = 0.666f
 
     fun getAllValues(context: Context){
         val prefManager = PreferencesManager.getInstance(context)
@@ -29,13 +29,13 @@ object PrefValues {
         sl_initialLocation = prefManager.getData("sl_initialLocation", sl_initialLocation)
         sl_TopPadding = prefManager.getData("sl_TopPadding", sl_TopPadding)
         sl_DownPadding = prefManager.getData("sl_DownPadding", sl_DownPadding)
-        sl_firstCut = prefManager.getData("sl_firstCut", sl_firstCut)
-        sl_secondCut = prefManager.getData("sl_secondCut", sl_secondCut)
+        s_firstCut = prefManager.getData("s_firstCut", s_firstCut)
+        s_secondCut = prefManager.getData("s_secondCut", s_secondCut)
         sl_movementSpeed = prefManager.getData("sl_movementSpeed", sl_movementSpeed)
         sl_TriggerCurveEdgeCount = prefManager.getData("sl_TriggerCurveEdgeCount", sl_TriggerCurveEdgeCount)
         sl_selectionCurveOffset = prefManager.getData("sl_selectionCurveOffset", sl_selectionCurveOffset)
 
-        ScreenValues.markPersistentDataDirty()
+        AccessibleScreenValues.markPersistentDataDirty()
     }
 
     val changedValuesMap = mutableMapOf<String, Any>()

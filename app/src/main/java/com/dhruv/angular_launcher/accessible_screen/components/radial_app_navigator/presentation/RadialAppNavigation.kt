@@ -18,12 +18,12 @@ import com.dhruv.angular_launcher.accessible_screen.components.radial_app_naviga
 @Composable
 fun RadialAppNavigation (vm: RadialAppNavigatorVM){
 
-    vm.offsets.forEach {
+    vm.offsets.forEachIndexed { index, it ->
         Box(
             modifier = Modifier
                 .offset { it.round() }
                 .size(5.dp)
-                .background(Color.Red)
+                .background( if (vm.selectionIndex-1 != index) Color.Red else Color.White)
         )
     }
 

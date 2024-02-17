@@ -1,15 +1,16 @@
 package com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigationFunctions
-import com.dhruv.angular_launcher.accessible_screen.data.ScreenValues
+import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
 object RadialAppNavigatorValues {
     private val persistentData = MutableLiveData(RadialAppNavigatorPersistentData())
-    private val data = MutableLiveData(RadialAppNavigatorData())
+    private val data = MutableLiveData(RadialAppNavigatorData(sliderPositionY = 0f, offsetFromCenter = Offset.Zero))
 
     val GetPersistentData: LiveData<RadialAppNavigatorPersistentData>
         get() = persistentData
@@ -34,12 +35,14 @@ object RadialAppNavigatorValues {
                 250.0,50.0,50.0, 40
             ),
         )
-        val coordinateScales = inputs.map { RadialAppNavigationFunctions.generateIconCoordinates(it) }
+        val coordinatesPerScale = inputs.map { RadialAppNavigationFunctions.generateIconCoordinates(it) }
 
         persistentData.value = RadialAppNavigatorPersistentData(
             numberOfElementsPerSelection = GetElementsPerSelection(),
-            width = ScreenUtils.screenWidth - ScreenUtils.dpToF(ScreenValues.GetPersistentData.value?.sliderWidth ?: 0.dp),
-            offsetsScales = coordinateScales.map { it.iconOffset }
+            width = ScreenUtils.screenWidth - ScreenUtils.dpToF(AccessibleScreenValues.GetPersistentData.value?.sliderWidth ?: 0.dp),
+            offsetsScales = coordinatesPerScale.map { it.iconOffset },
+            iconsPerRound = coordinatesPerScale.map { it.iconsPerRound },
+            roundStartingDistances = coordinatesPerScale.map{ it.startingPointOfRound },
         )
     }
     fun updateData (newData: RadialAppNavigatorData){

@@ -14,7 +14,7 @@ import com.dhruv.angular_launcher.data.models.SelectionMode
 data class TriggerData(
 
     var navigationMode: NavigationMode = NavigationMode.NotSelected,
-    var navigationStage: NavigationStage = NavigationStage.ModeSelect,
+    var navigationStage: NavigationStage = NavigationStage.SelectionModeSelection,
     var selectionMode: SelectionMode = SelectionMode.NotSelected,
 
     var sl_height: Float = 1000f,

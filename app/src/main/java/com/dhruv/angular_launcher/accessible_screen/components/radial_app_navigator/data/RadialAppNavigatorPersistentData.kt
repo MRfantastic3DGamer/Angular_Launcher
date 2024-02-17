@@ -9,4 +9,6 @@ data class RadialAppNavigatorPersistentData(
     val width: Float = 100f,
 
     val offsetsScales: List<List<Offset>> = listOf(),
+    val iconsPerRound: List<List<Int>> = listOf(),
+    val roundStartingDistances: List<List<Float>> = listOf(),
 )

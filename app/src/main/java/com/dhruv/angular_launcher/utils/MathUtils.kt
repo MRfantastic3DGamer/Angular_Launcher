@@ -15,8 +15,7 @@ object MathUtils {
         val bc: Double = sqrt((c.x - b.x).toDouble().pow(2.0) + (c.y - b.y).toDouble().pow(2.0))
         val ac: Double = sqrt((c.x - a.x).toDouble().pow(2.0) + (c.y - a.y).toDouble().pow(2.0))
         val ratio : Double = (ab * ab + ac * ac - bc * bc) /( 2 * ac * ab)
-        var degree = acos(ratio) *(180/Math.PI)
-        if(c.y > b.y) degree = 360 - degree
+        val degree = acos(ratio) *(180/Math.PI)
         return degree.toFloat()
     }
 

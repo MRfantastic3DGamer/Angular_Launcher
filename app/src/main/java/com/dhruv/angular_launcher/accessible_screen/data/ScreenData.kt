@@ -10,8 +10,6 @@ import com.dhruv.angular_launcher.data.models.SelectionMode
 
 @Stable
 data class ScreenData(
-    val delta: Offset = Offset.Zero,
-    val navigationMode: NavigationMode = NavigationMode.NotSelected,
-    val selectionMode: SelectionMode = SelectionMode.NotSelected,
-    val navigationStage: NavigationStage = NavigationStage.Inactive,
+    val touchPosition: Offset = Offset.Zero,
+    val delta: Offset? = null,
 )

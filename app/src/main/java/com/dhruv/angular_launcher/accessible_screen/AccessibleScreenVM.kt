@@ -4,24 +4,63 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.dhruv.angular_launcher.accessible_screen.data.ScreenData
-import com.dhruv.angular_launcher.accessible_screen.data.ScreenPersistentData
-import com.dhruv.angular_launcher.accessible_screen.data.ScreenValues
+import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderData
+import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
+import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.data.models.NavigationMode
 import com.dhruv.angular_launcher.data.models.NavigationStage
 import com.dhruv.angular_launcher.data.models.SelectionMode
+import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.utils.ScreenUtils
+import kotlin.math.absoluteValue
 
 class AccessibleScreenVM(): ViewModel() {
 
     var navigationMode: NavigationMode by mutableStateOf(NavigationMode.NotSelected)
     var selectionMode: SelectionMode by mutableStateOf(SelectionMode.NotSelected)
-    var navigationStage: NavigationStage by mutableStateOf(NavigationStage.ModeSelect)
+    var navigationStage: NavigationStage by mutableStateOf(NavigationStage.SelectionModeSelection)
+
+    var focusOnSlider: Boolean by mutableStateOf(false)
 
     init {
-        ScreenValues.GetData.observeForever {
-            navigationMode = it.navigationMode
-            selectionMode = it.selectionMode
-            navigationStage = it.navigationStage
+        AccessibleScreenValues.GetData.observeForever {
+
+            val collisionQuality: Float = 5f
+            val sliderLeftBound: Float = ScreenUtils.fromRight( ScreenUtils.dpToF(SliderValues.GetPersistentData.value!!.width) )
+
+            when (navigationStage) {
+                NavigationStage.SelectionModeSelection -> {
+
+                    // TODO: make it editable
+                    val selectionChoice = arrayListOf(SelectionMode.ByAlphabet, SelectionMode.ByGroup, SelectionMode.BySearch)
+
+                    val screenHeight = ScreenUtils.screenHeight
+                    val firstCutHeight = PrefValues.s_firstCut * screenHeight
+                    val secondCutHeight = PrefValues.s_secondCut * screenHeight
+
+                    if (it.touchPosition.x > sliderLeftBound){
+                        focusOnSlider = true
+                        selectionMode =
+                            if (it.touchPosition.y < firstCutHeight){ selectionChoice[0] }
+                            else if (it.touchPosition.y < secondCutHeight){ selectionChoice[1] }
+                            else{ selectionChoice[2] }
+
+                        navigationMode = if (it.delta == null) NavigationMode.Tap else NavigationMode.Gesture
+                        navigationStage = NavigationStage.AppSelect
+                    }
+                }
+                NavigationStage.AppSelect -> {
+                    focusOnSlider = !(it.touchPosition.x < sliderLeftBound-collisionQuality || (it.delta != null && it.delta.x.absoluteValue*3 > it.delta.y.absoluteValue))
+                    SliderValues.updateSliderData(
+                        SliderData(
+                            visible = true,
+                            shouldUpdateOffset = focusOnSlider,
+                            shouldUpdateSelection = focusOnSlider,
+                            touchPos = it.touchPosition,
+                        )
+                    )
+                }
+            }
         }
     }
 }

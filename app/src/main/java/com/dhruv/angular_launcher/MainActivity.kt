@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import com.dhruv.angular_launcher.accessible_screen.AccessibleScreenVM
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorValues
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
-import com.dhruv.angular_launcher.accessible_screen.data.ScreenValues
+import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.accessible_screen.presentation.AccessibleScreen
 import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.interaction_calculation.Trigger
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         TriggerFunctions.data.sl_height = ScreenUtils.screenHeight
 
         PrefValues.getAllValues(this)
-        ScreenValues.markPersistentDataDirty()
+        AccessibleScreenValues.markPersistentDataDirty()
         SliderValues.markPersistentDataDirty()
         RadialAppNavigatorValues.markPersistentDataDirty()
         setContent {

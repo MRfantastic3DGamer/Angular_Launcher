@@ -6,11 +6,9 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.dp
 import androidx.core.math.MathUtils.clamp
-import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderData
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderPersistentData
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
 import com.dhruv.angular_launcher.accessible_screen.data.SelectionData
-import com.dhruv.angular_launcher.interaction_calculation.TriggerFunctions
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import java.lang.Float.max
 import java.lang.Float.min
@@ -85,7 +83,15 @@ object SliderFunctions {
         return triggerOpenPath
     }
 
-    fun calculateTriggerOffset (yPos: Float): Offset {
+    fun GetSliderPositionY (touchPosY: Float, sliderHeight: Float, sliderPosY: Float): Float {
+        val topPositionY =
+            if (touchPosY < sliderPosY) touchPosY
+            else if (touchPosY > sliderPosY + sliderHeight) touchPosY - sliderHeight
+            else sliderPosY
+        return topPositionY
+    }
+
+    fun calculateSliderPosition (yPos: Float): Offset {
         return Offset(
             ScreenUtils.fromRight(ScreenUtils.dpToF(SliderValues.GetPersistentData.value?.width ?: 10.dp)),
             yPos
