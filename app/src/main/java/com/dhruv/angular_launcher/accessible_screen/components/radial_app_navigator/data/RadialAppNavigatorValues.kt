@@ -10,7 +10,7 @@ import com.dhruv.angular_launcher.utils.ScreenUtils
 
 object RadialAppNavigatorValues {
     private val persistentData = MutableLiveData(RadialAppNavigatorPersistentData())
-    private val data = MutableLiveData(RadialAppNavigatorData(sliderPositionY = 0f, offsetFromCenter = Offset.Zero))
+    private val data = MutableLiveData(RadialAppNavigatorData())
 
     val GetPersistentData: LiveData<RadialAppNavigatorPersistentData>
         get() = persistentData

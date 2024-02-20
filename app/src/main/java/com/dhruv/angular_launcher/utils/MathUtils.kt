@@ -4,19 +4,43 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import kotlin.math.PI
 import kotlin.math.acos
+import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 
 object MathUtils {
-    fun calculateAngle(a: Offset, b: Offset, c: Offset): Float {
-        val ab: Double = sqrt((b.x - a.x).toDouble().pow(2.0) + (b.y - a.y).toDouble().pow(2.0))
-        val bc: Double = sqrt((c.x - b.x).toDouble().pow(2.0) + (c.y - b.y).toDouble().pow(2.0))
-        val ac: Double = sqrt((c.x - a.x).toDouble().pow(2.0) + (c.y - a.y).toDouble().pow(2.0))
-        val ratio : Double = (ab * ab + ac * ac - bc * bc) /( 2 * ac * ab)
-        val degree = acos(ratio) *(180/Math.PI)
-        return degree.toFloat()
+
+    fun calculateAngle(point1: Offset, point2: Offset, point3: Offset): Float {
+        // Vector between point2 and point1
+        val vec1X = point1.x - point2.x
+        val vec1Y = point1.y - point2.y
+
+        // Vector between point2 and point3
+        val vec2X = point3.x - point2.x
+        val vec2Y = point3.y - point2.y
+
+        // Calculate dot product of vectors
+        val dotProduct = vec1X * vec2X + vec1Y * vec2Y
+
+        // Calculate cross product of vectors
+        val crossProduct = vec1X * vec2Y - vec1Y * vec2X
+
+        // Calculate the magnitude of vectors
+        val magnitudeVec1 = sqrt(vec1X * vec1X + vec1Y * vec1Y)
+        val magnitudeVec2 = sqrt(vec2X * vec2X + vec2Y * vec2Y)
+
+        // Calculate the angle between vectors using atan2 function
+        val angleRadians = atan2(crossProduct, dotProduct)
+
+        // Convert radians to degrees
+        var angleDegrees = Math.toDegrees(angleRadians.toDouble()).toFloat()
+
+        // Ensure the angle is between 0 and 360 degrees
+        angleDegrees = if (angleDegrees < 0) angleDegrees + 360f else angleDegrees
+
+        return angleDegrees
     }
 
     fun calculateDistance(a: Offset, b: Offset): Float{

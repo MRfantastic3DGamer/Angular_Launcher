@@ -29,7 +29,13 @@ fun SettingsColumn (
     specialDrawing: Map<String, @Composable (String, Any, Pair<Float, Float>?, (Any)->Unit)->Unit>,
     saveValues: MutableMap<String, Any>,
 ){
-    val context = LocalContext.current
+
+//    val values = map.keys.toList().map {
+//        val variable = PrefValues::class.java.getDeclaredField(it)
+//        variable.isAccessible = true
+//        remember { mutableStateOf(variable.get(PrefValues)) }
+//    }
+
     LazyColumn {
         items(map.keys.toList()) { key ->
             val variable = PrefValues::class.java.getDeclaredField(key)

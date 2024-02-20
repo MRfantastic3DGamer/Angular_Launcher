@@ -5,8 +5,9 @@ import androidx.compose.ui.geometry.Offset
 
 @Stable
 data class RadialAppNavigatorData(
-    val sliderPositionY: Float,
+    val sliderPositionY: Float = 0f,
     val center: Offset = Offset.Zero,
     val currentSelectionIndex: Int = 0,
-    val offsetFromCenter: Offset,
+    val offsetFromCenter: Offset = Offset.Zero,
+    val shouldSelectApp: Boolean = false
 )

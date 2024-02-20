@@ -35,6 +35,9 @@ class SliderVM:ViewModel() {
             if (it.shouldUpdateOffset){
                 val posY = GetSliderPositionY(touchPos.y, height, sliderPos.y)
                 sliderPos = SliderFunctions.calculateSliderPosition(posY)
+
+                val appLabelPosition = AppLabelFunctions.calculatePosition(300f, sliderPos.y, height, 20f)
+                AppLabelValue.updatePos(appLabelPosition)
             }
 
             if (it.shouldUpdateSelection) {
@@ -47,12 +50,6 @@ class SliderVM:ViewModel() {
                 selectionIndex = selection.index
             }
 
-            val appLabelPosition = AppLabelFunctions.calculatePosition(300f, sliderPos.y, height, 20f)
-            AppLabelValue.updateData(
-                AppLabelData(
-                    position = appLabelPosition
-                )
-            )
         }
     }
 }

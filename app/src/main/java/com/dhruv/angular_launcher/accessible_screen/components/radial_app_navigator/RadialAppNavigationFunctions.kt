@@ -4,10 +4,14 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.IconCoordinate
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorData
+import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorValues
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
+import com.dhruv.angular_launcher.debug.DebugLayerValues
 import com.dhruv.angular_launcher.utils.MathUtils
 import com.dhruv.angular_launcher.utils.ScreenUtils
-
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 object RadialAppNavigationFunctions {
@@ -24,7 +28,8 @@ object RadialAppNavigationFunctions {
             currentSelectionIndex = selection_i,
             center = center,
             sliderPositionY = sliderPosY,
-            offsetFromCenter = touchPos - center
+            offsetFromCenter = touchPos - center,
+            shouldSelectApp = touchPos.x < center.x
         )
     }
 
@@ -108,8 +113,9 @@ object RadialAppNavigationFunctions {
         val radiusDiff = input.radiusDiff
         val iconDistance = input.iconDistance
         val rounds = input.rounds
-        val startingAngle:Double = -90.0
-        val endAngle = 90.0
+
+        val startArcAngle:Double = -90.0
+        val endArcAngle = 90.0
 
         val indexToCoordinates = mutableListOf<Pair<Int,Int>>()
         val coordinateToIndex = mutableListOf<MutableList<Int>>()
@@ -121,12 +127,16 @@ object RadialAppNavigationFunctions {
         val iconCoordinates = mutableListOf<IconCoordinate>()
         var curI = 0
         for (i in 0 until rounds){
+            val halfAngleForIconDistance = 0f
+            val startAngle = startArcAngle + halfAngleForIconDistance
+            val endAngle = endArcAngle - halfAngleForIconDistance
+
             startingPointOfRound.add((radius.toFloat() - input.radiusDiff/2).toFloat())
-            val iconsInRing = ((endAngle - startingAngle) / MathUtils.calculateAngleOnCircle(radius, iconDistance)).toInt()
+            val iconsInRing = ((endAngle - startAngle) / MathUtils.calculateAngleOnCircle(radius, iconDistance)).toInt()
             iconsPerRound.add(iconsInRing)
-            val angle = (endAngle - startingAngle)/ iconsInRing
+            val angle = (endAngle - startAngle)/ iconsInRing
             var col = 0
-            var curr = startingAngle
+            var curr = startAngle
             val currRound = mutableListOf<Int>()
             while (curr < endAngle){
                 iconCoordinates.add(IconCoordinate(radius,180 - curr - angle/2))
@@ -150,39 +160,85 @@ object RadialAppNavigationFunctions {
         )
     }
 
-    fun getSelectedIconIndex (touchOffset: Offset, iconsPerRound: List<Int>, distancePerRound: List<Float>, skips: List<Pair<Int, Int>>): Int {
-        val dist  = MathUtils.calculateDistance(Offset.Zero, touchOffset)
-        val angle = MathUtils.calculateAngle(Offset(0f,10f), Offset.Zero, touchOffset)
+    fun getPossibleIconIndeces (touchOffset: Offset, iconsPerRound: List<Int>, distancePerRound: List<Float>, skips: List<Pair<Int, Int>>): Set<Int> {
+        val center = RadialAppNavigatorValues.GetData.value!!.center
+        val mid = Offset.Zero
+        val anchor = Offset(0f, -100f)
 
-        var curRound = 0
-        var curIndex = 0
 
-        if (dist < distancePerRound[0]) {
-            println("skipped")
-            return -1
+        val positions = mutableListOf<Offset>()
+        positions.add(touchOffset)
+        val steps = 5
+        val pointsPerStep = 16
+        val detectionRange = 40f
+        val deltaAngle = 22.7f
+        for (i in 1..steps)
+            for (p in 0 until pointsPerStep) {
+                val angle = deltaAngle * p * PI.toFloat() / 180f
+                val pos = touchOffset + Offset(
+                    sin(angle),
+                    cos(angle)
+                ) * (i * detectionRange)
+                positions.add(pos)
+//                DebugLayerValues.addPoint(center + pos, "$i,$p")
+            }
+
+
+//        DebugLayerValues.addLine(Pair(center + mid, center + touchOffset), "a-l1")
+//        DebugLayerValues.addLine(Pair(center + mid, center + anchor), "a-l2")
+
+        fun getResult (posOffset: Offset): Int {
+
+            val dist  = MathUtils.calculateDistance(mid, posOffset)
+            val angle = MathUtils.calculateAngle(posOffset, mid + Offset(-50f,0f), anchor + Offset(-50f,0f))
+
+
+
+            var curRound = 0
+            var curIndex = 0
+
+            if (dist < distancePerRound[0]) {
+                return -1
+            }
+            while (curRound+1 < iconsPerRound.size && dist > distancePerRound[curRound+1]) curIndex += iconsPerRound[curRound++]
+
+//            DebugLayerValues.addString("round N: $curRound", "")
+            val anglePerIndex = 180f/(iconsPerRound[curRound])
+            var curAngle = anglePerIndex/2
+            while (curAngle < angle){
+                curIndex++
+                curAngle+= anglePerIndex
+            }
+
+            var curSkipPair = 0
+            var skippedIndeces = 0
+
+            while (curSkipPair<skips.size && skips[curSkipPair].second < curIndex){
+                skippedIndeces += skips[curSkipPair].second - skips[curSkipPair].first
+                curSkipPair++
+            }
+
+            if (curSkipPair<skips.size && curIndex > skips[curSkipPair].first && curIndex <= skips[curSkipPair].second) {
+                return -1
+            }
+
+            return curIndex - skippedIndeces - 1
         }
-        while (curRound+1 < iconsPerRound.size && dist > distancePerRound[curRound+1]) curIndex+= iconsPerRound[curRound++]
 
-        val anglePerIndex = 180f/iconsPerRound[curRound]
-        var curAngle = -anglePerIndex/2
-        while (curAngle < angle){
-            curIndex++
-            curAngle+= anglePerIndex
+        return positions.map { getResult(it) }.toSet()
+    }
+
+    fun getBestIndex (touchOffset:Offset, offsets: List<Offset>, posibleIndeces: List<Int>): Int {
+        var bi = -1
+        var bd = 100000f
+        for (i in posibleIndeces){
+            if (i !in offsets.indices) continue
+            val d = MathUtils.calculateDistance(touchOffset, offsets[i])
+            if (d<bd){
+                bd = d
+                bi = i
+            }
         }
-
-        var curSkipPair = 0
-        var skippedIndeces = 0
-
-        while (curSkipPair<skips.size && skips[curSkipPair].second < curIndex){
-            skippedIndeces += skips[curSkipPair].second - skips[curSkipPair].first
-            curSkipPair++
-        }
-
-        if (curSkipPair<skips.size && curIndex > skips[curSkipPair].first && curIndex < skips[curSkipPair].second) {
-            println("skipped")
-            return -1
-        }
-
-        return curIndex - skippedIndeces
+        return bi
     }
 }

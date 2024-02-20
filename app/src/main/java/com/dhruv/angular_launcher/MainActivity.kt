@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.dhruv.angular_launcher.accessible_screen.AccessibleScreenVM
+import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorValues
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorValues
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
@@ -18,6 +19,7 @@ import com.dhruv.angular_launcher.accessible_screen.presentation.AccessibleScree
 import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.interaction_calculation.Trigger
 import com.dhruv.angular_launcher.interaction_calculation.TriggerFunctions
+import com.dhruv.angular_launcher.settings_screen.SettingsScreen
 import com.dhruv.angular_launcher.ui.theme.Angular_LauncherTheme
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
@@ -34,7 +36,9 @@ class MainActivity : ComponentActivity() {
         AccessibleScreenValues.markPersistentDataDirty()
         SliderValues.markPersistentDataDirty()
         RadialAppNavigatorValues.markPersistentDataDirty()
+        FluidCursorValues.markPersistentDataDirty()
         setContent {
+            val openSettings: Boolean by remember { mutableStateOf(false) }
             val screenVM: AccessibleScreenVM by remember { mutableStateOf(AccessibleScreenVM()) }
 
             Angular_LauncherTheme {
@@ -43,13 +47,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    if (SettingsValues.GetIsSettingsOpened.value == true){
-//                        SettingsScreen()
-//                    }
-//                    else{
+                    if (openSettings){
+                        SettingsScreen()
+                    }
+                    else{
                         AccessibleScreen(screenVM)
                         Trigger(Modifier.fillMaxSize())
-//                    }
+                    }
                 }
             }
         }
