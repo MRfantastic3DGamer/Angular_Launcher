@@ -28,9 +28,8 @@ object AccessibleScreenValues {
         return ScreenPersistentData(
             sliderWidth = ScreenUtils.fToDp(PrefValues.sl_width),
             sliderHeight = ScreenUtils.fToDp(PrefValues.sl_height),
-            sliderInitialLocation = ScreenUtils.fToDp(PrefValues.sl_initialLocation),
-            topPadding = PrefValues.sl_TopPadding.dp,
-            bottomPadding = PrefValues.sl_DownPadding.dp,
+            topPadding = PrefValues.sl_topPadding.dp,
+            bottomPadding = PrefValues.sl_downPadding.dp,
             firstCut = PrefValues.s_firstCut,
             secondCut = PrefValues.s_secondCut,
             sliderMovementSpeed = PrefValues.sl_movementSpeed,

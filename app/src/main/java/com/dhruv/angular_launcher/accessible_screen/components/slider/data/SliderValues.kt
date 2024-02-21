@@ -1,6 +1,5 @@
 package com.dhruv.angular_launcher.accessible_screen.components.slider.data
 
-import androidx.compose.ui.graphics.Path
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
@@ -9,7 +8,6 @@ import com.dhruv.angular_launcher.utils.ScreenUtils
 object SliderValues {
     private var persistentData = MutableLiveData(SliderPersistentData())
     private var sliderData = MutableLiveData(SliderData())
-    private var path = MutableLiveData(Path())
 
     val GetPersistentData: LiveData<SliderPersistentData>
         get() = persistentData
@@ -20,8 +18,21 @@ object SliderValues {
         return SliderPersistentData(
             height = ScreenUtils.fToDp(PrefValues.sl_height),
             width = ScreenUtils.fToDp(PrefValues.sl_width),
-            triggerCurveEdgeCount = PrefValues.sl_TriggerCurveEdgeCount,
             elementsCount = elementsCount(),
+            animationSpeed = PrefValues.sl_animationSpeed,
+            blurAmount = PrefValues.sl_blurAmount,
+            DownPadding = PrefValues.sl_downPadding,
+            sidePadding = PrefValues.sl_sidePadding,
+            movementSpeed = PrefValues.sl_movementSpeed,
+            selectionCurveOffset = PrefValues.sl_selectionCurveOffset,
+            selectionRadios = PrefValues.sl_selectionRadios,
+            shouldBlur = PrefValues.sl_shouldBlur,
+            tint = PrefValues.sl_tint,
+            topPadding = PrefValues.sl_topPadding,
+            triggerCurveEdgeCount = PrefValues.sl_triggerCurveEdgeCount,
+            vibrateOnSelectionChange = PrefValues.sl_vibrateOnSelectionChange,
+            vibrationAmount = PrefValues.sl_vibrationAmount,
+            vibrationTime = PrefValues.sl_vibrationTime,
         )
     }
 

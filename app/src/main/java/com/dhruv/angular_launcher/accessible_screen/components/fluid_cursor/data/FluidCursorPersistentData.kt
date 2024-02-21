@@ -1,7 +1,10 @@
 package com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+
 data class FluidCursorPersistentData(
-    val fluidity: Float = 0.5f,
-    val simulatedPoints: Int = 40,
-    // TODO: colors etc. IDK
+    val fluidCursorLooks: FluidCursorLooks,
+    val animationSpeed: Float,
 )

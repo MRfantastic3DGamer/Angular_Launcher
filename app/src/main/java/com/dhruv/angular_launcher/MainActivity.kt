@@ -19,7 +19,7 @@ import com.dhruv.angular_launcher.accessible_screen.presentation.AccessibleScree
 import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.interaction_calculation.Trigger
 import com.dhruv.angular_launcher.interaction_calculation.TriggerFunctions
-import com.dhruv.angular_launcher.settings_screen.SettingsScreen
+import com.dhruv.angular_launcher.settings_screen.presentation.SettingsScreen
 import com.dhruv.angular_launcher.ui.theme.Angular_LauncherTheme
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
@@ -32,13 +32,13 @@ class MainActivity : ComponentActivity() {
         ScreenUtils.screenHeight = this.resources.displayMetrics.heightPixels.toFloat()
         TriggerFunctions.data.sl_height = ScreenUtils.screenHeight
 
-        PrefValues.getAllValues(this)
+        PrefValues.loadAllValues(this)
         AccessibleScreenValues.markPersistentDataDirty()
         SliderValues.markPersistentDataDirty()
         RadialAppNavigatorValues.markPersistentDataDirty()
         FluidCursorValues.markPersistentDataDirty()
         setContent {
-            val openSettings: Boolean by remember { mutableStateOf(false) }
+            val openSettings: Boolean by remember { mutableStateOf(true) }
             val screenVM: AccessibleScreenVM by remember { mutableStateOf(AccessibleScreenVM()) }
 
             Angular_LauncherTheme {

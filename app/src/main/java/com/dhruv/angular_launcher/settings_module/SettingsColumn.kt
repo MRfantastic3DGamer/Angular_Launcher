@@ -1,15 +1,24 @@
 package com.dhruv.angular_launcher.settings_module
 
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.MutableState
 import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
 import java.lang.reflect.Type
+
+
+data class EntryData(
+    val label: String,
+    val data: MutableState<Any>,
+    val type: Type,
+    val constraints: Pair<Any, Any>? = null,
+)
+data class SettingsColumnData(
+    val heading: String,
+    val subHeading: String?,
+    val values: List<EntryData>
+)
 
 /**
  * It is used to draw and save a list of values that must be predefined in [PrefValues]
@@ -23,37 +32,15 @@ import java.lang.reflect.Type
 
 @Composable
 fun SettingsColumn (
-    map: Map<String, Type>,
-    constraints: Map<String, Pair<Float, Float>>,
-    drawing: Map<Type, @Composable (String, Any, Pair<Float, Float>?, (Any)->Unit)->Unit>,
-    specialDrawing: Map<String, @Composable (String, Any, Pair<Float, Float>?, (Any)->Unit)->Unit>,
-    saveValues: MutableMap<String, Any>,
+    data: SettingsColumnData,
+    entryForType: Map<Type, @Composable (String, MutableState<Any>, Pair<Any, Any>?) -> Unit>
 ){
+    Column {
 
-//    val values = map.keys.toList().map {
-//        val variable = PrefValues::class.java.getDeclaredField(it)
-//        variable.isAccessible = true
-//        remember { mutableStateOf(variable.get(PrefValues)) }
-//    }
+        Text(text = data.heading)
 
-    LazyColumn {
-        items(map.keys.toList()) { key ->
-            val variable = PrefValues::class.java.getDeclaredField(key)
-            variable.isAccessible = true
-
-            var value by remember { mutableStateOf(variable.get(PrefValues)) }
-            saveValues[key] = value
-            if (specialDrawing.containsKey(key)) {
-                specialDrawing[key]?.invoke(key, value, constraints[key]) { n ->
-                    value = n
-                    saveValues[key] = value
-                }
-            } else {
-                drawing[map[key]]?.invoke(key, value, constraints[key]) { n ->
-                    value = n
-                    saveValues[key] = value
-                }
-            }
+        data.values.forEach { it ->
+            entryForType[it.type]?.invoke(it.label, it.data, it.constraints)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.dhruv.angular_launcher.settings_screen.components
+package com.dhruv.angular_launcher.settings_screen.presentation.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
