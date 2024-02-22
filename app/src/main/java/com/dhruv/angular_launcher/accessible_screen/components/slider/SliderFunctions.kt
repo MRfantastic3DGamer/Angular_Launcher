@@ -28,7 +28,6 @@ object SliderFunctions {
 
         val maxAngle        = 180f
         val quality_trigg   = persistentData.triggerCurveEdgeCount
-        val selectionOffsetY = selectionPos
 
         val radius_1 = persistentData.selectionRadios
         val height = ScreenUtils.dpToF(persistentData.height)
@@ -39,8 +38,8 @@ object SliderFunctions {
         val triggerArcBot       = mutableListOf<Offset>()
         val triggerArcRadius    = triggerSize.width/2
         val deltaAngle_trigg    = (maxAngle / quality_trigg) * (PI / 180).toFloat()
-        val triggerTopArcMid    = triggerOffset + Offset(triggerArcRadius, min(0f,  selectionOffsetY - radius_1 + triggerArcRadius))
-        val triggerDownArcMid   = triggerOffset + Offset(triggerArcRadius, max(height, selectionOffsetY + radius_1 - triggerArcRadius))
+        val triggerTopArcMid    = triggerOffset + Offset(triggerArcRadius, min(0f,  selectionPos - radius_1 + triggerArcRadius))
+        val triggerDownArcMid   = triggerOffset + Offset(triggerArcRadius, max(height, selectionPos + radius_1 - triggerArcRadius))
 
         repeat(quality_trigg) {
             val angle = deltaAngle_trigg * it
@@ -52,7 +51,7 @@ object SliderFunctions {
 
         val triggerOpenPath = Path()
 
-        triggerOpenPath.moveTo(offset.x - persistentData.sidePadding, offset.y + selectionOffsetY - persistentData.selectionRadios)
+        triggerOpenPath.moveTo(offset.x - persistentData.sidePadding, offset.y + selectionPos - persistentData.selectionRadios)
 
 // selection arc
         triggerOpenPath.addArc(
@@ -64,8 +63,10 @@ object SliderFunctions {
             sweepAngleDegrees = 180f,
         )
 
-        val minY        = offset.y + selectionOffsetY - persistentData.selectionRadios
-        val maxY        = offset.y + selectionOffsetY + persistentData.selectionRadios
+        val minY        = offset.y + selectionPos - persistentData.selectionRadios
+        val maxY        = offset.y + selectionPos + persistentData.selectionRadios
+
+        triggerOpenPath.lineTo(triggerArcTop.first().x, triggerOffset.y + selectionPos-persistentData.selectionRadios )
 
 // top arc
         for (i in 0 until triggerArcTop.size/2)
@@ -78,6 +79,8 @@ object SliderFunctions {
             triggerOpenPath.lineTo(triggerArcBot[i].x, triggerArcBot[i].y)
         for (i in triggerArcBot.size/2+1 until triggerArcBot.size)
             triggerOpenPath.lineTo(triggerArcBot[i].x, max(maxY, triggerArcBot[i].y))
+
+        triggerOpenPath.lineTo(triggerArcTop.first().x, triggerOffset.y + selectionPos+persistentData.selectionRadios )
 
         triggerOpenPath.close()
         return triggerOpenPath

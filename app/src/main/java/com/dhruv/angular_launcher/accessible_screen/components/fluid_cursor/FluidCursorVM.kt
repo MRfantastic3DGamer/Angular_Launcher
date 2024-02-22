@@ -13,6 +13,8 @@ class FluidCursorVM: ViewModel() {
     var points: List<Offset> by mutableStateOf((0..40).map { Offset.Zero })
     var fluidCursorLooks: FluidCursorLooks by mutableStateOf(FluidCursorLooks())
     var animationSpeed: Float by mutableStateOf(1f)
+    var snap: Boolean by mutableStateOf(false)
+    var visibility:Boolean by mutableStateOf(false)
 
     init {
         FluidCursorValues.GetPersistentData.observeForever {
@@ -21,6 +23,8 @@ class FluidCursorVM: ViewModel() {
         }
         FluidCursorValues.GetData.observeForever {
             targetPos = it.targetPosition
+            snap = it.snap
+            visibility = it.visibility
             // TODO: points = simulatePoints()
         }
     }

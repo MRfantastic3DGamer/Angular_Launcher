@@ -14,7 +14,6 @@ import com.dhruv.angular_launcher.utils.ScreenUtils
 
 class SliderVM:ViewModel() {
 
-
     // main
     var height: Float by mutableStateOf(500f)
     var width: Float by mutableStateOf(100f)
@@ -31,8 +30,6 @@ class SliderVM:ViewModel() {
     var tint by mutableStateOf(Color.Black)
 
     // feel
-    var animationSpeed by  mutableStateOf(1f)
-    var movementSpeed by  mutableStateOf(1f)
     var vibrateOnSelectionChange by mutableStateOf(false)
     var vibrationAmount by mutableStateOf(1f)
     var vibrationTime by mutableStateOf(0f)
@@ -55,19 +52,17 @@ class SliderVM:ViewModel() {
             shouldBlur = it.shouldBlur
             blurAmount = it.blurAmount
             tint = it.tint
-            animationSpeed = it.animationSpeed
-            movementSpeed = it.movementSpeed
             vibrateOnSelectionChange = it.vibrateOnSelectionChange
             vibrationAmount = it.vibrationAmount
             vibrationTime = it.vibrationTime
 
             height = ScreenUtils.dpToF(it.height)
-            elementsCount = it.elementsCount
             sidePadding = it.sidePadding
         }
         SliderValues.GetSliderData.observeForever {
             visible = it.visible
             touchPos = it.touchPos
+            elementsCount = it.elementsCount
             if (it.shouldUpdateOffset){
                 val posY = GetSliderPositionY(touchPos.y, height, sliderPos.y)
                 sliderPos = SliderFunctions.calculateSliderPosition(posY)

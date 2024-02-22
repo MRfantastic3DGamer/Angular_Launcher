@@ -1,9 +1,11 @@
 package com.dhruv.angular_launcher.settings_module
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Modifier
 import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
 import java.lang.reflect.Type
 
@@ -35,7 +37,9 @@ fun SettingsColumn (
     data: SettingsColumnData,
     entryForType: Map<Type, @Composable (String, MutableState<Any>, Pair<Any, Any>?) -> Unit>
 ){
-    Column {
+    Column (
+        Modifier.fillMaxWidth()
+    ) {
 
         Text(text = data.heading)
 

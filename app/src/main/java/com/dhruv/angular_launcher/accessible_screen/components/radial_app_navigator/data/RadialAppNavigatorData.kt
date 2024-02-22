@@ -9,5 +9,6 @@ data class RadialAppNavigatorData(
     val center: Offset = Offset.Zero,
     val currentSelectionIndex: Int = 0,
     val offsetFromCenter: Offset = Offset.Zero,
-    val shouldSelectApp: Boolean = false
+    val shouldSelectApp: Boolean = false,
+    val visibility: Boolean = false
 )

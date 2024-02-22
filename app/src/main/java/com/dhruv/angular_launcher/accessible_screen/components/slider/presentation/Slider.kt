@@ -2,6 +2,7 @@ package com.dhruv.angular_launcher.accessible_screen.components.slider.presentat
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateOffsetAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
@@ -33,7 +34,8 @@ fun Slider (
                 selectionPaddingX = PrefValues.sl_selectionCurveOffset,
                 selectionPosY = currentSelectionPosition + currentOffset.y,
                 sliderPosY = vm.sliderPos.y,
-                touchPos = vm.touchPos
+                touchPos = vm.touchPos,
+                visibility = vm.visible
             )
         )
 
@@ -44,6 +46,19 @@ fun Slider (
             elementsCount = vm.elementsCount,
             currentSelection = currentFuzzySelection,
             shift = vm.sidePadding
+        )
+    }
+    else{
+        RadialAppNavigatorValues.updateData(
+            getRadialAppNavigatorData(
+                selection_i = clamp(vm.selectionIndex, 0, 25),
+                sliderWidth = ScreenUtils.dpToF(SliderValues.GetPersistentData.value?.width ?: 50.dp),
+                selectionPaddingX = PrefValues.sl_selectionCurveOffset,
+                selectionPosY = 0f,
+                sliderPosY = vm.sliderPos.y,
+                touchPos = vm.touchPos,
+                visibility = vm.visible
+            )
         )
     }
 }

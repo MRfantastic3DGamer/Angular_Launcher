@@ -5,4 +5,6 @@ import androidx.compose.ui.geometry.Offset
 data class FluidCursorData(
     val targetPosition: Offset = Offset.Zero,
     val urgency: Float = 1f,
+    val snap: Boolean = false,
+    val visibility: Boolean = false,
 )

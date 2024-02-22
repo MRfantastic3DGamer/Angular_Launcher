@@ -5,6 +5,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigationFunctions
+import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 
 @Stable
 data class RadialAppNavigatorPersistentData(
@@ -22,15 +23,6 @@ data class RadialAppNavigatorPersistentData(
     val blurAmount: Float = 0f,
     val tint: Color = Color.Black,
 
-// icons positioning generation options
-    val option1: RadialAppNavigationFunctions.IconCoordinatesGenerationInput = RadialAppNavigationFunctions.IconCoordinatesGenerationInput(),
-    val option2: RadialAppNavigationFunctions.IconCoordinatesGenerationInput = RadialAppNavigationFunctions.IconCoordinatesGenerationInput(),
-    val option3: RadialAppNavigationFunctions.IconCoordinatesGenerationInput = RadialAppNavigationFunctions.IconCoordinatesGenerationInput(),
-    val option4: RadialAppNavigationFunctions.IconCoordinatesGenerationInput = RadialAppNavigationFunctions.IconCoordinatesGenerationInput(),
-    val option5: RadialAppNavigationFunctions.IconCoordinatesGenerationInput = RadialAppNavigationFunctions.IconCoordinatesGenerationInput(),
-
 // feel
-    val vibrateOnSelectionChange: Boolean = false,
-    val vibrationAmount: Float = 0f,
-    val vibrationTime: Float = 0f
+    val vibration: VibrationData = VibrationData(),
 )

@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigationFunctions
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
+import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
 object RadialAppNavigatorValues {
@@ -18,23 +19,7 @@ object RadialAppNavigatorValues {
         get() = data
 
     fun markPersistentDataDirty (){
-        val inputs = listOf(
-            RadialAppNavigationFunctions.IconCoordinatesGenerationInput(
-                250.0,150.0,150.0
-            ),
-            RadialAppNavigationFunctions.IconCoordinatesGenerationInput(
-                250.0,125.0,125.0
-            ),
-            RadialAppNavigationFunctions.IconCoordinatesGenerationInput(
-                250.0,100.0,100.0
-            ),
-            RadialAppNavigationFunctions.IconCoordinatesGenerationInput(
-                250.0,750.0,75.0, 30
-            ),
-            RadialAppNavigationFunctions.IconCoordinatesGenerationInput(
-                250.0,50.0,50.0, 40
-            ),
-        )
+        val inputs = listOf(PrefValues.an_option1, PrefValues.an_option2, PrefValues.an_option3, PrefValues.an_option4, PrefValues.an_option5)
         val coordinatesPerScale = inputs.map { RadialAppNavigationFunctions.generateIconCoordinates(it) }
 
         persistentData.value = RadialAppNavigatorPersistentData(
@@ -43,6 +28,12 @@ object RadialAppNavigatorValues {
             offsetsScales = coordinatesPerScale.map { it.iconOffset },
             iconsPerRound = coordinatesPerScale.map { it.iconsPerRound },
             roundStartingDistances = coordinatesPerScale.map{ it.startingPointOfRound },
+            tint = PrefValues.an_tint,
+            vibration = PrefValues.an_vibration,
+            shouldBlur = PrefValues.an_shouldBlur,
+            blurAmount = PrefValues.an_blurAmount,
+            enlargeSelectedIconBy = PrefValues.an_enlargeSelectedIconBy,
+            iconSize = PrefValues.an_iconSize,
         )
     }
     fun updateData (newData: RadialAppNavigatorData){

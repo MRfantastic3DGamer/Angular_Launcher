@@ -4,12 +4,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.AppLabelValue
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderData
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
+import com.dhruv.angular_launcher.apps_data.AppsDataFunctions.getUsableApps
+import com.dhruv.angular_launcher.apps_data.AppsDataValues
+import com.dhruv.angular_launcher.apps_data.model.AppsData
 import com.dhruv.angular_launcher.data.models.NavigationMode
 import com.dhruv.angular_launcher.data.models.NavigationStage
 import com.dhruv.angular_launcher.data.models.SelectionMode
+import com.dhruv.angular_launcher.debug.DebugLayerValues
 import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import kotlin.math.absoluteValue
@@ -20,12 +25,21 @@ class AccessibleScreenVM(): ViewModel() {
     var selectionMode: SelectionMode by mutableStateOf(SelectionMode.NotSelected)
     var navigationStage: NavigationStage by mutableStateOf(NavigationStage.SelectionModeSelection)
 
+    var sliderVisibility: Boolean by mutableStateOf(false)
     var focusOnSlider: Boolean by mutableStateOf(false)
 
+    var usableAppsData: AppsData by mutableStateOf(AppsData())
+//    var
+
     init {
+        AppsDataValues.getData.observeForever {
+            if (it != null) {
+                usableAppsData = getUsableApps(it)
+            }
+        }
         AccessibleScreenValues.GetData.observeForever {
 
-            val collisionQuality: Float = 5f
+            val collisionQuality = 5f
             val sliderLeftBound: Float = ScreenUtils.fromRight( ScreenUtils.dpToF(SliderValues.GetPersistentData.value!!.width) )
 
             when (navigationStage) {
@@ -39,6 +53,7 @@ class AccessibleScreenVM(): ViewModel() {
                     val secondCutHeight = PrefValues.s_secondCut * screenHeight
 
                     if (it.touchPosition.x > sliderLeftBound){
+                        sliderVisibility = true
                         focusOnSlider = true
                         selectionMode =
                             if (it.touchPosition.y < firstCutHeight){ selectionChoice[0] }
@@ -51,12 +66,35 @@ class AccessibleScreenVM(): ViewModel() {
                 }
                 NavigationStage.AppSelect -> {
                     focusOnSlider = !(it.touchPosition.x < sliderLeftBound-collisionQuality || (it.delta != null && it.delta.x.absoluteValue*3 > it.delta.y.absoluteValue))
+
+                    if (it.delta == null) {
+                        sliderVisibility = false
+                        navigationMode = NavigationMode.NotSelected
+                        navigationStage = NavigationStage.SelectionModeSelection
+                        if (focusOnSlider){
+                            // TODO: on early retrieval
+                        }
+                        else if (AppLabelValue.launchAppIfPossible()){
+                            // TODO: on app activity launched
+                        }
+                        else{
+                            navigationMode = NavigationMode.Tap
+                            navigationStage = NavigationStage.AppSelect
+                        }
+                    }
+
                     SliderValues.updateSliderData(
                         SliderData(
-                            visible = true,
+                            visible = sliderVisibility,
                             shouldUpdateOffset = focusOnSlider,
                             shouldUpdateSelection = focusOnSlider,
                             touchPos = it.touchPosition,
+                            elementsCount = when(selectionMode) {
+                                SelectionMode.NotSelected -> 0
+                                SelectionMode.ByAlphabet -> 25
+                                SelectionMode.BySearch -> 0
+                                SelectionMode.ByGroup -> 10
+                            },
                         )
                     )
                 }

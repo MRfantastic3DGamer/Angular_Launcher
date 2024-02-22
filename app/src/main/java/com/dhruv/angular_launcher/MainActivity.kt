@@ -3,12 +3,14 @@ package com.dhruv.angular_launcher
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.dhruv.angular_launcher.accessible_screen.AccessibleScreenVM
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorValues
@@ -16,6 +18,8 @@ import com.dhruv.angular_launcher.accessible_screen.components.radial_app_naviga
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.accessible_screen.presentation.AccessibleScreen
+import com.dhruv.angular_launcher.apps_data.AppsDataVM
+import com.dhruv.angular_launcher.apps_data.AppsDataValues
 import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.interaction_calculation.Trigger
 import com.dhruv.angular_launcher.interaction_calculation.TriggerFunctions
@@ -24,6 +28,7 @@ import com.dhruv.angular_launcher.ui.theme.Angular_LauncherTheme
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ScreenUtils.pixelDensity = this.resources.displayMetrics.density
@@ -37,22 +42,30 @@ class MainActivity : ComponentActivity() {
         SliderValues.markPersistentDataDirty()
         RadialAppNavigatorValues.markPersistentDataDirty()
         FluidCursorValues.markPersistentDataDirty()
+        AppsDataValues.initialize(packageManager)
         setContent {
-            val openSettings: Boolean by remember { mutableStateOf(true) }
-            val screenVM: AccessibleScreenVM by remember { mutableStateOf(AccessibleScreenVM()) }
+            var openSettings: Boolean by remember { mutableStateOf(false) }
+            val screenVM: AccessibleScreenVM by viewModels<AccessibleScreenVM>()
+            val appsDataVM: AppsDataVM by viewModels<AppsDataVM>()
 
             Angular_LauncherTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     if (openSettings){
-                        SettingsScreen()
+                        SettingsScreen{ openSettings = false }
                     }
                     else{
                         AccessibleScreen(screenVM)
-                        Trigger(Modifier.fillMaxSize())
+                        Trigger(Modifier.fillMaxSize()) {
+                            PrefValues.loadAllValues(this)
+                            AccessibleScreenValues.markPersistentDataDirty()
+                            SliderValues.markPersistentDataDirty()
+                            RadialAppNavigatorValues.markPersistentDataDirty()
+                            FluidCursorValues.markPersistentDataDirty()
+                            openSettings = true
+                        }
                     }
                 }
             }

@@ -12,4 +12,8 @@ object AppLabelValue {
 
     fun updatePos (pos: Offset){ data.value = data.value!!.copy(position = pos)}
     fun updateText (text: String){ data.value = data.value!!.copy(appName = text)}
+    fun launchAppIfPossible(): Boolean {
+        println("launched app ${data.value!!.appName}")
+        return true
+    }
 }

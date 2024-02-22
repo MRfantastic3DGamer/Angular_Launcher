@@ -32,7 +32,6 @@ object AccessibleScreenValues {
             bottomPadding = PrefValues.sl_downPadding.dp,
             firstCut = PrefValues.s_firstCut,
             secondCut = PrefValues.s_secondCut,
-            sliderMovementSpeed = PrefValues.sl_movementSpeed,
         )
     }
 }

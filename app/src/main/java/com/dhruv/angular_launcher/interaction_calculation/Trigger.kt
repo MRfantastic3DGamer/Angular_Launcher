@@ -10,7 +10,8 @@ import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun Trigger(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    openSettings: ()->Unit,
 ) {
     val context = LocalContext.current
     Box(modifier = modifier
@@ -20,6 +21,7 @@ fun Trigger(
                     TriggerFunctions.Tap(context, offset)
                 },
                 onLongPress = {
+                    openSettings()
                     println("open settings")
                 }
             )

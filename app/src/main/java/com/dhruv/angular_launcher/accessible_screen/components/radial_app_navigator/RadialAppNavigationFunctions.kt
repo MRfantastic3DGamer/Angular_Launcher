@@ -6,7 +6,6 @@ import com.dhruv.angular_launcher.accessible_screen.components.radial_app_naviga
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorData
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorValues
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
-import com.dhruv.angular_launcher.debug.DebugLayerValues
 import com.dhruv.angular_launcher.utils.MathUtils
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import kotlin.math.PI
@@ -22,6 +21,7 @@ object RadialAppNavigationFunctions {
         selection_i: Int,
         sliderPosY: Float,
         touchPos: Offset,
+        visibility: Boolean,
     ): RadialAppNavigatorData {
         val center = Offset(ScreenUtils.fromRight(sliderWidth+ selectionPaddingX), selectionPosY)
         return RadialAppNavigatorData(
@@ -29,12 +29,9 @@ object RadialAppNavigationFunctions {
             center = center,
             sliderPositionY = sliderPosY,
             offsetFromCenter = touchPos - center,
-            shouldSelectApp = touchPos.x < center.x
+            shouldSelectApp = touchPos.x < center.x && visibility,
+            visibility = visibility
         )
-    }
-
-    fun getPositionOnCircle(coordinate: IconCoordinate): Offset {
-        return MathUtils.getPositionOnCircle(coordinate.distance, -coordinate.angle)
     }
 
     @Stable
@@ -161,7 +158,6 @@ object RadialAppNavigationFunctions {
     }
 
     fun getPossibleIconIndeces (touchOffset: Offset, iconsPerRound: List<Int>, distancePerRound: List<Float>, skips: List<Pair<Int, Int>>): Set<Int> {
-        val center = RadialAppNavigatorValues.GetData.value!!.center
         val mid = Offset.Zero
         val anchor = Offset(0f, -100f)
 
@@ -172,7 +168,7 @@ object RadialAppNavigationFunctions {
         val pointsPerStep = 16
         val detectionRange = 40f
         val deltaAngle = 22.7f
-        for (i in 1..steps)
+        for (i in 1..steps) {
             for (p in 0 until pointsPerStep) {
                 val angle = deltaAngle * p * PI.toFloat() / 180f
                 val pos = touchOffset + Offset(
@@ -180,12 +176,8 @@ object RadialAppNavigationFunctions {
                     cos(angle)
                 ) * (i * detectionRange)
                 positions.add(pos)
-//                DebugLayerValues.addPoint(center + pos, "$i,$p")
             }
-
-
-//        DebugLayerValues.addLine(Pair(center + mid, center + touchOffset), "a-l1")
-//        DebugLayerValues.addLine(Pair(center + mid, center + anchor), "a-l2")
+        }
 
         fun getResult (posOffset: Offset): Int {
 

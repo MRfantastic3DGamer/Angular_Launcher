@@ -16,5 +16,4 @@ data class ScreenPersistentData(
     val bottomPadding: Dp = 0.dp,
     val firstCut: Float = 0.33f,
     val secondCut: Float = 0.66f,
-    val sliderMovementSpeed: Float = 1f,
 )

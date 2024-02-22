@@ -18,19 +18,21 @@ import com.dhruv.angular_launcher.utils.ScreenUtils
 
 @Composable
 fun AppLabel (vm: AppLabelVM){
-    val position by animateIntOffsetAsState(targetValue = vm.offset.round())
-    Box(modifier = Modifier.fillMaxSize()){
-        Box (
-            Modifier
-                .offset { position }
-                .fillMaxWidth()
-                .height(ScreenUtils.fToDp(vm.height))
-                .background(Color.Blue),
-        ){
-            Text(
-                text = vm.appName,
-                maxLines = 1,
-            )
+    val position by animateIntOffsetAsState(targetValue = vm.offset.round(), label = "app label")
+    if (vm.appName != "-1"){
+        Box(modifier = Modifier.fillMaxSize()){
+            Box (
+                Modifier
+                    .offset { position }
+                    .fillMaxWidth()
+                    .height(ScreenUtils.fToDp(vm.height))
+                    .background(Color.Blue),
+            ){
+                Text(
+                    text = vm.appName,
+                    maxLines = 1,
+                )
+            }
         }
     }
 }

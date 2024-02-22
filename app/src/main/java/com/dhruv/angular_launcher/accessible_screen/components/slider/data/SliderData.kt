@@ -9,4 +9,5 @@ data class SliderData(
     val shouldUpdateOffset: Boolean = false,
     val shouldUpdateSelection: Boolean = false,
     val touchPos: Offset = Offset.Zero,
+    val elementsCount: Int = 0
 )

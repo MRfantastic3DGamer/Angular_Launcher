@@ -18,12 +18,9 @@ object SliderValues {
         return SliderPersistentData(
             height = ScreenUtils.fToDp(PrefValues.sl_height),
             width = ScreenUtils.fToDp(PrefValues.sl_width),
-            elementsCount = elementsCount(),
-            animationSpeed = PrefValues.sl_animationSpeed,
             blurAmount = PrefValues.sl_blurAmount,
             DownPadding = PrefValues.sl_downPadding,
-            sidePadding = PrefValues.sl_sidePadding,
-            movementSpeed = PrefValues.sl_movementSpeed,
+            sidePadding = PrefValues.sl_selectionCurveOffset,
             selectionCurveOffset = PrefValues.sl_selectionCurveOffset,
             selectionRadios = PrefValues.sl_selectionRadios,
             shouldBlur = PrefValues.sl_shouldBlur,
@@ -40,5 +37,4 @@ object SliderValues {
     fun updateSliderData(newData: SliderData) {
         sliderData.value = newData
     }
-    private fun elementsCount(): Int { return 26 /*TODO*/ }
 }

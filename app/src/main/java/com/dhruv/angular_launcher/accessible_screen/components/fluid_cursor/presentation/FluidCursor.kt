@@ -1,6 +1,9 @@
 package com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.presentation
 
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.SnapSpec
 import androidx.compose.animation.core.animateOffsetAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.ui.graphics.Path
 import androidx.compose.foundation.layout.Box
@@ -28,11 +31,13 @@ fun FluidCursor (vm: FluidCursorVM){
 //            vm.points.forEach { lineTo(it.x, it.y) }
 //            close()
 //        }
-    val pos by animateOffsetAsState(targetValue = vm.targetPos, label = "cursor-pos")
-    Box(
-        modifier = Modifier
-            .size(10.dp)
-            .offset { (pos - Offset(5f, 5f)).round() }
-            .background(Color.Cyan)
-    )
+    val pos by animateOffsetAsState(targetValue = vm.targetPos, label = "cursor-pos", animationSpec = if (vm.snap) SnapSpec() else spring())
+    if (vm.visibility){
+        Box(
+            modifier = Modifier
+                .size(10.dp)
+                .offset { (pos - Offset(5f, 5f)).round() }
+                .background(Color.Cyan)
+        )
+    }
 }
