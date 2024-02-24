@@ -6,13 +6,55 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.AppLabelFunctions
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.AppLabelValue
 import com.dhruv.angular_launcher.accessible_screen.components.slider.SliderFunctions.GetSliderPositionY
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
+import com.dhruv.angular_launcher.apps_data.MyApplication
+import com.dhruv.angular_launcher.apps_data.model.AppData
+import com.dhruv.angular_launcher.apps_data.model.GroupData
+import com.dhruv.angular_launcher.data.models.SelectionMode
 import com.dhruv.angular_launcher.utils.ScreenUtils
+import io.realm.kotlin.ext.query
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 class SliderVM:ViewModel() {
+
+    private val realm = MyApplication.realm
+
+    var selectionMode: SelectionMode by mutableStateOf(SelectionMode.NotSelected)
+    val alphabets = realm
+        .query<AppData>()
+        .asFlow()
+        .map { res -> res.list.toList().map {
+            val f = it.name.first()
+            if (f.isLetter()) f.uppercase()
+            else "#"
+            }.sorted().toSet()
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+    val groups = realm
+        .query<GroupData>()
+        .asFlow()
+        .map { res -> res.list.toList().map { it.iconKey } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+    val elementsCount: Int
+        get() = when(selectionMode) {
+            SelectionMode.NotSelected -> 0
+            SelectionMode.ByAlphabet -> alphabets.value.size
+            SelectionMode.BySearch -> 0
+            SelectionMode.ByGroup -> groups.value.size
+        }
+    val allOptions: List<String>
+        get() = when(selectionMode) {
+            SelectionMode.NotSelected -> emptyList()
+            SelectionMode.ByAlphabet -> alphabets.value.toList()
+            SelectionMode.BySearch -> emptyList()
+            SelectionMode.ByGroup -> groups.value
+        }
 
     // main
     var height: Float by mutableStateOf(500f)
@@ -34,7 +76,6 @@ class SliderVM:ViewModel() {
     var vibrationAmount by mutableStateOf(1f)
     var vibrationTime by mutableStateOf(0f)
 
-    var elementsCount: Int by mutableStateOf(0)
     var sidePadding: Float by mutableStateOf(0f)
 
     var visible: Boolean by mutableStateOf(false)
@@ -60,9 +101,8 @@ class SliderVM:ViewModel() {
             sidePadding = it.sidePadding
         }
         SliderValues.GetSliderData.observeForever {
-            visible = it.visible
             touchPos = it.touchPos
-            elementsCount = it.elementsCount
+            selectionMode = it.selectionMode
             if (it.shouldUpdateOffset){
                 val posY = GetSliderPositionY(touchPos.y, height, sliderPos.y)
                 sliderPos = SliderFunctions.calculateSliderPosition(posY)
@@ -73,12 +113,13 @@ class SliderVM:ViewModel() {
 
             if (it.shouldUpdateSelection) {
                 val selection = SliderFunctions.calculateCurrentSelection(
-                    elementsCount,
+                    elementsCount-1,
                     height,
                     touchPos.y - sliderPos.y
                 )
-                selectionPosY = selection.posY
                 selectionIndex = selection.index
+                selectionPosY = selection.posY
+            visible = (selectionIndex != -1) && it.visible
             }
         }
     }

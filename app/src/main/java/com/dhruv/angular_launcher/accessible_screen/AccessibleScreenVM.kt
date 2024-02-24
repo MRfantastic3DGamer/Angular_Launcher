@@ -14,7 +14,6 @@ import com.dhruv.angular_launcher.apps_data.model.AppsData
 import com.dhruv.angular_launcher.data.models.NavigationMode
 import com.dhruv.angular_launcher.data.models.NavigationStage
 import com.dhruv.angular_launcher.data.models.SelectionMode
-import com.dhruv.angular_launcher.debug.DebugLayerValues
 import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import kotlin.math.absoluteValue
@@ -28,15 +27,9 @@ class AccessibleScreenVM(): ViewModel() {
     var sliderVisibility: Boolean by mutableStateOf(false)
     var focusOnSlider: Boolean by mutableStateOf(false)
 
-    var usableAppsData: AppsData by mutableStateOf(AppsData())
 //    var
 
     init {
-        AppsDataValues.getData.observeForever {
-            if (it != null) {
-                usableAppsData = getUsableApps(it)
-            }
-        }
         AccessibleScreenValues.GetData.observeForever {
 
             val collisionQuality = 5f
@@ -89,12 +82,7 @@ class AccessibleScreenVM(): ViewModel() {
                             shouldUpdateOffset = focusOnSlider,
                             shouldUpdateSelection = focusOnSlider,
                             touchPos = it.touchPosition,
-                            elementsCount = when(selectionMode) {
-                                SelectionMode.NotSelected -> 0
-                                SelectionMode.ByAlphabet -> 25
-                                SelectionMode.BySearch -> 0
-                                SelectionMode.ByGroup -> 10
-                            },
+                            selectionMode = selectionMode,
                         )
                     )
                 }

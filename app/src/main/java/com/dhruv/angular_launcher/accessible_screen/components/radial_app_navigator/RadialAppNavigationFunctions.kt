@@ -4,8 +4,8 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.IconCoordinate
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorData
-import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorValues
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
+import com.dhruv.angular_launcher.data.models.SelectionMode
 import com.dhruv.angular_launcher.utils.MathUtils
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import kotlin.math.PI
@@ -18,19 +18,21 @@ object RadialAppNavigationFunctions {
         selectionPaddingX: Float,
         selectionPosY: Float,
         sliderWidth: Float,
-        selection_i: Int,
+        selection: String,
         sliderPosY: Float,
         touchPos: Offset,
         visibility: Boolean,
+        selectionMode: SelectionMode,
     ): RadialAppNavigatorData {
         val center = Offset(ScreenUtils.fromRight(sliderWidth+ selectionPaddingX), selectionPosY)
         return RadialAppNavigatorData(
-            currentSelectionIndex = selection_i,
+            sliderSelection = selection,
             center = center,
             sliderPositionY = sliderPosY,
             offsetFromCenter = touchPos - center,
             shouldSelectApp = touchPos.x < center.x && visibility,
-            visibility = visibility
+            visibility = visibility,
+            selectionMode = selectionMode,
         )
     }
 
@@ -42,7 +44,7 @@ object RadialAppNavigationFunctions {
     )
 
     fun getUsableOffsets(
-        list: List<List<Offset>>,
+        allOffsets: List<List<Offset>>,
         center: Offset,
         count: Int,
         sliderPosY: Float
@@ -51,6 +53,7 @@ object RadialAppNavigationFunctions {
         val top = sliderPosY + 50f
         val bot = sliderPosY + sliderHeight - 50f
         val left = 100f
+        val right = ScreenUtils.dpToF(ScreenUtils.fromRight(SliderValues.GetPersistentData.value!!.width)) + 50f
         val iconSizeOffset = Offset(2.5f, 2.5f)
 
         fun getResult(iconSizePreset: Int): IconOffsetComputeResult {
@@ -58,22 +61,22 @@ object RadialAppNavigationFunctions {
             val skips= mutableListOf<Pair<Int,Int>>()
             var j = 0
             for (i in 0 until count) {
-                if (j !in list[iconSizePreset].indices) {
-                    if (iconSizePreset >= list.size - 1)
+                if (j !in allOffsets[iconSizePreset].indices) {
+                    if (iconSizePreset >= allOffsets.size - 1)
                         return IconOffsetComputeResult(iconSizePreset, offsets, skips)
                     return getResult(iconSizePreset + 1)
                 }
-                var c = center + list[iconSizePreset][j] - iconSizeOffset
-                if (!((c.x > left) && (c.y > top) && (c.y < bot))){
+                var c = center + allOffsets[iconSizePreset][j] - iconSizeOffset
+                if (!((c.x > left) && (c.x < right) && (c.y > top) && (c.y < bot))){
                     val skipStart: Int = j
-                    while (!((c.x > left) && (c.y > top) && (c.y < bot))) {
+                    while (!((c.x > left) && (c.x < right) && (c.y > top) && (c.y < bot))) {
                         j++
-                        if (j !in list[iconSizePreset].indices) {
-                            if (iconSizePreset >= list.size - 1)
+                        if (j !in allOffsets[iconSizePreset].indices) {
+                            if (iconSizePreset >= allOffsets.size - 1)
                                 return IconOffsetComputeResult(iconSizePreset, offsets, skips)
                             return getResult(iconSizePreset + 1)
                         }
-                        c = center + list[iconSizePreset][j] - iconSizeOffset
+                        c = center + allOffsets[iconSizePreset][j] - iconSizeOffset
                     }
                     val skipEnd: Int = j
                     skips.add(Pair(skipStart,skipEnd))
@@ -232,5 +235,9 @@ object RadialAppNavigationFunctions {
             }
         }
         return bi
+    }
+
+    fun getFirstChar (string: String): String {
+        return if (string.first().isLetter()) string.first().uppercase() else "#"
     }
 }

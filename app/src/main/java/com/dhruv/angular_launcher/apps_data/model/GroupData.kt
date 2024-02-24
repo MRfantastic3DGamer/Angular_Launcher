@@ -7,5 +7,7 @@ import org.mongodb.kbson.ObjectId
 
 class GroupData : RealmObject {
     var _id: ObjectId = ObjectId()
-    var apps: RealmSet<AppsData> = realmSetOf()
+    var name: String = ""
+    var iconKey: String = ""
+    var apps: RealmSet<AppData> = realmSetOf()
 }

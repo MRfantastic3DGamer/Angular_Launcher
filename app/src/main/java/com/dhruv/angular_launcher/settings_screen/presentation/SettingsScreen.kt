@@ -21,6 +21,7 @@ import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,13 +34,16 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigationFunctions
+import com.dhruv.angular_launcher.apps_data.AppsDataVM
 import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.settings_screen.SettingsVM
 import com.dhruv.angular_launcher.settings_screen.presentation.components.tabButton
 import com.dhruv.angular_launcher.settings_screen.data.SettingsTab
 import com.dhruv.angular_launcher.settings_screen.presentation.components.AppNavigation
 import com.dhruv.angular_launcher.settings_screen.presentation.components.FluidCursor
+import com.dhruv.angular_launcher.settings_screen.presentation.components.GroupsEditor
 import com.dhruv.angular_launcher.settings_screen.presentation.components.Slider
+import kotlin.jvm.internal.Ref
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -64,6 +68,10 @@ fun SettingsScreen(
         "fc_fluidCursorLooks",
         "fc_animationSpeed",
         ))
+
+    val apps = vm.appsState.collectAsState().value
+    val groups = vm.groupsState.collectAsState().value.toMutableList()
+
     var selectedTab by remember { mutableStateOf(SettingsTab.Slider) }
 
     Box(
@@ -148,7 +156,7 @@ fun SettingsScreen(
                         )
                     }
                     SettingsTab.Groups -> Box (Modifier.fillMaxSize()){
-                        // TODO() add apps data and ability to edit them
+                        GroupsEditor(apps, groups) { vm.saveGroup(it) }
                     }
                 }
             }

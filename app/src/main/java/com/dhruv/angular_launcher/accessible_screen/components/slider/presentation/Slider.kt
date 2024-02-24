@@ -2,8 +2,8 @@ package com.dhruv.angular_launcher.accessible_screen.components.slider.presentat
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateOffsetAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.core.math.MathUtils.clamp
@@ -14,6 +14,8 @@ import com.dhruv.angular_launcher.accessible_screen.components.slider.SliderVM
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
 import com.dhruv.angular_launcher.accessible_screen.components.slider.presentation.components.AllChoices
 import com.dhruv.angular_launcher.accessible_screen.components.slider.presentation.components.SliderShape
+import com.dhruv.angular_launcher.data.models.SelectionMode
+import com.dhruv.angular_launcher.debug.DebugLayerValues
 import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
@@ -21,44 +23,40 @@ import com.dhruv.angular_launcher.utils.ScreenUtils
 fun Slider (
     vm: SliderVM,
 ){
-    if (vm.visible) {
-        val currentSelectionPosition: Float by animateFloatAsState(targetValue = vm.selectionPosY, label = "selection_pos_Y")
-        val currentFuzzySelection by animateFloatAsState(targetValue = vm.selectionIndex.toFloat(), label = "currentSelection")
-        val currentOffset by animateOffsetAsState(targetValue = vm.sliderPos, label = "trigger_offset")
-        val path = SliderFunctions.SliderPath(currentOffset, SliderValues.GetPersistentData.value!!, currentSelectionPosition)
+    val currentSelectionPosition: Float by animateFloatAsState(targetValue = vm.selectionPosY, label = "selection_pos_Y")
+    val currentFuzzySelection by animateFloatAsState(targetValue = vm.selectionIndex.toFloat(), label = "currentSelection")
+    val currentOffset by animateOffsetAsState(targetValue = vm.sliderPos, label = "trigger_offset")
 
-        RadialAppNavigatorValues.updateData(
-            getRadialAppNavigatorData(
-                selection_i = clamp(vm.selectionIndex, 0, 25),
-                sliderWidth = ScreenUtils.dpToF(SliderValues.GetPersistentData.value?.width ?: 50.dp),
-                selectionPaddingX = PrefValues.sl_selectionCurveOffset,
-                selectionPosY = currentSelectionPosition + currentOffset.y,
-                sliderPosY = vm.sliderPos.y,
-                touchPos = vm.touchPos,
-                visibility = vm.visible
-            )
+    RadialAppNavigatorValues.updateData(
+        getRadialAppNavigatorData(
+            selection = when (vm.selectionMode) {
+                SelectionMode.NotSelected -> "@"
+                SelectionMode.ByAlphabet -> vm.alphabets.collectAsState().value.toList().getOrElse(clamp(vm.selectionIndex, 0, vm.alphabets.collectAsState().value.size-1), {"@"})
+                SelectionMode.BySearch -> "@"
+                SelectionMode.ByGroup -> vm.groups.collectAsState().value.getOrElse(clamp(vm.selectionIndex, 0, vm.alphabets.collectAsState().value.size-1), {"@"})
+            },
+            sliderWidth = ScreenUtils.dpToF(SliderValues.GetPersistentData.value?.width ?: 50.dp),
+            selectionPaddingX = PrefValues.sl_selectionCurveOffset,
+            selectionPosY = currentSelectionPosition + currentOffset.y,
+            sliderPosY = vm.sliderPos.y,
+            touchPos = vm.touchPos,
+            visibility = vm.visible,
+            selectionMode = vm.selectionMode,
         )
+    )
+
+    DebugLayerValues.addString("chars: ${vm.alphabets.collectAsState().value.size}, groups: ${vm.groups.collectAsState().value.size}", "chars")
+
+    if (vm.visible) {
+        val path = SliderFunctions.SliderPath(currentOffset, SliderValues.GetPersistentData.value!!, currentSelectionPosition)
 
         SliderShape(path)
         AllChoices(
             offset = currentOffset,
             height = vm.height,
-            elementsCount = vm.elementsCount,
+            allOptions = vm.allOptions,
             currentSelection = currentFuzzySelection,
             shift = vm.sidePadding
-        )
-    }
-    else{
-        RadialAppNavigatorValues.updateData(
-            getRadialAppNavigatorData(
-                selection_i = clamp(vm.selectionIndex, 0, 25),
-                sliderWidth = ScreenUtils.dpToF(SliderValues.GetPersistentData.value?.width ?: 50.dp),
-                selectionPaddingX = PrefValues.sl_selectionCurveOffset,
-                selectionPosY = 0f,
-                sliderPosY = vm.sliderPos.y,
-                touchPos = vm.touchPos,
-                visibility = vm.visible
-            )
         )
     }
 }

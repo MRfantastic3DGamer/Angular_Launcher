@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
     id("kotlin-kapt")
+    id("io.realm.kotlin")
 }
 
 android {
@@ -23,6 +24,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = true
+//            useProguard = false
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -76,4 +81,11 @@ dependencies {
 
     // realm database
     implementation ("io.realm.kotlin:library-base:1.11.0")
+
+    // For the viewModel function that imports them into activities
+    implementation ("androidx.activity:activity-ktx:1.8.2")
+
+    // For the ViewModelScope if using Coroutines in the ViewModel
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 }

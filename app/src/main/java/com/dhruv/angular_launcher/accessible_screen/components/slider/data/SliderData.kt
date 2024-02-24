@@ -2,6 +2,7 @@ package com.dhruv.angular_launcher.accessible_screen.components.slider.data
 
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
+import com.dhruv.angular_launcher.data.models.SelectionMode
 
 @Stable
 data class SliderData(
@@ -9,5 +10,5 @@ data class SliderData(
     val shouldUpdateOffset: Boolean = false,
     val shouldUpdateSelection: Boolean = false,
     val touchPos: Offset = Offset.Zero,
-    val elementsCount: Int = 0
+    val selectionMode: SelectionMode = SelectionMode.NotSelected
 )

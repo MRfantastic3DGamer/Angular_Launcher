@@ -19,7 +19,7 @@ import com.dhruv.angular_launcher.utils.ScreenUtils
 @Composable
 fun AppLabel (vm: AppLabelVM){
     val position by animateIntOffsetAsState(targetValue = vm.offset.round(), label = "app label")
-    if (vm.appName != "-1"){
+    if (vm.visibility){
         Box(modifier = Modifier.fillMaxSize()){
             Box (
                 Modifier

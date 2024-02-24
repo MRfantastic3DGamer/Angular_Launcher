@@ -4,5 +4,5 @@ import androidx.compose.ui.geometry.Offset
 
 data class AppLabelData(
     val position: Offset = Offset.Zero,
-    val appName: String = "app name"
+    val appPackage: String = "app pkg name",
 )

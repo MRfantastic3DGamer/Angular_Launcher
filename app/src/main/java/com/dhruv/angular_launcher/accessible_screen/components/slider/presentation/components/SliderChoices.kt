@@ -11,22 +11,22 @@ import kotlin.math.exp
 import kotlin.math.pow
 
 @Composable
-fun DrawChoice (s: Int, x: Float, y: Float) {
+fun DrawChoice (s: String, x: Float, y: Float) {
     Text(
         modifier = AlignToMidPoint((Offset(x, y)).round()),
-        text = "$s"
+        text = s
     )
 }
 
 @Composable
-fun AllChoices (offset: Offset, height: Float, elementsCount: Int, currentSelection: Float, shift: Float){
-    val hPerElement = height/(elementsCount+1)
+fun AllChoices (offset: Offset, height: Float, allOptions: List<String>, currentSelection: Float, shift: Float){
+    val hPerElement = height/(allOptions.size+1)
     val first = hPerElement/2
 
-    for ( i in 0..elementsCount) {
+    allOptions.forEachIndexed{ i, n ->
         val x = offset.x + gaussian(i.toFloat(), currentSelection, 0.5f) * shift
         val y = offset.y + first + hPerElement*i
-        DrawChoice(i, x, y)
+        DrawChoice(n, x, y)
     }
 }
 

@@ -10,12 +10,14 @@ import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.Ap
 class AppLabelVM: ViewModel() {
     var offset: Offset by mutableStateOf(Offset.Zero)
     var appName: String by mutableStateOf("")
+    var visibility: Boolean by mutableStateOf(false)
     val height: Float = 300f
 
     init {
         AppLabelValue.GetData.observeForever {
             offset = it.position
-            appName = it.appName
+            appName = it.appPackage
+            visibility = it.appPackage != "@"
         }
     }
 }

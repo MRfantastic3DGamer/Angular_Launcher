@@ -17,11 +17,10 @@ class MyApplication: Application() {
         realm = Realm.open(
             configuration = RealmConfiguration.create(
                 schema = setOf(
-//                    AppData::class,
+                    AppData::class,
                     GroupData::class,
                 )
             )
         )
     }
-
 }
