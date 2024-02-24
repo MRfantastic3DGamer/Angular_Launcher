@@ -77,7 +77,7 @@ dependencies {
 
     // datastore
     implementation ("androidx.datastore:datastore-preferences:1.0.0")
-    implementation ("com.google.code.gson:gson:2.9.0")
+    implementation ("com.google.code.gson:gson:2.10")
 
     // realm database
     implementation ("io.realm.kotlin:library-base:1.11.0")

@@ -2,7 +2,7 @@ package com.dhruv.angular_launcher.accessible_screen.components.radial_app_navig
 
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
-import com.dhruv.angular_launcher.data.models.SelectionMode
+import com.dhruv.angular_launcher.data.enums.SelectionMode
 
 @Stable
 data class RadialAppNavigatorData(

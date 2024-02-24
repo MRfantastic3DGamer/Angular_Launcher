@@ -14,7 +14,7 @@ import com.dhruv.angular_launcher.accessible_screen.components.slider.SliderVM
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
 import com.dhruv.angular_launcher.accessible_screen.components.slider.presentation.components.AllChoices
 import com.dhruv.angular_launcher.accessible_screen.components.slider.presentation.components.SliderShape
-import com.dhruv.angular_launcher.data.models.SelectionMode
+import com.dhruv.angular_launcher.data.enums.SelectionMode
 import com.dhruv.angular_launcher.debug.DebugLayerValues
 import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.utils.ScreenUtils

@@ -1,5 +1,6 @@
 package com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.presentation
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
@@ -17,15 +18,13 @@ import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigationFunctions
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigatorVM
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorValues
+import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.presentation.components.AppIcon
 import com.dhruv.angular_launcher.apps_data.model.GroupData
-import com.dhruv.angular_launcher.data.models.SelectionMode
-import com.dhruv.angular_launcher.debug.DebugLayerValues
+import com.dhruv.angular_launcher.data.enums.SelectionMode
+import com.dhruv.angular_launcher.utils.ScreenUtils
 
 @Composable
 fun RadialAppNavigation (vm: RadialAppNavigatorVM){
-
-    var selectionOffset: Offset? = null
-    var color: Color
 
     val appsPkgsList: List<String> = when (vm.selectionMode) {
         SelectionMode.NotSelected -> emptyList()
@@ -39,7 +38,8 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
         RadialAppNavigatorValues.GetPersistentData.value?.offsetsScales ?: listOf(),
         vm.center,
         numberOfElements,
-        vm.sliderPosY
+        vm.sliderPosY,
+        ScreenUtils.dpToF(vm.iconStyle.size)*0.5f,
     )
     val offsets = iconPositionsCompute.offsets
     val skips = iconPositionsCompute.skips
@@ -61,25 +61,14 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
     else{
         vm.selectionIndex = -1
     }
-//    DebugLayerValues.addString("selection mode: ${vm.selectionMode}", "selection mode")
-//    DebugLayerValues.addString("icons cnt: $numberOfElements", "icons cnt")
-//    DebugLayerValues.addString("icon offsets: " + offsets.size.toString(), "icon offsets")
-//    DebugLayerValues.addString("selected char: " + vm.sliderSelection, "char")
+
+    var selectionOffset: Offset? = null
+
     if (vm.visibility){
         offsets.forEachIndexed { index, it ->
-            if (vm.selectionIndex == index){
-                selectionOffset = it
-                color = Color.White
-            }
-            else{
-                color = if (index in vm.possibleSelections) Color.Gray else Color.Red
-            }
-            Box(
-                modifier = Modifier
-                    .offset { it.round() }
-                    .size(5.dp)
-                    .background(color)
-            )
+            if (index == vm.selectionIndex) selectionOffset = it
+            val pkgName = appsPkgsList[index]
+            AppIcon(pkgName = pkgName, style = vm.iconStyle, painter = vm.appsIcons[pkgName], offset = it, selected = vm.selectionIndex == index)
         }
     }
 

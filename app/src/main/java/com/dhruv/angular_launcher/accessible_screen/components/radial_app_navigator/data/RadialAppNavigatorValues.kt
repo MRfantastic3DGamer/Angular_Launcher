@@ -33,7 +33,7 @@ object RadialAppNavigatorValues {
             shouldBlur = PrefValues.an_shouldBlur,
             blurAmount = PrefValues.an_blurAmount,
             enlargeSelectedIconBy = PrefValues.an_enlargeSelectedIconBy,
-            iconSize = PrefValues.an_iconSize,
+            iconStyle = PrefValues.an_iconStyle,
         )
     }
     fun updateData (newData: RadialAppNavigatorData){

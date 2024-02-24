@@ -14,7 +14,7 @@ import com.dhruv.angular_launcher.accessible_screen.components.slider.data.Slide
 import com.dhruv.angular_launcher.apps_data.MyApplication
 import com.dhruv.angular_launcher.apps_data.model.AppData
 import com.dhruv.angular_launcher.apps_data.model.GroupData
-import com.dhruv.angular_launcher.data.models.SelectionMode
+import com.dhruv.angular_launcher.data.enums.SelectionMode
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.SharingStarted

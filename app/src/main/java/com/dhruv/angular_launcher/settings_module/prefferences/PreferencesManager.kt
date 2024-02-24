@@ -2,13 +2,19 @@ package com.dhruv.angular_launcher.settings_module.prefferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
+import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
+import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
+import com.dhruv.angular_launcher.data.models.IconStyle
 import com.dhruv.angular_launcher.utils.ScreenUtils
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 
 class PreferencesManager private constructor(context: Context) {
-
-    private val sharedPreferencesCache: MutableMap<String, String> = mutableMapOf()
 
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("userPrefs", Context.MODE_PRIVATE)
@@ -22,10 +28,34 @@ class PreferencesManager private constructor(context: Context) {
             }
         }
     }
-
     fun saveData(key: String, value: String) {
         val editor = sharedPreferences.edit()
         editor.putString(key, value)
+        editor.apply()
+    }
+    fun saveData(key: String, value: IconCoordinatesGenerationInput) {
+        val editor = sharedPreferences.edit()
+        editor.putString(key, value.toString())
+        editor.apply()
+    }
+    fun saveData(key: String, value: IconStyle) {
+        val editor = sharedPreferences.edit()
+        editor.putString(key, value.toString())
+        editor.apply()
+    }
+    fun saveData(key: String, value: Color) {
+        val editor = sharedPreferences.edit()
+        editor.putString(key, ColortoString(value))
+        editor.apply()
+    }
+    fun saveData(key: String, value: FluidCursorLooks) {
+        val editor = sharedPreferences.edit()
+        editor.putString(key, value.toString())
+        editor.apply()
+    }
+    fun saveData(key: String, value: VibrationData) {
+        val editor = sharedPreferences.edit()
+        editor.putString(key, value.toString())
         editor.apply()
     }
 
@@ -36,7 +66,7 @@ class PreferencesManager private constructor(context: Context) {
         return sharedPreferences.getString(key, defaultValue.toString())?.toIntOrNull() ?: defaultValue
     }
     fun getData(key: String, defaultValue: Boolean): Boolean {
-        return sharedPreferences.getString(key, defaultValue.toString()).toBoolean() ?: defaultValue
+        return sharedPreferences.getString(key, defaultValue.toString()).toBoolean()
     }
     fun getData(key: String, defaultValue: Long): Long {
         return sharedPreferences.getString(key, defaultValue.toString())?.toLong() ?: defaultValue
@@ -44,15 +74,32 @@ class PreferencesManager private constructor(context: Context) {
     fun getData(key: String, defaultValue: Float): Float {
         return sharedPreferences.getString(key, defaultValue.toString())?.toFloat() ?: defaultValue
     }
-}
+    fun getData(key: String, defaultValue: IconCoordinatesGenerationInput): IconCoordinatesGenerationInput {
+        val storedValue = sharedPreferences.getString(key, defaultValue.toString())
+        return IconCoordinatesGenerationInput.fromString(storedValue ?: defaultValue.toString())
+    }
+    fun getData(key: String, defaultValue: IconStyle): IconStyle {
+        val storedValue = sharedPreferences.getString(key, defaultValue.toString())
+        return IconStyle.fromString(storedValue ?: defaultValue.toString())
+    }
+    fun getData(key: String, defaultValue: Color): Color {
+        val storedValue = sharedPreferences.getString(key, ColortoString(defaultValue))
+        return Color.fromString(storedValue ?: defaultValue.toString())
+    }
+    fun getData(key: String, defaultValue: FluidCursorLooks): FluidCursorLooks {
+        val storedValue = sharedPreferences.getString(key, defaultValue.toString())
+        return FluidCursorLooks.fromString(storedValue ?: defaultValue.toString())
+    }
+    fun getData(key: String, defaultValue: VibrationData): VibrationData {
+        val storedValue = sharedPreferences.getString(key, defaultValue.toString())
+        return VibrationData.fromString(storedValue ?: defaultValue.toString())
+    }
 
-inline fun <reified T : Any> castString(value: String): T? {
-    return when (T::class) {
-        Int::class -> value.toIntOrNull()
-        Double::class -> value.toDoubleOrNull()
-        Float::class -> value.toFloatOrNull()
-        Dp::class -> value.toIntOrNull()?.dp ?: 0.dp
-        // Add other supported types as needed
-        else -> null
-    } as? T
+    fun Color.Companion.fromString(colorString: String): Color {
+        val elements = colorString.split(',')
+        return if (elements.size == 4) Color(elements[0].toFloat(),elements[1].toFloat(),elements[2].toFloat(),elements[3].toFloat()) else Color.Red
+    }
+    fun ColortoString(color: Color): String {
+        return "${color.red},${color.green},${color.blue},${color.alpha}"
+    }
 }

@@ -2,18 +2,9 @@ package com.dhruv.angular_launcher.interaction_calculation
 
 import android.content.Context
 import androidx.compose.ui.geometry.Offset
-import com.dhruv.angular_launcher.accessible_screen.components.app_label.AppLabelFunctions
-import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.AppLabelData
-import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.AppLabelValue
-import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorData
-import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorValues
-import com.dhruv.angular_launcher.accessible_screen.components.slider.SliderFunctions
-import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderData
-import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
-import com.dhruv.angular_launcher.data.models.NavigationMode
+import com.dhruv.angular_launcher.data.enums.NavigationMode
 import com.dhruv.angular_launcher.interaction_calculation.data.TriggerData
-import com.dhruv.angular_launcher.utils.ScreenUtils
 
 object TriggerFunctions {
     val data: TriggerData = TriggerData()

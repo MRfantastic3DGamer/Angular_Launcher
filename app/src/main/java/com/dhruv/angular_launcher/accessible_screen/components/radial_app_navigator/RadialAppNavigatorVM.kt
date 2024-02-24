@@ -6,16 +6,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.AppLabelValue
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigationFunctions.getFirstChar
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorValues
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
+import com.dhruv.angular_launcher.apps_data.AppsDataValues
 import com.dhruv.angular_launcher.apps_data.MyApplication
 import com.dhruv.angular_launcher.apps_data.model.AppData
 import com.dhruv.angular_launcher.apps_data.model.GroupData
-import com.dhruv.angular_launcher.data.models.SelectionMode
+import com.dhruv.angular_launcher.data.enums.SelectionMode
+import com.dhruv.angular_launcher.data.models.IconStyle
+import com.example.launcher.Drawing.DrawablePainter
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -51,7 +54,7 @@ class RadialAppNavigatorVM:ViewModel() {
     var visibility by mutableStateOf(false)
     var selectionMode: SelectionMode by mutableStateOf(SelectionMode.NotSelected)
 
-    var iconSize by mutableStateOf(0f)
+    var iconStyle by mutableStateOf(IconStyle())
     var enlargeSelectedIconBy by mutableStateOf(0f)
     var shouldBlur by mutableStateOf(false)
     var blurAmount by mutableStateOf(0f)
@@ -63,22 +66,23 @@ class RadialAppNavigatorVM:ViewModel() {
     var roundsStartingDistances: List<List<Float>> by mutableStateOf(listOf())
     var iconsPerRound: List<List<Int>> by mutableStateOf(listOf())
 
-
     var sliderPosY: Float by mutableStateOf(0f)
     var center: Offset by mutableStateOf(Offset(500f, 100f))
     var offsetFromCenter: Offset by mutableStateOf(Offset.Zero)
 
-    var possibleSelections: List<Int> by mutableStateOf(listOf())
     var sliderSelection: String by mutableStateOf("@")
-
     var selectionIndex: Int by mutableIntStateOf(-1)
-
     var shouldSelectApp: Boolean by mutableStateOf(false)
 
+    var appsIcons: Map<String, DrawablePainter> by mutableStateOf(emptyMap())
+
     init {
+        AppsDataValues.getAppsIcons.observeForever { if (it != null) appsIcons = it }
         RadialAppNavigatorValues.GetPersistentData.observeForever {
 
-            iconSize = it.iconSize
+            println("updating p data")
+
+            iconStyle = it.iconStyle
             enlargeSelectedIconBy = it.enlargeSelectedIconBy
             shouldBlur = it.shouldBlur
             blurAmount = it.blurAmount

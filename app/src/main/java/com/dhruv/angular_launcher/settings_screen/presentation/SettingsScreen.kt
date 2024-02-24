@@ -33,9 +33,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
-import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigationFunctions
-import com.dhruv.angular_launcher.apps_data.AppsDataVM
-import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
+import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
+import com.dhruv.angular_launcher.data.models.IconStyle
 import com.dhruv.angular_launcher.settings_screen.SettingsVM
 import com.dhruv.angular_launcher.settings_screen.presentation.components.tabButton
 import com.dhruv.angular_launcher.settings_screen.data.SettingsTab
@@ -43,31 +43,13 @@ import com.dhruv.angular_launcher.settings_screen.presentation.components.AppNav
 import com.dhruv.angular_launcher.settings_screen.presentation.components.FluidCursor
 import com.dhruv.angular_launcher.settings_screen.presentation.components.GroupsEditor
 import com.dhruv.angular_launcher.settings_screen.presentation.components.Slider
-import kotlin.jvm.internal.Ref
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SettingsScreen(
+    vm: SettingsVM,
     exitSettings: ()->Unit,
 ) {
     val context = LocalContext.current
-    val vm = SettingsVM.getInstance(listOf(
-        "sl_width",
-        "sl_height",
-        "sl_topPadding",
-        "sl_downPadding",
-        "sl_triggerCurveEdgeCount",
-        "sl_selectionCurveOffset",
-        "sl_shouldBlur",
-        "sl_blurAmount",
-        "sl_tint",
-        "sl_vibrateOnSelectionChange",
-        "sl_vibrationAmount",
-        "sl_vibrationTime",
-
-        "fc_fluidCursorLooks",
-        "fc_animationSpeed",
-        ))
 
     val apps = vm.appsState.collectAsState().value
     val groups = vm.groupsState.collectAsState().value.toMutableList()
@@ -118,41 +100,42 @@ fun SettingsScreen(
                     }
                     SettingsTab.Slider -> Box (Modifier.fillMaxSize()){
                         Slider(
-                            width = vm.values["sl_width"] as MutableState<Float>,
-                            height = vm.values["sl_height"] as MutableState<Float>,
-                            topPadding = vm.values["sl_topPadding"] as MutableState<Float>,
-                            downPadding = vm.values["sl_downPadding"] as MutableState<Float>,
-                            triggerCurveEdgeCount = vm.values["sl_triggerCurveEdgeCount"] as MutableState<Int>,
-                            selectionCurveOffset = vm.values["sl_selectionCurveOffset"] as MutableState<Float>,
-                            shouldBlur = vm.values["sl_shouldBlur"] as MutableState<Boolean>,
-                            blurAmount = vm.values["sl_blurAmount"] as MutableState<Float>,
-                            tint = vm.values["sl_tint"] as MutableState<Color>,
-                            vibrateOnSelectionChange = vm.values["sl_vibrateOnSelectionChange"] as MutableState<Boolean>,
-                            vibrationAmount = vm.values["sl_vibrationAmount"] as MutableState<Float>,
-                            vibrationTime = vm.values["sl_vibrationTime"] as MutableState<Float>,
+                            width = vm.tryToGetState("sl_width") as MutableState<Float>,
+                            height = vm.tryToGetState("sl_height") as MutableState<Float>,
+                            topPadding = vm.tryToGetState("sl_topPadding") as MutableState<Float>,
+                            downPadding = vm.tryToGetState("sl_downPadding") as MutableState<Float>,
+                            triggerCurveEdgeCount = vm.tryToGetState("sl_triggerCurveEdgeCount") as MutableState<Int>,
+                            selectionCurveOffset = vm.tryToGetState("sl_selectionCurveOffset") as MutableState<Float>,
+                            shouldBlur = vm.tryToGetState("sl_shouldBlur") as MutableState<Boolean>,
+                            blurAmount = vm.tryToGetState("sl_blurAmount") as MutableState<Float>,
+                            tint = vm.tryToGetState("sl_tint") as MutableState<Color>,
+                            vibrateOnSelectionChange = vm.tryToGetState("sl_vibrateOnSelectionChange") as MutableState<Boolean>,
+                            vibrationAmount = vm.tryToGetState("sl_vibrationAmount") as MutableState<Float>,
+                            vibrationTime = vm.tryToGetState("sl_vibrationTime") as MutableState<Float>,
                         )
                     }
                     SettingsTab.FluidCursor -> Box (Modifier.fillMaxSize()){
                         FluidCursor(
-                            looks = vm.values["fc_looks"] as MutableState<FluidCursorLooks>,
-                            animationSpeed = vm.values["fc_animationSpeed"] as MutableState<Float>,
+                            looks = vm.tryToGetState("fc_looks") as MutableState<FluidCursorLooks>,
+                            animationSpeed = vm.tryToGetState("fc_animationSpeed") as MutableState<Float>,
                         )
                     }
                     SettingsTab.AppNavigation -> Box (Modifier.fillMaxSize()){
+
+
+
                         AppNavigation(
-                            iconSize = vm.values["an_iconSize"] as MutableState<Float>,
-                            enlargeSelectedIconBy = vm.values["an_enlargeSelectedIconBy"] as MutableState<Float>,
-                            shouldBlur = vm.values["an_shouldBlur"] as MutableState<Boolean>,
-                            blurAmount = vm.values["an_blurAmount"] as MutableState<Float>,
-                            tint = vm.values["an_tint"] as MutableState<Color>,
-                            option1 = vm.values["an_option1"] as MutableState<RadialAppNavigationFunctions.IconCoordinatesGenerationInput>,
-                            option2 = vm.values["an_option2"] as MutableState<RadialAppNavigationFunctions.IconCoordinatesGenerationInput>,
-                            option3 = vm.values["an_option3"] as MutableState<RadialAppNavigationFunctions.IconCoordinatesGenerationInput>,
-                            option4 = vm.values["an_option4"] as MutableState<RadialAppNavigationFunctions.IconCoordinatesGenerationInput>,
-                            option5 = vm.values["an_option5"] as MutableState<RadialAppNavigationFunctions.IconCoordinatesGenerationInput>,
-                            vibrateOnSelectionChange = vm.values["an_vibrateOnSelectionChange"] as MutableState<Boolean>,
-                            vibrationAmount = vm.values["an_vibrationAmount"] as MutableState<Float>,
-                            vibrationTime = vm.values["an_vibrationTime"] as MutableState<Float>,
+                            iconStyle = vm.tryToGetState("an_iconStyle") as MutableState<IconStyle>,
+                            enlargeSelectedIconBy = vm.tryToGetState("an_enlargeSelectedIconBy") as MutableState<Float>,
+                            shouldBlur = vm.tryToGetState("an_shouldBlur") as MutableState<Boolean>,
+                            blurAmount = vm.tryToGetState("an_blurAmount") as MutableState<Float>,
+                            tint = vm.tryToGetState("an_tint") as MutableState<Color>,
+                            option1 = vm.tryToGetState("an_option1") as MutableState<IconCoordinatesGenerationInput>,
+                            option2 = vm.tryToGetState("an_option2") as MutableState<IconCoordinatesGenerationInput>,
+                            option3 = vm.tryToGetState("an_option3") as MutableState<IconCoordinatesGenerationInput>,
+                            option4 = vm.tryToGetState("an_option4") as MutableState<IconCoordinatesGenerationInput>,
+                            option5 = vm.tryToGetState("an_option5") as MutableState<IconCoordinatesGenerationInput>,
+                            vibrationData = vm.tryToGetState("an_vibration") as MutableState<VibrationData>,
                         )
                     }
                     SettingsTab.Groups -> Box (Modifier.fillMaxSize()){
@@ -163,7 +146,6 @@ fun SettingsScreen(
         }
         FloatingActionButton(
             onClick = {
-                vm.save(context)
                 exitSettings()
             },
             modifier = Modifier

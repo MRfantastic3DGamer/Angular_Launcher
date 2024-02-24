@@ -1,9 +1,9 @@
 package com.dhruv.angular_launcher.interaction_calculation.data
 
 import androidx.compose.ui.geometry.Offset
-import com.dhruv.angular_launcher.data.models.NavigationMode
-import com.dhruv.angular_launcher.data.models.NavigationStage
-import com.dhruv.angular_launcher.data.models.SelectionMode
+import com.dhruv.angular_launcher.data.enums.NavigationMode
+import com.dhruv.angular_launcher.data.enums.NavigationStage
+import com.dhruv.angular_launcher.data.enums.SelectionMode
 
 /**
  * s  -> -screen-

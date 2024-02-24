@@ -1,6 +1,7 @@
 package com.dhruv.angular_launcher.settings_screen
 
 import android.content.Context
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,14 +12,14 @@ import com.dhruv.angular_launcher.apps_data.model.AppData
 import com.dhruv.angular_launcher.apps_data.model.GroupData
 import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
 import io.realm.kotlin.ext.query
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class SettingsVM private constructor (
-    allKeys: List<String>,
-): ViewModel() {
+class SettingsVM : ViewModel() {
     var settingsOpened by mutableStateOf(false)
     private val realm = MyApplication.realm
 
@@ -33,14 +34,21 @@ class SettingsVM private constructor (
         .map { res -> res.list.toList() }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    val values = allKeys.associateWith { key ->
+    val _values: MutableMap<String, MutableState<Any>?> = mutableMapOf()
+
+    fun tryToGetState (key: String): MutableState<Any>? {
+        if (_values.containsKey(key)){
+            return _values[key]!!
+        }
+
         try {
             val variable = PrefValues::class.java.getDeclaredField(key)
             variable.isAccessible = true
-            mutableStateOf(variable.get(PrefValues))
+            _values[key] = mutableStateOf(variable.get(PrefValues))
+            return _values[key]
         }catch (error: Throwable){
             println("no reflection for $key")
-            null
+            return null
         }
     }
 
@@ -60,22 +68,12 @@ class SettingsVM private constructor (
         }
     }
 
-    fun save(context: Context){
-        values.keys.forEach {
-            PrefValues.changedValuesMap[it] = values[it]!!.value!!
-        }
-        PrefValues.save(context)
-    }
-
-
-    companion object {
-        @Volatile
-        private var instance: SettingsVM? = null
-
-        fun getInstance(allKeys: List<String>): SettingsVM {
-            return instance ?: synchronized(this) {
-                instance ?: SettingsVM(allKeys).also { instance = it }
+    suspend fun save(context: Context){
+        return withContext(Dispatchers.IO){
+            _values.keys.forEach {
+                PrefValues.changedValuesMap[it] = _values[it]!!.value!!
             }
+            PrefValues.save(context)
         }
     }
 }

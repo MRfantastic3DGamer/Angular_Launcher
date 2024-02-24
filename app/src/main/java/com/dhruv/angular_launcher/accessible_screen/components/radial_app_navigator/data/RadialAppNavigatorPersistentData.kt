@@ -6,6 +6,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigationFunctions
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
+import com.dhruv.angular_launcher.data.models.IconStyle
 
 @Stable
 data class RadialAppNavigatorPersistentData(
@@ -17,7 +18,7 @@ data class RadialAppNavigatorPersistentData(
     val roundStartingDistances: List<List<Float>> = listOf(),
 
 // look
-    val iconSize: Float = 0f,
+    val iconStyle: IconStyle = IconStyle(),
     val enlargeSelectedIconBy: Float = 0f,
     val shouldBlur: Boolean = false,
     val blurAmount: Float = 0f,

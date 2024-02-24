@@ -5,7 +5,8 @@ import androidx.compose.ui.geometry.Offset
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.IconCoordinate
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorData
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
-import com.dhruv.angular_launcher.data.models.SelectionMode
+import com.dhruv.angular_launcher.data.enums.SelectionMode
+import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
 import com.dhruv.angular_launcher.utils.MathUtils
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import kotlin.math.PI
@@ -47,13 +48,14 @@ object RadialAppNavigationFunctions {
         allOffsets: List<List<Offset>>,
         center: Offset,
         count: Int,
-        sliderPosY: Float
+        sliderPosY: Float,
+        iconSize: Float,
     ): IconOffsetComputeResult {
         val sliderHeight = ScreenUtils.dpToF(SliderValues.GetPersistentData.value!!.height)
         val top = sliderPosY + 50f
         val bot = sliderPosY + sliderHeight - 50f
         val left = 100f
-        val right = ScreenUtils.dpToF(ScreenUtils.fromRight(SliderValues.GetPersistentData.value!!.width)) + 50f
+        val right = ScreenUtils.dpToF(ScreenUtils.fromRight(SliderValues.GetPersistentData.value!!.width)) - 50f - iconSize/2
         val iconSizeOffset = Offset(2.5f, 2.5f)
 
         fun getResult(iconSizePreset: Int): IconOffsetComputeResult {
@@ -89,12 +91,6 @@ object RadialAppNavigationFunctions {
         return getResult(0)
     }
 
-    data class IconCoordinatesGenerationInput(
-        val startingRadius:Double = 250.0,
-        val radiusDiff:Double = 150.0,
-        val iconDistance:Double = 150.0,
-        val rounds: Int = 20,
-    )
     /**
      * all possible coordinates for icons for [0,0] as its center
      * @param iconOffset
