@@ -2,15 +2,15 @@ package com.dhruv.angular_launcher.apps_data
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import com.dhruv.angular_launcher.apps_data.model.AppData
+import com.dhruv.angular_launcher.database.room.models.AppData
 import com.dhruv.angular_launcher.apps_data.model.AppsData
 import com.example.launcher.Drawing.DrawablePainter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object AppsDataFunctions {
-    suspend fun getAllInstalledAppDatas (packageManager: PackageManager): List<AppData> {
-        return withContext(Dispatchers.IO) {
+    fun getAllInstalledAppDatas (packageManager: PackageManager): List<AppData> {
+//        return withContext(Dispatchers.IO) {
             val main = Intent(Intent.ACTION_MAIN, null)
             main.addCategory(Intent.CATEGORY_LAUNCHER)
             val appsL = packageManager.queryIntentActivities(main, 0)
@@ -27,8 +27,8 @@ object AppsDataFunctions {
                 icons.add(DrawablePainter(app.loadIcon(packageManager)))
             }
 
-            apps.toList()
-        }
+            return apps.toList()
+//        }
     }
 
     suspend fun getAllAppIcons (packageManager: PackageManager): Map<String, DrawablePainter>{

@@ -232,8 +232,4 @@ object RadialAppNavigationFunctions {
         }
         return bi
     }
-
-    fun getFirstChar (string: String): String {
-        return if (string.first().isLetter()) string.first().uppercase() else "#"
-    }
 }

@@ -11,7 +11,7 @@ import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.data.enums.NavigationMode
 import com.dhruv.angular_launcher.data.enums.NavigationStage
 import com.dhruv.angular_launcher.data.enums.SelectionMode
-import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.database.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import kotlin.math.absoluteValue
 

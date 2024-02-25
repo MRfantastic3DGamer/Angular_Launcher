@@ -2,7 +2,7 @@ package com.dhruv.angular_launcher.accessible_screen.components.slider.data
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.database.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
 object SliderValues {
@@ -27,9 +27,7 @@ object SliderValues {
             tint = PrefValues.sl_tint,
             topPadding = PrefValues.sl_topPadding,
             triggerCurveEdgeCount = PrefValues.sl_triggerCurveEdgeCount,
-            vibrateOnSelectionChange = PrefValues.sl_vibrateOnSelectionChange,
-            vibrationAmount = PrefValues.sl_vibrationAmount,
-            vibrationTime = PrefValues.sl_vibrationTime,
+            vibrationData = PrefValues.sl_vibration,
         )
     }
 

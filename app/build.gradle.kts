@@ -80,7 +80,12 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.10")
 
     // realm database
-    implementation ("io.realm.kotlin:library-base:1.11.0")
+//    implementation ("io.realm.kotlin:library-base:1.11.0")
+
+    // room database
+    implementation ("androidx.room:room-runtime:2.6.1")
+    implementation ("androidx.room:room-ktx:2.6.1")
+    kapt ("androidx.room:room-compiler:2.6.1")
 
     // For the viewModel function that imports them into activities
     implementation ("androidx.activity:activity-ktx:1.8.2")

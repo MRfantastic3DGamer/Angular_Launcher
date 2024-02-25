@@ -7,9 +7,6 @@ import androidx.compose.ui.graphics.Color
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
 import com.dhruv.angular_launcher.data.models.IconStyle
-import com.dhruv.angular_launcher.settings_module.EntryData
-import com.dhruv.angular_launcher.settings_module.SettingsColumn
-import com.dhruv.angular_launcher.settings_module.SettingsColumnData
 
 @Composable
 fun AppNavigation (

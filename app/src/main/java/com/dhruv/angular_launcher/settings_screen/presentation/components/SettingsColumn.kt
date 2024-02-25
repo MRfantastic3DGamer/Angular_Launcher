@@ -1,4 +1,4 @@
-package com.dhruv.angular_launcher.settings_module
+package com.dhruv.angular_launcher.settings_screen.presentation.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -6,7 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.database.prefferences.values.PrefValues
 import java.lang.reflect.Type
 
 

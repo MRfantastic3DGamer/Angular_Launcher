@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 
 @Stable
 data class SliderPersistentData(
@@ -24,7 +25,5 @@ data class SliderPersistentData(
     val tint:Color = Color.Black,
 
     // feel
-    val vibrateOnSelectionChange:Boolean = false,
-    val vibrationAmount:Float = 1f,
-    val vibrationTime:Float = 0f,
+    val vibrationData: VibrationData = VibrationData()
 )

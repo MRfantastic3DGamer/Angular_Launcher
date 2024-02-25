@@ -4,7 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.database.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
 object AccessibleScreenValues {

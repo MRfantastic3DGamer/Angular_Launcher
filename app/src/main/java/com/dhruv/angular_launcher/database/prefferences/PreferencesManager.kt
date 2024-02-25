@@ -1,18 +1,12 @@
-package com.dhruv.angular_launcher.settings_module.prefferences
+package com.dhruv.angular_launcher.database.prefferences
 
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
 import com.dhruv.angular_launcher.data.models.IconStyle
-import com.dhruv.angular_launcher.utils.ScreenUtils
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 
 class PreferencesManager private constructor(context: Context) {
 

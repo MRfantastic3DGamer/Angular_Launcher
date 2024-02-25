@@ -1,12 +1,11 @@
 package com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data
 
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigationFunctions
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
-import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.database.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
 object RadialAppNavigatorValues {

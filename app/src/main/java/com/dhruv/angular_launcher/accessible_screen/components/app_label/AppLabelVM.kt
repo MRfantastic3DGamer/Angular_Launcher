@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.ViewModel
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.AppLabelValue
-import com.dhruv.angular_launcher.apps_data.AppsDataValues
+import com.dhruv.angular_launcher.apps_data.AppsIconsDataValues
 import com.example.launcher.Drawing.DrawablePainter
 
 class AppLabelVM: ViewModel() {
@@ -18,7 +18,7 @@ class AppLabelVM: ViewModel() {
     var appsIcons: Map<String, DrawablePainter> by mutableStateOf(emptyMap())
 
     init {
-        AppsDataValues.getAppsIcons.observeForever { if (it != null) appsIcons = it }
+        AppsIconsDataValues.getAppsIcons.observeForever { if (it != null) appsIcons = it }
         AppLabelValue.GetData.observeForever {
             offset = it.position
             appPkg = it.appPackage

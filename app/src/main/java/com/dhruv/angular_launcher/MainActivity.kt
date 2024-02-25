@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,10 +20,10 @@ import com.dhruv.angular_launcher.accessible_screen.components.radial_app_naviga
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.accessible_screen.presentation.AccessibleScreen
-import com.dhruv.angular_launcher.apps_data.AppsDataVM
-import com.dhruv.angular_launcher.apps_data.AppsDataValues
-import com.dhruv.angular_launcher.debug.DebugLayerValues
-import com.dhruv.angular_launcher.settings_module.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.apps_data.AppsIconsDataValues
+import com.dhruv.angular_launcher.database.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.database.room.AppDatabase
+import com.dhruv.angular_launcher.database.room.AppDatabaseVM
 import com.dhruv.angular_launcher.interaction_calculation.Trigger
 import com.dhruv.angular_launcher.interaction_calculation.TriggerFunctions
 import com.dhruv.angular_launcher.settings_screen.SettingsVM
@@ -47,18 +46,20 @@ class MainActivity : ComponentActivity() {
         TriggerFunctions.data.sl_height = ScreenUtils.screenHeight
 
         setContent {
+            val DBVM: AppDatabaseVM = remember { AppDatabase.getViewModel(context) }
             var openSettings: Boolean by remember { mutableStateOf(false) }
             val screenVM: AccessibleScreenVM by viewModels<AccessibleScreenVM>()
-            val appsDataVM: AppsDataVM by viewModels<AppsDataVM>()
             val settingsVM: SettingsVM by viewModels<SettingsVM>()
+            val database = AppDatabase.getInstance(context)
             val scope = rememberCoroutineScope()
+
             LaunchedEffect(Dispatchers.IO){
                 async { PrefValues.loadAllValues(context) }.await().apply {
+                    AppsIconsDataValues.initialize(packageManager, database.appDataDao())
                     AccessibleScreenValues.markPersistentDataDirty()
                     SliderValues.markPersistentDataDirty()
                     RadialAppNavigatorValues.markPersistentDataDirty()
                     FluidCursorValues.markPersistentDataDirty()
-                    AppsDataValues.initialize(packageManager)
                 }
             }
 
@@ -68,7 +69,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    DebugLayerValues.addString("number Of apps: ${appsDataVM.apps.collectAsState().value.size}", "apps")
                     if (openSettings){
                         SettingsScreen(settingsVM){
                             scope.launch {

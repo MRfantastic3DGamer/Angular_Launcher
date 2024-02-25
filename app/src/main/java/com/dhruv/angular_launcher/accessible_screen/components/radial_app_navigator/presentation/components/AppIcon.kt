@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.round
-import com.dhruv.angular_launcher.apps_data.model.AppData
 import com.dhruv.angular_launcher.data.models.IconStyle
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import com.example.launcher.Drawing.DrawablePainter

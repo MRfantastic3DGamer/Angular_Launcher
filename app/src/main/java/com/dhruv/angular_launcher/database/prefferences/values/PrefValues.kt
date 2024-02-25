@@ -1,14 +1,13 @@
-package com.dhruv.angular_launcher.settings_module.prefferences.values
+package com.dhruv.angular_launcher.database.prefferences.values
 
 import android.content.Context
 import androidx.compose.ui.graphics.Color
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
-import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigationFunctions
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
 import com.dhruv.angular_launcher.data.models.IconStyle
-import com.dhruv.angular_launcher.settings_module.prefferences.PreferencesManager
+import com.dhruv.angular_launcher.database.prefferences.PreferencesManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -19,7 +18,6 @@ import kotlinx.coroutines.withContext
  * an -> -app navigation-
  */
 object PrefValues {
-
 
     // region app navigation
     var an_iconStyle: IconStyle = IconStyle()
@@ -44,9 +42,7 @@ object PrefValues {
 
     // region slider
 
-    var sl_vibrationTime: Float = 1f
-    var sl_vibrationAmount: Float = 1f
-    var sl_vibrateOnSelectionChange: Boolean = false
+    var sl_vibration: VibrationData = VibrationData()
     var sl_tint: Color = Color.Black
     var sl_shouldBlur: Boolean = false
     var sl_selectionRadios: Float = 100f
@@ -90,9 +86,7 @@ object PrefValues {
 // endregion
 
 // region slider
-        sl_vibrationTime = prefManager.getData("sl_vibrationTime", sl_vibrationTime)
-        sl_vibrationAmount = prefManager.getData("sl_vibrationAmount", sl_vibrationAmount)
-        sl_vibrateOnSelectionChange = prefManager.getData("sl_vibrateOnSelectionChange", sl_vibrateOnSelectionChange)
+        sl_vibration = prefManager.getData("sl_vibration", sl_vibration)
         sl_tint = prefManager.getData("sl_tint", sl_tint)
         sl_shouldBlur = prefManager.getData("sl_shouldBlur", sl_shouldBlur)
         sl_selectionRadios = prefManager.getData("sl_selectionRadios", sl_selectionRadios)

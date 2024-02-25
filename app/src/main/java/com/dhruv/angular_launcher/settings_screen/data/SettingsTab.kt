@@ -5,5 +5,6 @@ enum class SettingsTab {
     Slider,
     FluidCursor,
     AppNavigation,
+    Apps,
     Groups,
 }

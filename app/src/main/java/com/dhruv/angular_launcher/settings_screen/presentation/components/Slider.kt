@@ -1,14 +1,10 @@
 package com.dhruv.angular_launcher.settings_screen.presentation.components
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.dhruv.angular_launcher.settings_module.SettingsColumn
-import com.dhruv.angular_launcher.settings_module.SettingsColumnData
-import com.dhruv.angular_launcher.settings_module.EntryData
+import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 
 @Composable
 fun Slider (
@@ -25,9 +21,7 @@ fun Slider (
     blurAmount: MutableState<Float>,
     tint: MutableState<Color>,
     // feel
-    vibrateOnSelectionChange: MutableState<Boolean>,
-    vibrationAmount: MutableState<Float>,
-    vibrationTime: MutableState<Float>,
+    vibration: MutableState<VibrationData>,
 ) {
     LazyColumn(){
         item {
@@ -70,9 +64,7 @@ fun Slider (
             // Display settings related to feel
             SettingsColumn(
                 data = SettingsColumnData("Feel", null, listOf(
-                    EntryData("Vibrate On Selection Change", vibrateOnSelectionChange as MutableState<Any>, Boolean::class.java),
-                    EntryData("Vibration Amount", vibrationAmount as MutableState<Any>, Float::class.java),
-                    EntryData("Vibration Time", vibrationTime as MutableState<Any>, Float::class.java),
+                    EntryData("Vibrate On Selection Change", vibration as MutableState<Any>, VibrationData::class.java),
                 )),
                 entryForType = _SettingsArt.DefaultEntry
             )
