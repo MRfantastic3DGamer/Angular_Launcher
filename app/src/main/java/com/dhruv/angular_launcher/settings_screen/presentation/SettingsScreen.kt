@@ -153,7 +153,7 @@ fun SettingsScreen(
                 }
             }
         }
-        if (selectedTab != SettingsTab.Apps || selectedTab != SettingsTab.Groups) {
+        if (selectedTab != SettingsTab.Apps && selectedTab != SettingsTab.Groups) {
             FloatingActionButton(
                 onClick = {
                     exitSettings()
