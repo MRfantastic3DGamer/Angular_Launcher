@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
@@ -25,36 +24,31 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.dhruv.angular_launcher.database.room.models.AppData
+import com.dhruv.angular_launcher.database.room.AppDatabase
+import com.dhruv.angular_launcher.database.room.models.GroupAppCrossRef
 import com.dhruv.angular_launcher.database.room.models.GroupData
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @Composable
 fun GroupsEditor (vm: GroupsEditingVM){
 
     val context = LocalContext.current
-    var showDialog by remember { mutableStateOf(false) }
-
-    val groups = emptyList<GroupData>()
-    val apps = emptyList<AppData>()
-    val selectedApps by remember { mutableStateOf(mutableSetOf<AppData>()) }
+    val DBVM = remember{ AppDatabase.getViewModel(context) }
+    val groups = DBVM.groups.collectAsState(initial = emptyList()).value
+    val apps = DBVM.apps.collectAsState(initial = emptyList()).value
+    val appsOfCurrentGroup = (if (vm.selectedGroup != null) DBVM.getAppsForGroup(vm.selectedGroup!!._id).collectAsState(initial = emptyList()).value else emptyList()).map { it.packageName }
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    vm.newGroup()
-                    showDialog = true
-                },
+                onClick = { DBVM.insertGroup(GroupData(name = "group ${groups.size}", iconKey = "key")) },
                 content = { Icon(Icons.Default.Add, contentDescription = "Add Group") }
             )
         }
@@ -70,14 +64,13 @@ fun GroupsEditor (vm: GroupsEditingVM){
             Text("Created Groups:")
             Spacer(modifier = Modifier.height(8.dp))
             LazyColumn {
-                itemsIndexed(groups) { index, group ->
+                items(groups) {group ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .padding(vertical = 4.dp)
                             .clickable {
-                                vm.getGroup(index)
-                                showDialog = true
+                                vm.getGroup(group)
                             }
                     ) {
                         Text(group.name, color = Color.Blue)
@@ -89,39 +82,41 @@ fun GroupsEditor (vm: GroupsEditingVM){
         }
     }
 
-    if (showDialog) {
+    if (vm.showDialog) {
         AlertDialog(
-            onDismissRequest = {
-                showDialog = false
-                vm.groupName = TextFieldValue()
-            },
-            title = {
-                Text(if (vm.selectedGroup != null) "Edit Group" else "Create Group")
-            },
+            onDismissRequest = { vm.dismiss() },
+            title = { Text(if (vm.selectedGroup != null) "Edit Group" else "Create Group") },
             text = {
                 Column {
                     TextField(
-                        value = vm.groupName,
-                        onValueChange = { vm.groupName = it },
+                        value = vm.nameValue,
+                        onValueChange = { vm.nameValue = it },
                         label = { Text("Enter group name") },
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Select strings to add to group:")
+                    TextField(
+                        value = vm.keyValue,
+                        onValueChange = { vm.keyValue = it },
+                        label = { Text("Enter group iconKey") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Select apps to add to group:")
                     Spacer(modifier = Modifier.height(8.dp))
                     LazyColumn {
-                        items(apps) { app ->
+                        items(apps){ app ->
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.padding(vertical = 4.dp)
                             ) {
                                 Checkbox(
-                                    checked = selectedApps.contains(app),
+                                    checked = appsOfCurrentGroup.contains(app.packageName),
                                     onCheckedChange = { isChecked ->
                                         if (isChecked) {
-                                            selectedApps.remove(app)
+                                            DBVM.insertConnection(GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName))
                                         } else {
-                                            selectedApps.add(app)
+                                            DBVM.deleteConnection(GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName))
                                         }
                                     }
                                 )
@@ -132,32 +127,11 @@ fun GroupsEditor (vm: GroupsEditingVM){
                 }
             },
             confirmButton = {
-                Button(
-                    onClick = {
-                        if (vm.groupName.text.isNotBlank()) {
-                            vm.selectedGroup!!.apply {
-                                name = vm.groupName.text
-                            }
-                            vm.saveGroup()
-                            showDialog = false
-                            vm.selectedGroup = null
-                            vm.groupName = TextFieldValue()
-                        }
-                    }
-                ) {
-                    Text("Save")
+                Button(onClick = { vm.save { DBVM.insertGroup(it) } }) {
+                    Text(text = "Save")
                 }
             },
-            dismissButton = {
-                Button(
-                    onClick = {
-                        showDialog = false
-                        vm.groupName = TextFieldValue()
-                    }
-                ) {
-                    Text("Cancel")
-                }
-            }
+            dismissButton = {},
         )
     }
 }

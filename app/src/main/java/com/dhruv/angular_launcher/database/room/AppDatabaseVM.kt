@@ -6,6 +6,7 @@ import com.dhruv.angular_launcher.database.room.dao.AppDataDao
 import com.dhruv.angular_launcher.database.room.dao.GroupAppCrossRefDao
 import com.dhruv.angular_launcher.database.room.dao.GroupDataDao
 import com.dhruv.angular_launcher.database.room.models.AppData
+import com.dhruv.angular_launcher.database.room.models.GroupAppCrossRef
 import com.dhruv.angular_launcher.database.room.models.GroupData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -41,11 +42,13 @@ class AppDatabaseVM(
         flow {
             val appsByGroup = mutableMapOf<String, List<AppData>>()
             groups.forEach { group ->
-                groupAppCrossRefDao.getAppsForGroup(group._id).collect { apps ->
-                    appsByGroup[group._id.toString()] = apps
-                    emit(appsByGroup.toMap())
+                println("group:->  ${group.name}")
+                groupAppCrossRefDao.getAppsForGroup(group._id).collect { appsList ->
+                    appsByGroup[group._id.toString()] = appsList
+                    println("for ${group._id} : ${appsList.map { it.name }}")
                 }
             }
+            emit(appsByGroup.toMap())
         }
     }
 
@@ -61,13 +64,16 @@ class AppDatabaseVM(
         }
     }
 
-    suspend fun insertAllApps(apps: List<AppData>){
-
-    }
-
     // Functions for GroupDataDao
-    suspend fun insertGroup(groupData: GroupData) {
-        groupDataDao.insert(groupData)
+    fun insertGroup(groupData: GroupData) {
+        viewModelScope.launch {
+            groupDataDao.insert(groupData)
+        }
+    }
+    fun updateGroup(groupData: GroupData) {
+        viewModelScope.launch {
+            groupDataDao.update(groupData)
+        }
     }
 
     // Functions for GroupAppCrossRefDao
@@ -78,7 +84,31 @@ class AppDatabaseVM(
         return groupAppCrossRefDao.getGroupsForApp(appId)
     }
 
-    fun getFirstChar (string: String): String {
+    fun deleteGroupApps(groupId: Int, apps: List<String>){
+        viewModelScope.launch {
+            groupAppCrossRefDao.deleteExtraConnections(groupId, apps)
+        }
+    }
+
+    fun updateConnections(groupId: Int, appPkgs: List<String>) {
+        viewModelScope.launch {
+            groupAppCrossRefDao.updateConnections(groupId, appPkgs)
+        }
+    }
+
+    fun insertConnection(connection: GroupAppCrossRef){
+        viewModelScope.launch {
+            groupAppCrossRefDao.insert(connection)
+        }
+    }
+
+    fun deleteConnection(connection: GroupAppCrossRef){
+        viewModelScope.launch {
+            groupAppCrossRefDao.delete(connection)
+        }
+    }
+
+    private fun getFirstChar (string: String): String {
         return if (string.first().isLetter()) string.first().uppercase() else "#"
     }
 }

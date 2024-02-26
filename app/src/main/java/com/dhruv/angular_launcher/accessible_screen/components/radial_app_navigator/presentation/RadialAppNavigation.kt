@@ -22,11 +22,15 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
     val context = LocalContext.current
     val DBVM = remember() { AppDatabase.getViewModel(context) }
 
+    val appsPerGroup = DBVM.groups.collectAsState(initial = emptyList()).value.map {
+        it._id.toString() to DBVM.getAppsForGroup(it._id).collectAsState(initial = emptyList()).value.map { it.packageName }
+    }.toMap()
+
     val appsPkgsList: List<String> = when (vm.selectionMode) {
         SelectionMode.NotSelected -> emptyList()
         SelectionMode.ByAlphabet -> DBVM.appsByChar.collectAsState(initial = emptyMap()).value.getOrDefault(vm.sliderSelection, emptyList()).map { it.packageName }
         SelectionMode.BySearch -> emptyList()
-        SelectionMode.ByGroup -> DBVM.appsByGroup.collectAsState(initial = emptyMap()).value.getOrDefault(vm.sliderSelection, emptyList()).map { it.packageName }
+        SelectionMode.ByGroup -> appsPerGroup.getOrDefault(vm.sliderSelection, emptyList())
     }
 
     val numberOfElements: Int = appsPkgsList.size

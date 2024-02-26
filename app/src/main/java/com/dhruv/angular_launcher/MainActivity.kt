@@ -24,6 +24,7 @@ import com.dhruv.angular_launcher.apps_data.AppsIconsDataValues
 import com.dhruv.angular_launcher.database.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.database.room.AppDatabase
 import com.dhruv.angular_launcher.database.room.AppDatabaseVM
+import com.dhruv.angular_launcher.debug.DebugLayerVM
 import com.dhruv.angular_launcher.interaction_calculation.Trigger
 import com.dhruv.angular_launcher.interaction_calculation.TriggerFunctions
 import com.dhruv.angular_launcher.settings_screen.SettingsVM
@@ -47,6 +48,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val DBVM: AppDatabaseVM = remember { AppDatabase.getViewModel(context) }
+            val debugLayerVM by remember { mutableStateOf(DebugLayerVM()) }
             var openSettings: Boolean by remember { mutableStateOf(false) }
             val screenVM: AccessibleScreenVM by viewModels<AccessibleScreenVM>()
             val settingsVM: SettingsVM by viewModels<SettingsVM>()
@@ -100,6 +102,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
+//                    DebugLayer(vm = debugLayerVM)
                 }
             }
         }

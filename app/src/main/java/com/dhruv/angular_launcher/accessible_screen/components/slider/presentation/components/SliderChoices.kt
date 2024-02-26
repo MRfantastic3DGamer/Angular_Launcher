@@ -20,7 +20,7 @@ fun DrawChoice (s: String, x: Float, y: Float) {
 
 @Composable
 fun AllChoices (offset: Offset, height: Float, allOptions: List<String>, currentSelection: Float, shift: Float){
-    val hPerElement = height/(allOptions.size+1)
+    val hPerElement = height/(allOptions.size)
     val first = hPerElement/2
 
     allOptions.forEachIndexed{ i, n ->

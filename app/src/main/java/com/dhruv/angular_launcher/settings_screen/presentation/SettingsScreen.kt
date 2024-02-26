@@ -2,9 +2,14 @@ package com.dhruv.angular_launcher.settings_screen.presentation
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -39,14 +44,15 @@ import com.dhruv.angular_launcher.data.models.IconStyle
 import com.dhruv.angular_launcher.database.room.AppDatabase
 import com.dhruv.angular_launcher.settings_screen.SettingsVM
 import com.dhruv.angular_launcher.settings_screen.data.SettingsTab
-import com.dhruv.angular_launcher.settings_screen.presentation.components.AppNavigation
-import com.dhruv.angular_launcher.settings_screen.presentation.components.FluidCursor
-import com.dhruv.angular_launcher.settings_screen.presentation.components.Slider
+import com.dhruv.angular_launcher.settings_screen.presentation.components.app_navigator.AppNavigation
 import com.dhruv.angular_launcher.settings_screen.presentation.components.apps.AppsEditing
 import com.dhruv.angular_launcher.settings_screen.presentation.components.apps.AppsEditingVM
+import com.dhruv.angular_launcher.settings_screen.presentation.components.cursor.FluidCursor
 import com.dhruv.angular_launcher.settings_screen.presentation.components.groups.GroupsEditingVM
 import com.dhruv.angular_launcher.settings_screen.presentation.components.groups.GroupsEditor
+import com.dhruv.angular_launcher.settings_screen.presentation.components.slider.Slider
 import com.dhruv.angular_launcher.settings_screen.presentation.components.tabButton
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun SettingsScreen(
@@ -55,9 +61,9 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val DBVM = remember { AppDatabase.getViewModel(context) }
-    val apps = DBVM.apps.collectAsState(initial = emptyList()).value
-
-    val groupsEditingVM = remember { GroupsEditingVM() }
+    val apps = DBVM.apps.collectAsState(initial = emptyList())
+    val groups = DBVM.groups.collectAsState(initial = emptyList())
+    val appsByGroup = DBVM.appsByGroup.map { it.map { it.key.toInt() to it.value.map { it.packageName } }.toMap() }
 
     var selectedTab by remember { mutableStateOf(SettingsTab.Slider) }
 
@@ -142,18 +148,24 @@ fun SettingsScreen(
                     SettingsTab.Apps -> Box(Modifier.fillMaxSize()){
                         val appsEditingVM = remember(apps) {
                             derivedStateOf{
-                                AppsEditingVM(apps, {DBVM.updateApp(it)})
+                                AppsEditingVM(apps.value, {DBVM.updateApp(it)})
                             }
                         }
                         AppsEditing(vm = appsEditingVM.value)
                     }
                     SettingsTab.Groups -> Box (Modifier.fillMaxSize()){
+                        val groupsEditingVM = remember { GroupsEditingVM() }
                         GroupsEditor(groupsEditingVM)
                     }
                 }
             }
         }
-        if (selectedTab != SettingsTab.Apps && selectedTab != SettingsTab.Groups) {
+        AnimatedVisibility(
+            visible = selectedTab != SettingsTab.Apps && selectedTab != SettingsTab.Groups,
+            Modifier,
+            enter = slideIn(initialOffset = { IntOffset(0, 200) }) + fadeIn(),
+            exit = slideOut(targetOffset = { IntOffset(0, 200) }) + fadeOut(),
+        ) {
             FloatingActionButton(
                 onClick = {
                     exitSettings()

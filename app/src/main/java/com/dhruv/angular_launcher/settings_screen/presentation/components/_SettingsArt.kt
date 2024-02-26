@@ -2,21 +2,19 @@ package com.dhruv.angular_launcher.settings_screen.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +28,7 @@ object _SettingsArt {
     val DefaultEntry = mapOf<Type, @Composable (String, MutableState<Any>, Pair<Any, Any>?) -> Unit>(
         Float::class.java to { key, state, constraints->
             Column {
-                Text(text = key)
+                H1(text = key)
                 if (constraints != null){
                     Slider(
                         value = state.value.toString().toFloat(),
@@ -45,7 +43,7 @@ object _SettingsArt {
         },
         Int::class.java to { key, state, constraints ->
             Column {
-                Text(text = key)
+                H1(text = key)
                 if (constraints != null){
                     Slider(
                         value = state.value.toString().toFloat(),
@@ -61,9 +59,7 @@ object _SettingsArt {
         IconStyle::class.java to { key, state, constraints ->
             val State = state as MutableState<IconStyle>
             Column {
-                Row (
-                    Modifier.fillMaxWidth()
-                ){
+                Row (Modifier.fillMaxWidth()){
                     Box(
                         modifier = Modifier
                             .size(state.value.size)
@@ -71,24 +67,25 @@ object _SettingsArt {
                             .background(Color.White)
                     )
                 }
-                Text(text = "icon size")
+                H1(text = "icon size")
                 Slider(
                     value = state.value.size.value.toString().toFloat(),
                     onValueChange = { state.value = state.value.copy(size = it.dp) },
                     valueRange = 5f..100f
                 )
-                Text(text = "border size")
+                H1(text = "border size")
                 Slider(
                     value = state.value.borderStrokeWidth.value.toString().toFloat(),
                     onValueChange = { state.value = state.value.copy(borderStrokeWidth = it.dp) },
                     valueRange = 0f..20f
                 )
+                H1(text = "")
             }
         },
         IconCoordinatesGenerationInput::class.java to { key, state, constraints ->
             val State = state as MutableState<IconCoordinatesGenerationInput>
             Column {
-                Text(text = "starting radious")
+                H1(text = "starting radious")
                 Slider(
                     value = state.value.startingRadius.toString().toFloat(),
                     onValueChange = { state.value = state.value.copy(iconDistance = it.toDouble()) },
@@ -98,10 +95,18 @@ object _SettingsArt {
         },
         VibrationData::class.java to {key, state, constraints ->
             val State = state as MutableState<VibrationData>
-            Text(text = "Vibration details")
+            H1(text = "should vibrate")
+            Checkbox(checked = state.value.active, onCheckedChange = { state.value = state.value.copy(active = !state.value.active) })
 
-        }
+
+        },
+        
     )
+
+    @Composable
+    private fun H1 (text: String){
+        Text(text = text)
+    }
 }
 
 @Preview
