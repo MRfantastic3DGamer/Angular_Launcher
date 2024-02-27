@@ -12,9 +12,7 @@ import com.dhruv.angular_launcher.settings_screen.presentation.components._Setti
 
 @Composable
 fun FluidCursor (
-    // looks
     looks: MutableState<FluidCursorLooks>,
-    // feel
     animationSpeed: MutableState<Float>,
 ){
     LazyColumn(){
