@@ -19,6 +19,12 @@ import kotlinx.coroutines.withContext
  */
 object PrefValues {
 
+    // region theme
+
+    var wallpaper: String = ""
+
+    // endregion
+
     // region app navigation
     var an_iconStyle: IconStyle = IconStyle()
     var an_enlargeSelectedIconBy: Float = 0.2f
@@ -63,6 +69,10 @@ object PrefValues {
 
     suspend fun loadAllValues(context: Context){
         val prefManager = PreferencesManager.getInstance(context)
+
+// region theme
+        wallpaper = prefManager.getData("wallPaper", wallpaper)
+// endregion
 
 // region app navigation
         an_iconStyle = prefManager.getData("an_iconStyle", an_iconStyle)

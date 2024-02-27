@@ -1,9 +1,8 @@
-package com.dhruv.angular_launcher.apps_data
+package com.dhruv.angular_launcher.database.apps_data
 
 import android.content.Intent
 import android.content.pm.PackageManager
 import com.dhruv.angular_launcher.database.room.models.AppData
-import com.dhruv.angular_launcher.apps_data.model.AppsData
 import com.example.launcher.Drawing.DrawablePainter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -45,24 +44,5 @@ object AppsDataFunctions {
 
             icons
         }
-    }
-
-    fun getUsableApps (data: AppsData): AppsData {
-
-        val names: MutableList<String?> = mutableListOf()
-        val packages: MutableList<String?> = mutableListOf()
-        val icons: MutableList<DrawablePainter?> = mutableListOf()
-
-        data.packages.indices.forEach { i ->
-            if (data.icons[i] == null || data.names[i] == null || data.packages[i] == null){
-
-            }
-            else{
-                names.add(data.names[i])
-                packages.add(data.packages[i])
-                icons.add(data.icons[i])
-            }
-        }
-        return AppsData( names, packages, icons )
     }
 }

@@ -52,6 +52,7 @@ import com.dhruv.angular_launcher.settings_screen.presentation.components.groups
 import com.dhruv.angular_launcher.settings_screen.presentation.components.groups.GroupsEditor
 import com.dhruv.angular_launcher.settings_screen.presentation.components.slider.Slider
 import com.dhruv.angular_launcher.settings_screen.presentation.components.tabButton
+import com.dhruv.angular_launcher.settings_screen.presentation.components.theme.Theme
 import kotlinx.coroutines.flow.map
 
 @Composable
@@ -107,7 +108,7 @@ fun SettingsScreen(
             ) { targetState ->
                 when (targetState) {
                     SettingsTab.Theme -> Box (Modifier.fillMaxSize()){
-
+                        Theme()
                     }
                     SettingsTab.Slider -> Box (Modifier.fillMaxSize()){
                         Slider(

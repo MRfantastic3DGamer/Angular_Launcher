@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -14,13 +15,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
 import com.dhruv.angular_launcher.accessible_screen.AccessibleScreenVM
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorValues
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorValues
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.accessible_screen.presentation.AccessibleScreen
-import com.dhruv.angular_launcher.apps_data.AppsIconsDataValues
+import com.dhruv.angular_launcher.database.apps_data.AppsIconsDataValues
 import com.dhruv.angular_launcher.database.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.database.room.AppDatabase
 import com.dhruv.angular_launcher.debug.DebugLayerVM
@@ -30,6 +32,7 @@ import com.dhruv.angular_launcher.settings_screen.SettingsVM
 import com.dhruv.angular_launcher.settings_screen.presentation.SettingsScreen
 import com.dhruv.angular_launcher.ui.theme.Angular_LauncherTheme
 import com.dhruv.angular_launcher.utils.ScreenUtils
+import com.dhruv.angular_launcher.utils.decodeBase64
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -97,6 +100,15 @@ class MainActivity : ComponentActivity() {
                                         openSettings = true
                                     }
                                 }
+                            }
+                        }
+                        if (PrefValues.wallpaper != ""){
+                            val bitmap = decodeBase64(PrefValues.wallpaper)
+                            if (bitmap != null) {
+                                Image(bitmap = bitmap.asImageBitmap(), contentDescription = "wallpaper")
+                            }
+                            else{
+                                println("couldn't read image")
                             }
                         }
                     }
