@@ -3,8 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools">
 
 
+    <!-- for the wallpapers -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
+
+    <!-- for the apps data -->
     <permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+
+    <!-- for the wallpaper -->
     <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- for reading external storage -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <queries>

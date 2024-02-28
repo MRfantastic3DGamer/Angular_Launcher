@@ -3,6 +3,7 @@ package com.dhruv.angular_launcher.accessible_screen
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.tooling.preview.Wallpaper
 import androidx.lifecycle.ViewModel
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.AppLabelValue
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderData
@@ -23,6 +24,7 @@ class AccessibleScreenVM(): ViewModel() {
 
     var sliderVisibility: Boolean by mutableStateOf(false)
     var focusOnSlider: Boolean by mutableStateOf(false)
+    var wallpaper: Wallpaper = Wallpaper()
 
 //    var
 

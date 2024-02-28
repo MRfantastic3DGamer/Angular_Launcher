@@ -10,6 +10,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 
 
@@ -40,8 +42,15 @@ fun encodeToBase64(image: Bitmap): String? {
     return imageEncoded
 }
 
-fun decodeBase64(input: String?): Bitmap? {
-    val decodedByte = Base64.decode(input, 0)
-    return BitmapFactory
-        .decodeByteArray(decodedByte, 0, decodedByte.size)
+suspend fun decodeBase64(input: String?): Bitmap? {
+    return withContext(Dispatchers.IO){
+        try {
+            val decodedByte = Base64.decode(input, 0)
+            BitmapFactory
+                .decodeByteArray(decodedByte, 0, decodedByte.size)
+        }catch (e: Exception){
+            println("image could not be decoded from string")
+            null
+        }
+    }
 }
