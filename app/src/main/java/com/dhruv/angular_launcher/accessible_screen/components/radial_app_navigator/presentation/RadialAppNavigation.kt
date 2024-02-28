@@ -11,7 +11,7 @@ import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigationFunctions
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigatorVM
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorValues
-import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.presentation.components.AppIcon
+import com.dhruv.angular_launcher.core.AppIcon.AppIcon
 import com.dhruv.angular_launcher.data.enums.SelectionMode
 import com.dhruv.angular_launcher.database.room.AppDatabase
 import com.dhruv.angular_launcher.utils.ScreenUtils

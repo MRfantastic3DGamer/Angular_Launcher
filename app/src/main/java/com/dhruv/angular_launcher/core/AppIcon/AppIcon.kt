@@ -1,4 +1,4 @@
-package com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.presentation.components
+package com.dhruv.angular_launcher.core.AppIcon
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,9 +9,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.round
-import com.dhruv.angular_launcher.data.models.IconStyle
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import com.example.launcher.Drawing.DrawablePainter
 
@@ -24,9 +24,13 @@ fun AppIcon (pkgName: String, style: IconStyle, painter: DrawablePainter?, offse
             .offset { (offset - Offset( correctionOffset, correctionOffset )).round() }
             .border(style.borderStrokeWidth, color = style.borderColor, shape = RoundedCornerShape(style.cornerRadios))
             .background(style.backGroundColor)
+            .clip(RoundedCornerShape(style.cornerRadios))
     ){
         if (painter != null){
-            Image(painter = painter, contentDescription = "icon-${pkgName}")
+            Image(
+                painter = painter,
+                contentDescription = "icon-${pkgName}"
+            )
         }
     }
 }

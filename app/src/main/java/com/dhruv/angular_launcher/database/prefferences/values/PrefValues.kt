@@ -6,7 +6,7 @@ import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
-import com.dhruv.angular_launcher.data.models.IconStyle
+import com.dhruv.angular_launcher.core.AppIcon.IconStyle
 import com.dhruv.angular_launcher.database.prefferences.PreferencesManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

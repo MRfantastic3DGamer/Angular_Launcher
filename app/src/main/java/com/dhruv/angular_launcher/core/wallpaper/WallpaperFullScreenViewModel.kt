@@ -1,4 +1,4 @@
-package com.dhruv.angular_launcher.utils.wallpaper
+package com.dhruv.angular_launcher.core.wallpaper
 
 import android.app.WallpaperManager
 import android.content.Context

@@ -1,5 +1,6 @@
 package com.dhruv.angular_launcher.utils
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -15,6 +16,8 @@ object ScreenUtils {
 
     var screenWidth = 100f
     var screenHeight = 100f
+    val screenSize: Offset
+        get() = Offset(screenWidth, screenHeight)
 
     fun fromRight(f: Float): Float = screenWidth  - f
     fun fromRight(dp: Dp): Dp = fToDp(screenWidth) - dp

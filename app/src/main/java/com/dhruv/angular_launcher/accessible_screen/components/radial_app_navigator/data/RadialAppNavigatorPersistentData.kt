@@ -1,12 +1,10 @@
 package com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigationFunctions
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
-import com.dhruv.angular_launcher.data.models.IconStyle
+import com.dhruv.angular_launcher.core.AppIcon.IconStyle
 
 @Stable
 data class RadialAppNavigatorPersistentData(

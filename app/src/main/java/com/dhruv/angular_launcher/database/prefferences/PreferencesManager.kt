@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
-import com.dhruv.angular_launcher.data.models.IconStyle
+import com.dhruv.angular_launcher.core.AppIcon.IconStyle
 
 class PreferencesManager private constructor(context: Context) {
 

@@ -6,7 +6,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.Color
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
-import com.dhruv.angular_launcher.data.models.IconStyle
+import com.dhruv.angular_launcher.core.AppIcon.IconStyle
 import com.dhruv.angular_launcher.settings_screen.presentation.components.EntryData
 import com.dhruv.angular_launcher.settings_screen.presentation.components.SettingsColumn
 import com.dhruv.angular_launcher.settings_screen.presentation.components.SettingsColumnData

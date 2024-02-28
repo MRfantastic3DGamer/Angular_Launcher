@@ -11,7 +11,7 @@ import com.dhruv.angular_launcher.accessible_screen.components.radial_app_naviga
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 import com.dhruv.angular_launcher.database.apps_data.AppsIconsDataValues
 import com.dhruv.angular_launcher.data.enums.SelectionMode
-import com.dhruv.angular_launcher.data.models.IconStyle
+import com.dhruv.angular_launcher.core.AppIcon.IconStyle
 import com.example.launcher.Drawing.DrawablePainter
 
 class RadialAppNavigatorVM:ViewModel() {
