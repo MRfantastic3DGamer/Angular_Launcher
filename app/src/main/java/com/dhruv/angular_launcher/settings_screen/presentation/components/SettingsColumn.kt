@@ -2,11 +2,11 @@ package com.dhruv.angular_launcher.settings_screen.presentation.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Text
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import com.dhruv.angular_launcher.database.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
 import java.lang.reflect.Type
 
 
@@ -41,10 +41,11 @@ fun SettingsColumn (
         Modifier.fillMaxWidth()
     ) {
 
-        Text(text = data.heading)
+        H1(text = data.heading)
 
         data.values.forEach { it ->
             entryForType[it.type]?.invoke(it.label, it.data, it.constraints)
+            Divider(Modifier)
         }
     }
 }

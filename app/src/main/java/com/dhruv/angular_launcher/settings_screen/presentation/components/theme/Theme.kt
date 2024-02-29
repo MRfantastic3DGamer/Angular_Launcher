@@ -7,7 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import com.dhruv.angular_launcher.database.prefferences.PreferencesManager
+import com.dhruv.angular_launcher.core.database.prefferences.PreferencesManager
 import com.dhruv.angular_launcher.utils.BitmapFromURI
 import com.dhruv.angular_launcher.utils.encodeToBase64
 

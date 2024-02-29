@@ -1,8 +1,8 @@
-package com.dhruv.angular_launcher.database.apps_data
+package com.dhruv.angular_launcher.core.database.apps_data
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import com.dhruv.angular_launcher.database.room.models.AppData
+import com.dhruv.angular_launcher.core.database.room.models.AppData
 import com.example.launcher.Drawing.DrawablePainter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

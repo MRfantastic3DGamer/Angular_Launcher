@@ -94,4 +94,9 @@ dependencies {
     // For the ViewModelScope if using Coroutines in the ViewModel
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+
+    // icons
+    implementation ("androidx.compose.material:material-icons-extended-android:1.6.2")
+    implementation ("androidx.compose.material:material-icons-extended-desktop:1.6.2")
+    implementation ("androidx.compose.material:material-icons-extended:1.6.2")
 }

@@ -1,4 +1,4 @@
-package com.dhruv.angular_launcher.database.room.models
+package com.dhruv.angular_launcher.core.database.room.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

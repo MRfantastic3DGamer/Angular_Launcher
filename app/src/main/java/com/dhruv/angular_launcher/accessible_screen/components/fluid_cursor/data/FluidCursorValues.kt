@@ -2,7 +2,7 @@ package com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.dat
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.dhruv.angular_launcher.database.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
 
 object FluidCursorValues {
     private var persistentData = MutableLiveData(FluidCursorPersistentData(FluidCursorLooks(), 1f))

@@ -1,15 +1,15 @@
-package com.dhruv.angular_launcher.database.room
+package com.dhruv.angular_launcher.core.database.room
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.dhruv.angular_launcher.database.room.dao.AppDataDao
-import com.dhruv.angular_launcher.database.room.dao.GroupAppCrossRefDao
-import com.dhruv.angular_launcher.database.room.dao.GroupDataDao
-import com.dhruv.angular_launcher.database.room.models.AppData
-import com.dhruv.angular_launcher.database.room.models.GroupAppCrossRef
-import com.dhruv.angular_launcher.database.room.models.GroupData
+import com.dhruv.angular_launcher.core.database.room.dao.AppDataDao
+import com.dhruv.angular_launcher.core.database.room.dao.GroupAppCrossRefDao
+import com.dhruv.angular_launcher.core.database.room.dao.GroupDataDao
+import com.dhruv.angular_launcher.core.database.room.models.AppData
+import com.dhruv.angular_launcher.core.database.room.models.GroupAppCrossRef
+import com.dhruv.angular_launcher.core.database.room.models.GroupData
 
 @Database(entities = [AppData::class, GroupData::class, GroupAppCrossRef::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {

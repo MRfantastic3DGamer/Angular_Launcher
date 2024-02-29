@@ -1,4 +1,4 @@
-package com.dhruv.angular_launcher.database.realm
+package com.dhruv.angular_launcher.core.database.realm
 
 //import androidx.lifecycle.ViewModel
 //import androidx.lifecycle.viewModelScope

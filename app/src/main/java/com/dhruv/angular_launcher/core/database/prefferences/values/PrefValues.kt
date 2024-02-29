@@ -1,4 +1,4 @@
-package com.dhruv.angular_launcher.database.prefferences.values
+package com.dhruv.angular_launcher.core.database.prefferences.values
 
 import android.content.Context
 import androidx.compose.ui.graphics.Color
@@ -7,7 +7,7 @@ import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
 import com.dhruv.angular_launcher.core.AppIcon.IconStyle
-import com.dhruv.angular_launcher.database.prefferences.PreferencesManager
+import com.dhruv.angular_launcher.core.database.prefferences.PreferencesManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

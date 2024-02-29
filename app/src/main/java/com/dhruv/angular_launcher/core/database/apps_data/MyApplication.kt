@@ -1,4 +1,4 @@
-package com.dhruv.angular_launcher.database.apps_data
+package com.dhruv.angular_launcher.core.database.apps_data
 
 //import android.app.Application
 //import com.dhruv.angular_launcher.settings_module.room.models.AppData

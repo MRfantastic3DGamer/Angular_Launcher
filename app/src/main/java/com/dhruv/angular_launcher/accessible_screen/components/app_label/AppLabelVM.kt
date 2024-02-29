@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.ViewModel
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.AppLabelValue
-import com.dhruv.angular_launcher.database.apps_data.AppsIconsDataValues
+import com.dhruv.angular_launcher.core.database.apps_data.AppsIconsDataValues
 import com.example.launcher.Drawing.DrawablePainter
 
 class AppLabelVM: ViewModel() {

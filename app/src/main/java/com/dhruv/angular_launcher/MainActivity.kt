@@ -29,9 +29,9 @@ import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.accessible_screen.presentation.AccessibleScreen
 import com.dhruv.angular_launcher.core.wallpaper.Wallpaper
 import com.dhruv.angular_launcher.core.wallpaper.WallpaperValues
-import com.dhruv.angular_launcher.database.apps_data.AppsIconsDataValues
-import com.dhruv.angular_launcher.database.prefferences.values.PrefValues
-import com.dhruv.angular_launcher.database.room.AppDatabase
+import com.dhruv.angular_launcher.core.database.apps_data.AppsIconsDataValues
+import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.core.database.room.AppDatabase
 import com.dhruv.angular_launcher.debug.DebugLayerVM
 import com.dhruv.angular_launcher.interaction_calculation.Trigger
 import com.dhruv.angular_launcher.interaction_calculation.TriggerFunctions

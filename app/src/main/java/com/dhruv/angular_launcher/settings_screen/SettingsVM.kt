@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.dhruv.angular_launcher.database.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

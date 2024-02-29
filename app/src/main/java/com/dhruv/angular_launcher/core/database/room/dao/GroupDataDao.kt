@@ -1,11 +1,11 @@
-package com.dhruv.angular_launcher.database.room.dao
+package com.dhruv.angular_launcher.core.database.room.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.dhruv.angular_launcher.database.room.models.GroupData
+import com.dhruv.angular_launcher.core.database.room.models.GroupData
 import kotlinx.coroutines.flow.Flow
 
 @Dao

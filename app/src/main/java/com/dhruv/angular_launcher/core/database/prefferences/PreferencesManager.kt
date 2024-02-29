@@ -1,4 +1,4 @@
-package com.dhruv.angular_launcher.database.prefferences
+package com.dhruv.angular_launcher.core.database.prefferences
 
 import android.content.Context
 import android.content.SharedPreferences

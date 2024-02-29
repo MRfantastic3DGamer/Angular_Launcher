@@ -31,10 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.dhruv.angular_launcher.database.room.AppDatabase
-import com.dhruv.angular_launcher.database.room.models.GroupAppCrossRef
-import com.dhruv.angular_launcher.database.room.models.GroupData
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.dhruv.angular_launcher.core.database.room.AppDatabase
+import com.dhruv.angular_launcher.core.database.room.models.GroupAppCrossRef
+import com.dhruv.angular_launcher.core.database.room.models.GroupData
 
 @Composable
 fun GroupsEditor (vm: GroupsEditingVM){

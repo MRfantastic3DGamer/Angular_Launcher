@@ -1,4 +1,4 @@
-package com.dhruv.angular_launcher.database.room.dao
+package com.dhruv.angular_launcher.core.database.room.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,9 +6,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.dhruv.angular_launcher.database.room.models.AppData
-import com.dhruv.angular_launcher.database.room.models.GroupAppCrossRef
-import com.dhruv.angular_launcher.database.room.models.GroupData
+import com.dhruv.angular_launcher.core.database.room.models.AppData
+import com.dhruv.angular_launcher.core.database.room.models.GroupAppCrossRef
+import com.dhruv.angular_launcher.core.database.room.models.GroupData
 import kotlinx.coroutines.flow.Flow
 
 @Dao

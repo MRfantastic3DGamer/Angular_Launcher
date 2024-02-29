@@ -2,7 +2,7 @@ package com.dhruv.angular_launcher.accessible_screen.components.slider.data
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.dhruv.angular_launcher.database.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
 object SliderValues {

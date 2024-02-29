@@ -11,13 +11,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.FloatingActionButton
@@ -41,10 +41,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
-import com.dhruv.angular_launcher.core.wallpaper.GlassOverWallpaper
-import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
 import com.dhruv.angular_launcher.core.AppIcon.IconStyle
-import com.dhruv.angular_launcher.database.room.AppDatabase
+import com.dhruv.angular_launcher.core.database.room.AppDatabase
+import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
 import com.dhruv.angular_launcher.settings_screen.SettingsVM
 import com.dhruv.angular_launcher.settings_screen.data.SettingsTab
 import com.dhruv.angular_launcher.settings_screen.presentation.components.app_navigator.AppNavigation
@@ -95,9 +94,10 @@ fun SettingsScreen(
                 }
             }
 
-            Box {
-
-                GlassOverWallpaper(modifier = Modifier.fillMaxSize(), shape = RoundedCornerShape(10.dp), shineAlpha = 0.7f, edgeWidth = 0.dp)
+            Box (
+                Modifier
+                    .background(Color.Black.copy(alpha = 0.7f))
+            ) {
 
                 AnimatedContent(
                     targetState = selectedTab,

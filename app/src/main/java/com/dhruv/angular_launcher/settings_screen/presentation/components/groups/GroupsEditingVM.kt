@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
-import com.dhruv.angular_launcher.database.room.models.GroupData
+import com.dhruv.angular_launcher.core.database.room.models.GroupData
 
 class GroupsEditingVM(): ViewModel() {
 
