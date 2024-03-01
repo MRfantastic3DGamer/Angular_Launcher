@@ -16,9 +16,9 @@ import com.dhruv.angular_launcher.accessible_screen.components.slider.SliderVM
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
 import com.dhruv.angular_launcher.accessible_screen.components.slider.presentation.components.AllChoices
 import com.dhruv.angular_launcher.accessible_screen.components.slider.presentation.components.SliderShape
-import com.dhruv.angular_launcher.data.enums.SelectionMode
 import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.core.database.room.AppDatabase
+import com.dhruv.angular_launcher.data.enums.SelectionMode
 import com.dhruv.angular_launcher.debug.DebugLayerValues
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
@@ -88,7 +88,8 @@ fun Slider (
             height = vm.height,
             allOptions = allOptions,
             currentSelection = currentFuzzySelection,
-            shift = vm.sidePadding
+            shift = vm.sidePadding,
+            selectionMode = vm.selectionMode,
         )
     }
 }
