@@ -139,8 +139,10 @@ fun GroupsEditor (vm: GroupsEditingVM){
                                     onCheckedChange = { isChecked ->
                                         if (isChecked) {
                                             DBVM.insertConnection(GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName))
+                                            println("inserted ${GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName)}")
                                         } else {
                                             DBVM.deleteConnection(GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName))
+                                            println("removed ${GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName)}")
                                         }
                                     }
                                 )

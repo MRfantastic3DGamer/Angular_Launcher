@@ -9,14 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.round
+import androidx.core.graphics.drawable.toBitmap
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.AppLabelVM
 import com.dhruv.angular_launcher.debug.DebugLayerValues
 import com.dhruv.angular_launcher.utils.ScreenUtils
@@ -37,9 +37,11 @@ fun AppLabel (vm: AppLabelVM){
                 Row {
                     if (vm.appsIcons.containsKey(vm.appPkg)) {
                         Image(
-                            painter = vm.appsIcons[vm.appPkg]!!,
+                            bitmap = vm.appsIcons[vm.appPkg]!!.drawable
+                                .toBitmap(
+                                180,180
+                                ).asImageBitmap(),
                             contentDescription = "app ${vm.appPkg}",
-                            Modifier.size(50.dp)
                         )
                     }
                     Text(

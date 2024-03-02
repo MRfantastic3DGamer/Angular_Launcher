@@ -1,5 +1,6 @@
 package com.dhruv.angular_launcher.settings_screen.presentation
 
+import android.content.Context
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
@@ -56,18 +57,15 @@ import com.dhruv.angular_launcher.settings_screen.presentation.components.slider
 import com.dhruv.angular_launcher.settings_screen.presentation.components.tabButton
 import com.dhruv.angular_launcher.settings_screen.presentation.components.theme.Theme
 import com.dhruv.angular_launcher.utils.ScreenUtils
-import kotlinx.coroutines.flow.map
 
 @Composable
 fun SettingsScreen(
     vm: SettingsVM,
-    exitSettings: ()->Unit,
+    exitSettings: (Context)->Unit,
 ) {
     val context = LocalContext.current
     val DBVM = remember { AppDatabase.getViewModel(context) }
     val apps = DBVM.apps.collectAsState(initial = emptyList())
-    val groups = DBVM.groups.collectAsState(initial = emptyList())
-    val appsByGroup = DBVM.appsByGroup.map { it.map { it.key.toInt() to it.value.map { it.packageName } }.toMap() }
 
     var selectedTab by remember { mutableStateOf(SettingsTab.Slider) }
 
@@ -177,7 +175,7 @@ fun SettingsScreen(
             ) {
                 FloatingActionButton(
                     onClick = {
-                        exitSettings()
+                        exitSettings(context)
                     },
                     modifier = Modifier
                         .offset { (ScreenUtils.screenSize + Offset(-20f, -20f)).round() },

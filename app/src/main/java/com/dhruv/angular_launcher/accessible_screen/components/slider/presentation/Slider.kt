@@ -80,7 +80,6 @@ fun Slider (
 //            modifier = Modifier.fillMaxSize(),
 //            path = path,
 //            blur = 10.dp,
-//
 //        )
         SliderShape(path)
         AllChoices(

@@ -12,8 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.round
+import androidx.core.graphics.drawable.toBitmap
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import com.example.launcher.Drawing.DrawablePainter
 
@@ -23,7 +24,7 @@ fun AppIcon (pkgName: String, style: IconStyle, painter: DrawablePainter?, offse
     Box(
         Modifier
             .size(style.size)
-            .offset { (offset - Offset( correctionOffset, correctionOffset )).round() }
+            .offset { (offset - Offset(correctionOffset, correctionOffset)).round() }
             .border(
                 style.borderStrokeWidth,
                 color = style.borderColor,
@@ -34,11 +35,13 @@ fun AppIcon (pkgName: String, style: IconStyle, painter: DrawablePainter?, offse
     ){
         if (painter != null){
             Image(
-                painter = painter,
+                bitmap = painter.drawable.toBitmap(
+                    ScreenUtils.dpToF(style.size).toInt(),
+                    ScreenUtils.dpToF(style.size).toInt()
+                ).asImageBitmap(),
                 contentDescription = "icon-${pkgName}",
-                Modifier.size(style.size),
+                Modifier,
                 Alignment.Center,
-                ContentScale.Fit
             )
         }
     }

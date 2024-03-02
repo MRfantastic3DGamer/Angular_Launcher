@@ -37,7 +37,6 @@ object TriggerFunctions {
 
     fun Drag(context: Context, dragAmount: Offset) {
         data.c_fingerPosition += dragAmount
-
         AccessibleScreenValues.updateScreenData(data.c_fingerPosition, dragAmount)
     }
 
