@@ -7,7 +7,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import com.dhruv.angular_launcher.core.database.room.models.GroupData
 
-class GroupsEditingVM(): ViewModel() {
+class GroupsEditingVM: ViewModel() {
 
     var showGroupEditingDialog      by mutableStateOf(false)
     var showGroupIconChoices         by mutableStateOf(false)

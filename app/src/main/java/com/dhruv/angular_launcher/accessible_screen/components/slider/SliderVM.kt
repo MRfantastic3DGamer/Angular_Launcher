@@ -28,8 +28,6 @@ class SliderVM:ViewModel() {
     var DownPadding by mutableStateOf(50f)
 
     // looks
-    var TriggerCurveEdgeCount by mutableStateOf(15)
-    var selectionCurveOffset by mutableStateOf(50f)
     var shouldBlur by mutableStateOf(false)
     var blurAmount by mutableStateOf(1f)
     var tint by mutableStateOf(Color.Black)
@@ -49,8 +47,6 @@ class SliderVM:ViewModel() {
         SliderValues.GetPersistentData.observeForever {
             TopPadding = it.topPadding
             DownPadding = it.DownPadding
-            TriggerCurveEdgeCount = it.triggerCurveEdgeCount
-            selectionCurveOffset = it.selectionCurveOffset
             shouldBlur = it.shouldBlur
             blurAmount = it.blurAmount
             tint = it.tint

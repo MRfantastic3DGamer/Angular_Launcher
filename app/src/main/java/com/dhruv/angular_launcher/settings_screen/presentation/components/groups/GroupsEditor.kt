@@ -139,10 +139,10 @@ fun GroupsEditor (vm: GroupsEditingVM){
                                     onCheckedChange = { isChecked ->
                                         if (isChecked) {
                                             DBVM.insertConnection(GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName))
-                                            println("inserted ${GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName)}")
+//                                            println("inserted ${GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName)}")
                                         } else {
                                             DBVM.deleteConnection(GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName))
-                                            println("removed ${GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName)}")
+//                                            println("removed ${GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName)}")
                                         }
                                     }
                                 )
@@ -153,14 +153,18 @@ fun GroupsEditor (vm: GroupsEditingVM){
                 }
             },
             confirmButton = {
-                Button(onClick = { vm.save { DBVM.insertGroup(it) } }) {
-                    Text(text = "Save")
-                }
+                Button(
+                    onClick = {
+                        vm.showGroupEditingDialog = false
+                        val new = vm.selectedGroup?.copy(name = vm.nameValue.text, iconKey = vm.keyValue.text)
+                        println(new)
+                        if (new != null) { DBVM.updateGroup(new) }
+                    }
+                ) { Text(text = "Save") }
             },
             dismissButton = {},
         )
     }
-
 }
 
 @Composable

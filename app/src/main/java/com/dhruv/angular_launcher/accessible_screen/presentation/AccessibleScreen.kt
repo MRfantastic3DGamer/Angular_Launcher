@@ -1,7 +1,6 @@
 package com.dhruv.angular_launcher.accessible_screen.presentation
 
 import android.app.WallpaperManager
-import android.graphics.drawable.Drawable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,11 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageShader
-import androidx.compose.ui.graphics.ShaderBrush
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.graphics.drawable.toBitmap
 import com.dhruv.angular_launcher.accessible_screen.AccessibleScreenVM
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.AppLabelVM
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.presentation.AppLabel
@@ -25,10 +20,10 @@ import com.dhruv.angular_launcher.accessible_screen.components.radial_app_naviga
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.presentation.RadialAppNavigation
 import com.dhruv.angular_launcher.accessible_screen.components.slider.SliderVM
 import com.dhruv.angular_launcher.accessible_screen.components.slider.presentation.Slider
+import com.dhruv.angular_launcher.core.wallpaper.wallpaper
 import com.dhruv.angular_launcher.interaction_calculation.AccessibleScreenTrigger
 import com.dhruv.angular_launcher.settings_screen.SettingsVM
 import com.dhruv.angular_launcher.settings_screen.presentation.SettingsScreen
-import com.dhruv.angular_launcher.utils.ScreenUtils
 
 @Composable
 fun AccessibleScreen(mainScreenVM: AccessibleScreenVM, settingsVM: SettingsVM){
@@ -66,17 +61,4 @@ fun AccessibleScreen(mainScreenVM: AccessibleScreenVM, settingsVM: SettingsVM){
             }
         }
     }
-//    Trigger(openSettings = settingsVM::openSettings)
-}
-
-fun Modifier.wallpaper( drawable: Drawable? ): Modifier {
-    return if (drawable != null)
-        this
-            .background(
-                ShaderBrush(ImageShader(drawable.toBitmap(
-                    width = ScreenUtils.screenWidth.toInt(),
-                    height = ScreenUtils.screenHeight.toInt()
-                ).asImageBitmap()))
-            )
-    else this
 }

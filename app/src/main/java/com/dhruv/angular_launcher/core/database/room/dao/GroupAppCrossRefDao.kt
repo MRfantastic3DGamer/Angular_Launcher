@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GroupAppCrossRefDao {
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(groupAppCrossRef: GroupAppCrossRef)
     @Transaction

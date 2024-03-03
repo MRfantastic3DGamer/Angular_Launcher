@@ -10,7 +10,7 @@ import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 data class SliderPersistentData(
     val width: Dp = 50.dp,
     val height: Dp = 500.dp,
-    val sidePadding: Float = 20f,
+    val sidePadding: Float = 40f,
     val selectionRadios: Float = 100f,
 
     // constraints
