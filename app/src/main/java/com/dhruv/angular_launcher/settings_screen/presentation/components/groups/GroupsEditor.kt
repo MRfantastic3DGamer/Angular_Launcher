@@ -229,6 +229,6 @@ fun GroupIconChoices(onSelect: (Int)->Unit) {
 
 @Preview
 @Composable
-fun iconsPrev() {
+fun IconsPrev() {
     GroupIconChoices(onSelect = {})
 }

@@ -27,6 +27,6 @@ fun Introduction() {
 
 @Preview
 @Composable
-private fun intro() {
+private fun Intro() {
     Introduction()
 }

@@ -74,6 +74,6 @@ fun MediaPermission() {
 
 @Preview
 @Composable
-private fun media() {
+private fun Media() {
     MediaPermission()
 }

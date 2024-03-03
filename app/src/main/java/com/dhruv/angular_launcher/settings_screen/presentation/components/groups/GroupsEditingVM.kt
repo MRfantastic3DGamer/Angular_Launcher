@@ -25,14 +25,4 @@ class GroupsEditingVM: ViewModel() {
     fun dismiss (){
         showGroupEditingDialog = false
     }
-
-    fun save(
-        addGroup: (GroupData) -> Unit,
-    ) {
-        if (selectedGroup != null){
-            addGroup(selectedGroup!!.copy(name = nameValue.text, iconKey = keyValue.text))
-        }
-        selectedGroup = null
-        showGroupEditingDialog = false
-    }
 }
