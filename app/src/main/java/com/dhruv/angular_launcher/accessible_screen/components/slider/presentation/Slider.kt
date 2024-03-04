@@ -53,7 +53,7 @@ fun Slider (
         DebugLayerValues.addString((vm.touchPos.y - vm.sliderPos.y).toString(), "f-pos")
         if (vm.shouldUpdateSelection) {
             val selection = SliderFunctions.calculateCurrentSelection(
-                allOptions.size-1,
+                allOptions.size,
                 vm.height,
                 vm.touchPos.y - vm.sliderPos.y
             )

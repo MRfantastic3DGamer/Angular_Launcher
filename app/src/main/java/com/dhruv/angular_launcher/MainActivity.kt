@@ -22,6 +22,11 @@ import com.dhruv.angular_launcher.utils.ScreenUtils
 
 class MainActivity : ComponentActivity() {
 
+//    override fun onBackPressed() {
+//        super.onBackPressed()
+//        myFunction()
+//    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val context = this

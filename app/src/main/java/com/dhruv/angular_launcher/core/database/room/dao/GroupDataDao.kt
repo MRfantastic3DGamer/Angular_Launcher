@@ -1,6 +1,7 @@
 package com.dhruv.angular_launcher.core.database.room.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -15,6 +16,9 @@ interface GroupDataDao {
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(groupData: GroupData)
+
+    @Delete
+    fun delete(group: GroupData)
 
     @Query("SELECT * FROM groups")
     fun getAllGroups(): Flow<List<GroupData>>

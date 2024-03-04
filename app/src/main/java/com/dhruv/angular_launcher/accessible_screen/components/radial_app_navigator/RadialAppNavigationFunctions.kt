@@ -156,7 +156,12 @@ object RadialAppNavigationFunctions {
         )
     }
 
-    fun getPossibleIconIndeces (touchOffset: Offset, iconsPerRound: List<Int>, distancePerRound: List<Float>, skips: List<Pair<Int, Int>>): Set<Int> {
+    fun getPossibleIconIndeces (
+        touchOffset: Offset,
+        iconsPerRound: List<Int>,
+        distancePerRound: List<Float>,
+        skips: List<Pair<Int, Int>>,
+    ): Set<Int> {
         val mid = Offset.Zero
         val anchor = Offset(0f, -100f)
 
@@ -219,10 +224,34 @@ object RadialAppNavigationFunctions {
         return positions.map { getResult(it) }.toSet()
     }
 
-    fun getBestIndex (touchOffset:Offset, offsets: List<Offset>, posibleIndeces: List<Int>): Int {
+
+    data class IconSelectionData(
+        val bestSelection: Int,
+        val selectionData: Map<Int,Float>
+    )
+    fun getIconSelection (
+        touchOffset: Offset,
+        allOffsets: List<Offset>,
+        range: Float,
+    ): IconSelectionData {
+        var bestDist = Float.MAX_VALUE
+        var best = -1
+        val selectionVals = mutableMapOf<Int, Float>()
+        allOffsets.forEachIndexed{ i, it ->
+            val dist = MathUtils.calculateDistance(touchOffset, it)
+            if (dist < bestDist){
+                bestDist = dist
+                best = i
+            }
+            selectionVals[i] = 1-dist/range
+        }
+        return IconSelectionData(best, selectionVals)
+    }
+
+    fun getBestIndex (touchOffset:Offset, offsets: List<Offset>, possibleIndeces: List<Int>): Int {
         var bi = -1
         var bd = 100000f
-        for (i in posibleIndeces){
+        for (i in possibleIndeces){
             if (i !in offsets.indices) continue
             val d = MathUtils.calculateDistance(touchOffset, offsets[i])
             if (d<bd){

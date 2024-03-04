@@ -12,6 +12,7 @@ import com.example.launcher.Drawing.DrawablePainter
 class AppLabelVM: ViewModel() {
     var offset: Offset by mutableStateOf(Offset.Zero)
     var appPkg: String by mutableStateOf("")
+    var prevPkg: String by mutableStateOf("")
     var visibility: Boolean by mutableStateOf(false)
     val height: Float = 300f
 
@@ -21,8 +22,9 @@ class AppLabelVM: ViewModel() {
         AppsIconsDataValues.getAppsIcons.observeForever { if (it != null) appsIcons = it }
         AppLabelValue.GetData.observeForever {
             offset = it.position
+            prevPkg = appPkg
             appPkg = it.appPackage
-            visibility = it.appPackage != "@"
+            visibility = appPkg != "@"
         }
     }
 }

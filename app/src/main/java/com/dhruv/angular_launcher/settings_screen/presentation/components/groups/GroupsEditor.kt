@@ -21,15 +21,9 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -47,6 +41,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dhruv.angular_launcher.R
+import com.dhruv.angular_launcher.core.AppIcon.StaticAppIcon
 import com.dhruv.angular_launcher.core.database.room.AppDatabase
 import com.dhruv.angular_launcher.core.database.room.models.GroupAppCrossRef
 import com.dhruv.angular_launcher.core.database.room.models.GroupData
@@ -61,27 +56,33 @@ fun GroupsEditor (vm: GroupsEditingVM){
     val apps = DBVM.apps.collectAsState(initial = emptyList()).value
     val appsOfCurrentGroup = (if (vm.selectedGroup != null) DBVM.getAppsForGroup(vm.selectedGroup!!._id).collectAsState(initial = emptyList()).value else emptyList()).map { it.packageName }
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { DBVM.insertGroup(GroupData(name = "group ${groups.size}", iconKey = R.drawable.group_social.toString())) },
-                content = { Icon(Icons.Default.Add, contentDescription = "Add Group") }
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxSize()
-                .padding(padding),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Top
-        ) {
-            Text("Created Groups:")
-            Spacer(modifier = Modifier.height(8.dp))
-            LazyColumn {
-                items(groups) {group ->
-                    Group(group) { vm.getGroup(group) }
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top
+    ) {
+        Text("Created Groups:")
+        Spacer(modifier = Modifier.height(8.dp))
+        LazyColumn {
+            items(
+                groups,
+                key = { it._id }
+            ) {group ->
+                Group(group) { vm.getGroup(group) }
+            }
+            item {
+                Button(
+                    onClick = { DBVM.insertGroup(GroupData(name = "group ${groups.size}", iconKey = R.drawable.group_social.toString())) },
+                    Modifier.fillMaxWidth().padding(8.dp)
+                ) {
+                    Text(text = "add new group",
+                        Modifier
+                            .padding(4.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .align(Alignment.CenterVertically)
+                    )
                 }
             }
         }
@@ -89,18 +90,24 @@ fun GroupsEditor (vm: GroupsEditingVM){
 
     if (vm.showGroupEditingDialog) {
         AlertDialog(
+            modifier = Modifier
+                .background(Color.Black),
             onDismissRequest = { vm.dismiss() },
-            title = { Text(if (vm.selectedGroup != null) "Edit Group" else "Create Group") },
+            title = { Text("Edit Group") },
             text = {
                 Column {
-                    Row {
+                    Row (
+                        Modifier,
+                        Arrangement.SpaceEvenly,
+                        Alignment.CenterVertically,
+                    ) {
                         IconButton(onClick = { vm.showGroupIconChoices = !vm.showGroupIconChoices }) {
                             val image = BitmapFactory.decodeResource( context.resources, vm.keyValue.text.toInt()).asImageBitmap()
                             Image(
                                 bitmap = image,
                                 contentDescription = R.drawable.group_writing.toString(),
                                 Modifier
-                                    .size(24.dp)
+                                    .size(40.dp)
                                     .clip(CircleShape)
                                     .background(Color.White),
                                 Alignment.Center,
@@ -130,23 +137,43 @@ fun GroupsEditor (vm: GroupsEditingVM){
                             apps,
                             key = {it.packageName}
                         ){ app ->
+                            val checked = appsOfCurrentGroup.contains(app.packageName)
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(vertical = 4.dp)
-                            ) {
-                                Checkbox(
-                                    checked = appsOfCurrentGroup.contains(app.packageName),
-                                    onCheckedChange = { isChecked ->
-                                        if (isChecked) {
-                                            DBVM.insertConnection(GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName))
-//                                            println("inserted ${GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName)}")
-                                        } else {
-                                            DBVM.deleteConnection(GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName))
-//                                            println("removed ${GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName)}")
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp)
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(
+                                        when (checked) {
+                                            true -> Color.Gray
+                                            false -> Color.Black
+                                        }
+                                    )
+                                    .clickable {
+                                        when (checked) {
+                                            true -> {
+                                                DBVM.deleteConnection(
+                                                    GroupAppCrossRef(
+                                                        vm.selectedGroup!!._id,
+                                                        app.packageName
+                                                    )
+                                                )
+                                            }
+
+                                            false -> {
+                                                DBVM.insertConnection(
+                                                    GroupAppCrossRef(
+                                                        vm.selectedGroup!!._id,
+                                                        app.packageName
+                                                    )
+                                                )
+                                            }
                                         }
                                     }
-                                )
-                                Text(app.name)
+                            ) {
+                                StaticAppIcon(packageName = app.packageName, size = 80)
+                                Text(app.name, Modifier.padding(4.dp))
                             }
                         }
                     }
@@ -162,7 +189,14 @@ fun GroupsEditor (vm: GroupsEditingVM){
                     }
                 ) { Text(text = "Save") }
             },
-            dismissButton = {},
+            dismissButton = {
+                Button(
+                    onClick = {
+                        vm.showGroupEditingDialog = false
+                        DBVM.deleteGroup(vm.selectedGroup!!)
+                    }
+                ) { Text(text = "Delete") }
+            },
         )
     }
 }
@@ -175,6 +209,7 @@ fun Group(
     val context = LocalContext.current
     Row (
         Modifier
+            .fillMaxWidth()
             .clickable { select() },
         Arrangement.Start,
         Alignment.CenterVertically,
@@ -217,8 +252,7 @@ fun GroupIconChoices(onSelect: (Int)->Unit) {
                 Modifier
                     .size(48.dp)
                     .padding(2.dp)
-                    .clickable { onSelect(icon) }
-                ,
+                    .clickable { onSelect(icon) },
                 Alignment.Center,
                 ContentScale.Inside,
                 colorFilter = ColorFilter.lighting(Color.Black, Color.Black)

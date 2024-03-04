@@ -102,10 +102,10 @@ object SliderFunctions {
     }
 
     fun calculateCurrentSelection(numberOfElements: Int, height: Float, touchPosY: Float): SelectionData {
-        if (numberOfElements < 0) return SelectionData(-1, 0f)
-        val hPerElement = height/(numberOfElements+1)
-        if (numberOfElements == 0) return SelectionData(1, hPerElement/2)
-        val selection_i = clamp((touchPosY / hPerElement).toInt(), 0, numberOfElements)
+        if (numberOfElements <= 0) return SelectionData(-1, 0f)
+        val hPerElement = height/(numberOfElements)
+        if (numberOfElements == 1) return SelectionData(0, hPerElement/2)
+        val selection_i = clamp((touchPosY / hPerElement).toInt(), 0, numberOfElements-1)
         val selectionPos = selection_i*hPerElement + hPerElement/2
         return SelectionData(
             index = selection_i,

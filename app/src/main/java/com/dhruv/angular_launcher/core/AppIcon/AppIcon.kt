@@ -15,14 +15,22 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.round
 import androidx.core.graphics.drawable.toBitmap
+import com.dhruv.angular_launcher.core.database.apps_data.AppsIconsDataValues
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import com.example.launcher.Drawing.DrawablePainter
 
 @Composable
-fun AppIcon (pkgName: String, style: IconStyle, painter: DrawablePainter?, offset: Offset, selected: Boolean){
+fun AppIcon (
+    modifier: Modifier = Modifier,
+    pkgName: String,
+    style: IconStyle,
+    painter: DrawablePainter?,
+    offset: Offset,
+    selected: Boolean
+){
     val correctionOffset = ScreenUtils.dpToF(style.size)/2
     Box(
-        Modifier
+        modifier
             .size(style.size)
             .offset { (offset - Offset(correctionOffset, correctionOffset)).round() }
             .border(
@@ -45,4 +53,14 @@ fun AppIcon (pkgName: String, style: IconStyle, painter: DrawablePainter?, offse
             )
         }
     }
+}
+
+@Composable
+fun StaticAppIcon(
+    modifier: Modifier = Modifier,
+    packageName: String,
+    size: Int
+) {
+    val icon = AppsIconsDataValues.getAppsIcons.value!![packageName]!!.drawable.toBitmap(size, size).asImageBitmap()
+    Image(bitmap = icon, contentDescription = "icon-of-$packageName", modifier)
 }

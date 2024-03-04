@@ -3,25 +3,19 @@ package com.dhruv.angular_launcher.settings_screen.presentation
 import android.content.Context
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideIn
-import androidx.compose.animation.slideOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.Text
@@ -33,13 +27,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.round
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 import com.dhruv.angular_launcher.core.AppIcon.IconStyle
@@ -56,7 +48,6 @@ import com.dhruv.angular_launcher.settings_screen.presentation.components.groups
 import com.dhruv.angular_launcher.settings_screen.presentation.components.slider.Slider
 import com.dhruv.angular_launcher.settings_screen.presentation.components.tabButton
 import com.dhruv.angular_launcher.settings_screen.presentation.components.theme.Theme
-import com.dhruv.angular_launcher.utils.ScreenUtils
 
 @Composable
 fun SettingsScreen(
@@ -155,7 +146,7 @@ fun SettingsScreen(
                         SettingsTab.Apps -> Box(Modifier.fillMaxSize()){
                             val appsEditingVM = remember(apps) {
                                 derivedStateOf{
-                                    AppsEditingVM(apps.value, {DBVM.updateApp(it)})
+                                    AppsEditingVM(apps.value, DBVM::updateApp)
                                 }
                             }
                             AppsEditing(vm = appsEditingVM.value)
@@ -167,23 +158,15 @@ fun SettingsScreen(
                     }
                 }
             }
-            AnimatedVisibility(
-                visible = selectedTab != SettingsTab.Apps && selectedTab != SettingsTab.Groups,
-                Modifier,
-                enter = slideIn(initialOffset = { IntOffset(0, 200) }) + fadeIn(),
-                exit = slideOut(targetOffset = { IntOffset(0, 200) }) + fadeOut(),
-            ) {
-                FloatingActionButton(
-                    onClick = {
-                        exitSettings(context)
-                    },
-                    modifier = Modifier
-                        .offset { (ScreenUtils.screenSize + Offset(-20f, -20f)).round() },
-                ) {
-                    Text(text = "Save")
-                }
-            }
         }
-
+        Button(
+            onClick = {
+                exitSettings(context)
+            },
+            modifier = Modifier
+                .align(Alignment.BottomEnd),
+        ) {
+            Text(text = "Save")
+        }
     }
 }

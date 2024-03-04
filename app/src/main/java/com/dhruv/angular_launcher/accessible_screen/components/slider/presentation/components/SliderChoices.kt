@@ -22,9 +22,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.round
 import com.dhruv.angular_launcher.data.enums.SelectionMode
+import com.dhruv.angular_launcher.utils.MathUtils.gaussian
 import com.dhruv.angular_launcher.utils.ScreenUtils
-import kotlin.math.exp
-import kotlin.math.pow
 
 @Composable
 fun DrawTextChoice (s: String, x: Float, y: Float) {
@@ -98,10 +97,3 @@ fun Modifier.alignToMidPoint(
 }
 
 
-/**
- * @param a -> lifted point
- * @param k -> steepness
- */
-fun gaussian(x: Float, a: Float, k: Float): Float {
-    return exp(-((x - a).pow(2) / (2 * k.pow(2))))
-}

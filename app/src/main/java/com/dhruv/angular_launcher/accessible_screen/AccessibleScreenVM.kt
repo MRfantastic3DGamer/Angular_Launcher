@@ -8,10 +8,10 @@ import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.Ap
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderData
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
+import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.data.enums.NavigationMode
 import com.dhruv.angular_launcher.data.enums.NavigationStage
 import com.dhruv.angular_launcher.data.enums.SelectionMode
-import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import kotlin.math.absoluteValue
 
@@ -64,13 +64,11 @@ class AccessibleScreenVM(): ViewModel() {
                         if (focusOnSlider){
                             // TODO: on early retrieval
                         }
-                        else if (AppLabelValue.launchAppIfPossible()){
-                            // TODO: on app activity launched
-                        }
                         else{
                             navigationMode = NavigationMode.Tap
                             navigationStage = NavigationStage.AppSelect
                         }
+                        AppLabelValue.launchAppIfPossible()
                     }
 
                     SliderValues.updateSliderData(

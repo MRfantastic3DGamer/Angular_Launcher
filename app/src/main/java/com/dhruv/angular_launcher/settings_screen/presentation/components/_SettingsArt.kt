@@ -96,18 +96,18 @@ object _SettingsArt {
                             Arrangement.SpaceEvenly,
                             Alignment.CenterVertically,) {
                             AppIcon(
-                                "",
-                                state.value,
-                                null,
-                                Offset(0f, state.value.size.value),
-                                false
+                                pkgName = "",
+                                style = state.value,
+                                painter = null,
+                                offset = Offset(0f, state.value.size.value),
+                                selected = false,
                             )
                             AppIcon(
-                                "",
-                                state.value,
-                                null,
-                                Offset(0f, state.value.size.value),
-                                true
+                                pkgName = "",
+                                style = state.value,
+                                painter = null,
+                                offset = Offset(0f, state.value.size.value),
+                                selected = true,
                             )
                         }
                         H2(text = "icon size")

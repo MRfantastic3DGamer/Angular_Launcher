@@ -41,11 +41,14 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
         vm.sliderPosY,
         ScreenUtils.dpToF(vm.iconStyle.size)*0.5f,
     )
-    val offsets = iconPositionsCompute.offsets
+    val allOffsets = iconPositionsCompute.offsets
     val skips = iconPositionsCompute.skips
     val currentQualityIndex = iconPositionsCompute.qualityIndex
-//    println("for ${vm.sliderSelection} -> offsets: ${offsets}, skips: $skips qualityIndex: $currentQualityIndex")
+
     if (vm.shouldSelectApp){
+
+        val selectionData = RadialAppNavigationFunctions.getIconSelection(vm.offsetFromCenter + vm.center, allOffsets, 100f)
+
         val possibleSelections = RadialAppNavigationFunctions.getPossibleIconIndeces(
             vm.offsetFromCenter,
             vm.iconsPerRound[currentQualityIndex],
@@ -55,7 +58,7 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
 
         vm.selectionIndex = RadialAppNavigationFunctions.getBestIndex(
             vm.center + vm.offsetFromCenter,
-            offsets,
+            allOffsets,
             possibleSelections
         )
     }
@@ -65,10 +68,10 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
 
     var selectionOffset: Offset? = null
 
-    println("apps: ${appsPkgsList}")
+//    println("apps: ${appsPkgsList}")
 
     if (vm.visibility){
-        offsets.forEachIndexed { index, it ->
+        allOffsets.forEachIndexed { index, it ->
             if (index == vm.selectionIndex) selectionOffset = it
             if (index in appsPkgsList.indices) {
                 val pkgName = appsPkgsList[index]

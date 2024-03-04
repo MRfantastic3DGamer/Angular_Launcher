@@ -15,16 +15,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.round
 import androidx.core.graphics.drawable.toBitmap
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.AppLabelVM
-import com.dhruv.angular_launcher.debug.DebugLayerValues
+import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.AppLabelValue
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
 @Composable
 fun AppLabel (vm: AppLabelVM){
+    val context = LocalContext.current
     val position by animateIntOffsetAsState(targetValue = vm.offset.round(), label = "app label")
-    DebugLayerValues.addString("ions :" + vm.appsIcons.size.toString(), "ions retrieved")
+
+    if (AppLabelValue.useLaunchTrigger()){
+        val launchIntent = context.packageManager.getLaunchIntentForPackage(vm.prevPkg)
+        println("got intent for ${vm.prevPkg}: ${launchIntent}")
+        if (launchIntent != null) {
+            context.startActivity(launchIntent)
+        }
+        println("launched app ${AppLabelValue.GetData.value!!.appPackage}")
+    }
     if (vm.visibility){
         Box(modifier = Modifier.fillMaxSize()){
             Box (

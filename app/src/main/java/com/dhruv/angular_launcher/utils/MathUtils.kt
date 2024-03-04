@@ -1,11 +1,10 @@
 package com.dhruv.angular_launcher.utils
 
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import kotlin.math.PI
-import kotlin.math.acos
 import kotlin.math.atan2
 import kotlin.math.cos
+import kotlin.math.exp
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -154,4 +153,11 @@ object MathUtils {
         return (arcLength(center, A, B, radius) / (iconRadius + distanceBWIcons)).toInt()
     }
 
+    /**
+     * @param a -> lifted point
+     * @param k -> steepness
+     */
+    fun gaussian(x: Float, a: Float, k: Float): Float {
+        return exp(-((x - a).pow(2) / (2 * k.pow(2))))
+    }
 }
