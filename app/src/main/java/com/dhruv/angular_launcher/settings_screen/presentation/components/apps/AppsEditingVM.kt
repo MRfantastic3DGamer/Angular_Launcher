@@ -22,4 +22,5 @@ class AppsEditingVM(
     var appName by mutableStateOf(TextFieldValue())
     var appVisible = true
     var showPopup = mutableStateOf(false)
+    var ascending by mutableStateOf(true)
 }

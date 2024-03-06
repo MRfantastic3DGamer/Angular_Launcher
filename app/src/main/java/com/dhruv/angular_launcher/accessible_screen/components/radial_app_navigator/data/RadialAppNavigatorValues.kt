@@ -31,8 +31,8 @@ object RadialAppNavigatorValues {
             vibration = PrefValues.an_vibration,
             shouldBlur = PrefValues.an_shouldBlur,
             blurAmount = PrefValues.an_blurAmount,
-            enlargeSelectedIconBy = PrefValues.an_enlargeSelectedIconBy,
             iconStyle = PrefValues.an_iconStyle,
+            selectedIconStyle = PrefValues.an_selectedIconStyle,
         )
     }
     fun updateData (newData: RadialAppNavigatorData){

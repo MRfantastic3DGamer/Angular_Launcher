@@ -12,6 +12,7 @@ import com.dhruv.angular_launcher.accessible_screen.components.radial_app_naviga
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.haptics.HapticsHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -27,14 +28,14 @@ class SettingsVM : ViewModel() {
             return _values[key]!!
         }
 
-        try {
+        return try {
             val variable = PrefValues::class.java.getDeclaredField(key)
             variable.isAccessible = true
             _values[key] = mutableStateOf(variable.get(PrefValues))
-            return _values[key]
+            _values[key]
         }catch (error: Throwable){
             println("no reflection for $key")
-            return null
+            null
         }
     }
 
@@ -50,6 +51,7 @@ class SettingsVM : ViewModel() {
                 }
             }
         }
+        HapticsHelper.toggleSettingsHaptic(context)
     }
 
     fun exitSettings(context: Context){
@@ -64,6 +66,7 @@ class SettingsVM : ViewModel() {
                 }
             }
         }
+        HapticsHelper.toggleSettingsHaptic(context)
     }
 
     suspend fun save(context: Context){

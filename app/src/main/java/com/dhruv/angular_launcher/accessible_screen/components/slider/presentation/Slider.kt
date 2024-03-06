@@ -14,9 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -30,7 +28,7 @@ import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.core.database.room.AppDatabase
 import com.dhruv.angular_launcher.core.wallpaper.GlassOverWallpaper
 import com.dhruv.angular_launcher.data.enums.SelectionMode
-import com.dhruv.angular_launcher.debug.DebugLayerValues
+import com.dhruv.angular_launcher.haptics.HapticsHelper
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
 @Composable
@@ -38,7 +36,7 @@ fun Slider (
     vm: SliderVM,
 ){
     val context = LocalContext.current
-    val DBVM = remember() { AppDatabase.getViewModel(context) }
+    val DBVM = AppDatabase.getViewModel(context)
 
     val allOptions: List<String> = when (vm.selectionMode) {
         SelectionMode.NotSelected -> emptyList()
@@ -48,18 +46,22 @@ fun Slider (
     }
 
     LaunchedEffect(key1 = vm.touchPos){
-        DebugLayerValues.addString((allOptions.size-1).toString(), "el_cnt")
-        DebugLayerValues.addString((vm.height).toString(), "sl_h")
-        DebugLayerValues.addString((vm.touchPos.y - vm.sliderPos.y).toString(), "f-pos")
+//        DebugLayerValues.addString((allOptions.size-1).toString(), "el_cnt")
+//        DebugLayerValues.addString((vm.height).toString(), "sl_h")
+//        DebugLayerValues.addString((vm.touchPos.y - vm.sliderPos.y).toString(), "f-pos")
         if (vm.shouldUpdateSelection) {
             val selection = SliderFunctions.calculateCurrentSelection(
                 allOptions.size,
                 vm.height,
                 vm.touchPos.y - vm.sliderPos.y
             )
+            vm.prevSelectionIndex = vm.selectionIndex
             vm.selectionIndex = selection.index
+            if (vm.selectionIndex != vm.prevSelectionIndex){
+                HapticsHelper.groupSelectHaptic(context)
+            }
             vm.selectionPosY = selection.posY
-            DebugLayerValues.addString((selection.index).toString(), "sl_select")
+//            DebugLayerValues.addString((selection.index).toString(), "sl_select")
         }
     }
 
@@ -68,7 +70,6 @@ fun Slider (
     val currentOffset by animateOffsetAsState(targetValue = vm.sliderPos, label = "trigger_offset")
     val path = SliderFunctions.SliderPath(currentOffset, SliderValues.GetPersistentData.value!!, currentSelectionPosition)
 
-    val groupsAvailable by remember { derivedStateOf { vm.selectionIndex != -1 } }
 
     RadialAppNavigatorValues.updateData(
         getRadialAppNavigatorData(
@@ -88,6 +89,7 @@ fun Slider (
         )
     )
 
+    val groupsAvailable = allOptions.isNotEmpty()
     AnimatedVisibility(
         visible = !groupsAvailable && vm.visible,
         Modifier,
@@ -121,7 +123,7 @@ fun Slider (
             width = ScreenUtils.fToDp(vm.width - 20),
             allOptions = allOptions,
             currentSelection = currentFuzzySelection,
-            shift = vm.sidePadding,
+            shift = ScreenUtils.dpToF(vm.sidePadding.dp),
             selectionMode = vm.selectionMode,
         )
     }

@@ -12,8 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawStyle
-import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 
@@ -25,7 +23,7 @@ fun DebugLayer (vm: DebugLayerVM){
     ){
         LazyColumn(){
             items(vm.strings){
-                Text(text = it)
+                Text(text = it, color = Color.White)
             }
         }
 

@@ -55,7 +55,7 @@ fun SettingsScreen(
     exitSettings: (Context)->Unit,
 ) {
     val context = LocalContext.current
-    val DBVM = remember { AppDatabase.getViewModel(context) }
+    val DBVM = AppDatabase.getViewModel(context)
     val apps = DBVM.apps.collectAsState(initial = emptyList())
 
     var selectedTab by remember { mutableStateOf(SettingsTab.Slider) }
@@ -77,7 +77,7 @@ fun SettingsScreen(
                 },
             ){
                 SettingsTab.entries.forEach {
-                    tabButton(text = it.name) {
+                    tabButton(text = it.name, selectedTab == it) {
                         selectedTab = it
                     }
                 }
@@ -131,7 +131,7 @@ fun SettingsScreen(
 
                             AppNavigation(
                                 iconStyle = vm.tryToGetState("an_iconStyle") as MutableState<IconStyle>,
-                                enlargeSelectedIconBy = vm.tryToGetState("an_enlargeSelectedIconBy") as MutableState<Float>,
+                                selectedIconStyle = vm.tryToGetState("an_selectedIconStyle") as MutableState<IconStyle>,
                                 shouldBlur = vm.tryToGetState("an_shouldBlur") as MutableState<Boolean>,
                                 blurAmount = vm.tryToGetState("an_blurAmount") as MutableState<Float>,
                                 tint = vm.tryToGetState("an_tint") as MutableState<Color>,

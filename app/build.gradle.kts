@@ -25,7 +25,7 @@ android {
 
     buildTypes {
         debug {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
 //            useProguard = false
         }
         release {
@@ -96,7 +96,7 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 
     // icons TODO: this needs to be removed
-    implementation ("androidx.compose.material:material-icons-extended:1.6.2")
+//    implementation ("androidx.compose.material:material-icons-extended:1.6.2")
 
     // for permissions
 //    implementation ("io.github.farimarwat:permissionmate-compose:1.1")

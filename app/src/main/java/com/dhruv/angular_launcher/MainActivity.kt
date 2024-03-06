@@ -10,10 +10,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalHapticFeedback
 import com.dhruv.angular_launcher.accessible_screen.AccessibleScreenVM
 import com.dhruv.angular_launcher.accessible_screen.presentation.AccessibleScreen
 import com.dhruv.angular_launcher.core.database.apps_data.AppsIconsDataValues
 import com.dhruv.angular_launcher.core.database.room.AppDatabase
+import com.dhruv.angular_launcher.debug.DebugLayer
+import com.dhruv.angular_launcher.debug.DebugLayerVM
 import com.dhruv.angular_launcher.onboarding.Onboarding
 import com.dhruv.angular_launcher.onboarding.OnboardingVM
 import com.dhruv.angular_launcher.settings_screen.SettingsVM
@@ -35,10 +38,12 @@ class MainActivity : ComponentActivity() {
         ScreenUtils.screenWidth = this.resources.displayMetrics.widthPixels.toFloat()
         ScreenUtils.screenHeight = this.resources.displayMetrics.heightPixels.toFloat()
 
+
         setContent {
+            val haptic = LocalHapticFeedback.current
 
 //            val scope = rememberCoroutineScope()
-//            val debugLayerVM by remember { mutableStateOf(DebugLayerVM()) }
+            val debugLayerVM by remember { mutableStateOf(DebugLayerVM()) }
 
             val settingsVM by remember { mutableStateOf(SettingsVM()) }
             val onboardingVM by remember { mutableStateOf(OnboardingVM(endOnboarding = {
@@ -61,7 +66,7 @@ class MainActivity : ComponentActivity() {
                             Onboarding(vm = onboardingVM)
                         }
                     }
-//                    DebugLayer(vm = debugLayerVM)
+                    DebugLayer(vm = debugLayerVM)
                 }
             }
         }

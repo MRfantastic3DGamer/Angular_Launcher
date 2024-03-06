@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.round
 import androidx.core.graphics.drawable.toBitmap
 import com.dhruv.angular_launcher.core.database.apps_data.AppsIconsDataValues
@@ -24,28 +25,35 @@ fun AppIcon (
     modifier: Modifier = Modifier,
     pkgName: String,
     style: IconStyle,
+    selectionStyle: IconStyle,
     painter: DrawablePainter?,
     offset: Offset,
-    selected: Boolean
+    selected: Float
 ){
-    val correctionOffset = ScreenUtils.dpToF(style.size)/2
+    val size = androidx.compose.ui.unit.lerp(style.size ,selectionStyle.size , selected)
+    val correctionOffset = ScreenUtils.dpToF(size)/2
+    val color = lerp(style.backGroundColor, selectionStyle.backGroundColor, selected)
+    val borderColor = lerp(style.borderColor, selectionStyle.borderColor, selected)
+    val borderRadius = androidx.compose.ui.unit.lerp(style.cornerRadios, selectionStyle.cornerRadios, selected)
+    val borderWidth = androidx.compose.ui.unit.lerp(style.borderStrokeWidth, selectionStyle.borderStrokeWidth, selected)
+
     Box(
         modifier
-            .size(style.size)
+            .size(size)
             .offset { (offset - Offset(correctionOffset, correctionOffset)).round() }
             .border(
-                style.borderStrokeWidth,
-                color = style.borderColor,
-                shape = RoundedCornerShape(style.cornerRadios)
+                borderWidth,
+                color = borderColor,
+                shape = RoundedCornerShape(borderRadius)
             )
-            .clip(RoundedCornerShape(style.cornerRadios))
-            .background(style.backGroundColor)
+            .clip(RoundedCornerShape(borderRadius))
+            .background(color)
     ){
         if (painter != null){
             Image(
                 bitmap = painter.drawable.toBitmap(
-                    ScreenUtils.dpToF(style.size).toInt(),
-                    ScreenUtils.dpToF(style.size).toInt()
+                    ScreenUtils.dpToF(size).toInt(),
+                    ScreenUtils.dpToF(size).toInt()
                 ).asImageBitmap(),
                 contentDescription = "icon-${pkgName}",
                 Modifier,
@@ -61,6 +69,9 @@ fun StaticAppIcon(
     packageName: String,
     size: Int
 ) {
-    val icon = AppsIconsDataValues.getAppsIcons.value!![packageName]!!.drawable.toBitmap(size, size).asImageBitmap()
-    Image(bitmap = icon, contentDescription = "icon-of-$packageName", modifier)
+    if ( AppsIconsDataValues.getAppsIcons.value != null && AppsIconsDataValues.getAppsIcons.value!!.containsKey(packageName)) {
+        val icon =
+            AppsIconsDataValues.getAppsIcons.value!![packageName]!!.drawable.toBitmap(size, size).asImageBitmap()
+        Image(bitmap = icon, contentDescription = "icon-of-$packageName", modifier)
+    }
 }

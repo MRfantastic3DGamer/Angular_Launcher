@@ -39,6 +39,7 @@ class SliderVM:ViewModel() {
 
     var visible: Boolean by mutableStateOf(false)
     var sliderPos: Offset by mutableStateOf(Offset.Zero)
+    var prevSelectionIndex: Int by mutableStateOf(0)
     var selectionIndex: Int by mutableStateOf(0)
     var selectionPosY: Float by mutableStateOf(0f)
     var touchPos: Offset by mutableStateOf(Offset.Zero)

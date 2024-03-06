@@ -9,9 +9,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorValues
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
+import com.dhruv.angular_launcher.core.AppIcon.IconStyle
 import com.dhruv.angular_launcher.core.database.apps_data.AppsIconsDataValues
 import com.dhruv.angular_launcher.data.enums.SelectionMode
-import com.dhruv.angular_launcher.core.AppIcon.IconStyle
 import com.example.launcher.Drawing.DrawablePainter
 
 class RadialAppNavigatorVM:ViewModel() {
@@ -22,7 +22,8 @@ class RadialAppNavigatorVM:ViewModel() {
     var selectionMode: SelectionMode by mutableStateOf(SelectionMode.NotSelected)
 
     var iconStyle by mutableStateOf(IconStyle())
-    var enlargeSelectedIconBy by mutableStateOf(0f)
+    var selectedIconStyle by mutableStateOf(IconStyle())
+
     var shouldBlur by mutableStateOf(false)
     var blurAmount by mutableStateOf(0f)
     var tint by mutableStateOf(Color.Black)
@@ -38,7 +39,9 @@ class RadialAppNavigatorVM:ViewModel() {
     var offsetFromCenter: Offset by mutableStateOf(Offset.Zero)
 
     var sliderSelection: String by mutableStateOf("@")
+    var prevSelectionIndex: Int by mutableStateOf(-1)
     var selectionIndex: Int by mutableIntStateOf(-1)
+    var selectionAmount: Map<Int, Float> by mutableStateOf(emptyMap())
     var shouldSelectApp: Boolean by mutableStateOf(false)
 
     var appsIcons: Map<String, DrawablePainter> by mutableStateOf(emptyMap())
@@ -50,7 +53,7 @@ class RadialAppNavigatorVM:ViewModel() {
             println("updating p data")
 
             iconStyle = it.iconStyle
-            enlargeSelectedIconBy = it.enlargeSelectedIconBy
+            selectedIconStyle = it.selectedIconStyle
             shouldBlur = it.shouldBlur
             blurAmount = it.blurAmount
             tint = it.tint

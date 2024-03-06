@@ -7,4 +7,5 @@ data class FluidCursorData(
     val urgency: Float = 1f,
     val snap: Boolean = false,
     val visibility: Boolean = false,
+    val state: CursorState = CursorState.STUCK_TO_SLIDER
 )

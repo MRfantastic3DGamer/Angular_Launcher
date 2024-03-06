@@ -5,8 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.Color
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
-import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
 import com.dhruv.angular_launcher.core.AppIcon.IconStyle
+import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
 import com.dhruv.angular_launcher.settings_screen.presentation.components.EntryData
 import com.dhruv.angular_launcher.settings_screen.presentation.components.SettingsColumn
 import com.dhruv.angular_launcher.settings_screen.presentation.components.SettingsColumnData
@@ -16,7 +16,7 @@ import com.dhruv.angular_launcher.settings_screen.presentation.components._Setti
 fun AppNavigation (
     // look
     iconStyle: MutableState<IconStyle>,
-    enlargeSelectedIconBy: MutableState<Float>,
+    selectedIconStyle: MutableState<IconStyle>,
     shouldBlur: MutableState<Boolean>,
     blurAmount: MutableState<Float>,
     tint: MutableState<Color>,
@@ -35,12 +35,12 @@ fun AppNavigation (
         item {
             // Display settings related to look
             SettingsColumn(
-                data = SettingsColumnData("Look", null, listOf(
-                    EntryData("Icon Size", iconStyle as MutableState<Any>, IconStyle::class.java),
-                    EntryData("Enlarge Selected Icon By", enlargeSelectedIconBy as MutableState<Any>, Float::class.java),
-                    EntryData("Should Blur", shouldBlur as MutableState<Any>, Boolean::class.java),
-                    EntryData("Blur Amount", blurAmount as MutableState<Any>, Float::class.java),
-                    EntryData("Tint", tint as MutableState<Any>, Color::class.java),
+                data = SettingsColumnData("look", null, listOf(
+                    EntryData("default icon style", iconStyle as MutableState<Any>, IconStyle::class.java),
+                    EntryData("selected Icon style", selectedIconStyle as MutableState<Any>, IconStyle::class.java),
+                    EntryData("should blur", shouldBlur as MutableState<Any>, Boolean::class.java),
+                    EntryData("blur amount", blurAmount as MutableState<Any>, Float::class.java),
+                    EntryData("tint", tint as MutableState<Any>, Color::class.java),
                 )),
                 entryForType = _SettingsArt.DefaultEntry
             )

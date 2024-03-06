@@ -28,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,7 +50,7 @@ import com.dhruv.angular_launcher.settings_screen.presentation.components.H2
 fun GroupsEditor (vm: GroupsEditingVM){
 
     val context = LocalContext.current
-    val DBVM = remember{ AppDatabase.getViewModel(context) }
+    val DBVM = AppDatabase.getViewModel(context)
     val groups = DBVM.groups.collectAsState(initial = emptyList()).value
     val apps = DBVM.apps.collectAsState(initial = emptyList()).value
     val appsOfCurrentGroup = (if (vm.selectedGroup != null) DBVM.getAppsForGroup(vm.selectedGroup!!._id).collectAsState(initial = emptyList()).value else emptyList()).map { it.packageName }
@@ -143,37 +142,29 @@ fun GroupsEditor (vm: GroupsEditingVM){
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(vertical = 8.dp)
-                                    .clip(RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(100.dp))
                                     .background(
                                         when (checked) {
-                                            true -> Color.Gray
+                                            true -> Color.White
                                             false -> Color.Black
                                         }
                                     )
                                     .clickable {
                                         when (checked) {
-                                            true -> {
-                                                DBVM.deleteConnection(
-                                                    GroupAppCrossRef(
-                                                        vm.selectedGroup!!._id,
-                                                        app.packageName
-                                                    )
-                                                )
-                                            }
-
-                                            false -> {
-                                                DBVM.insertConnection(
-                                                    GroupAppCrossRef(
-                                                        vm.selectedGroup!!._id,
-                                                        app.packageName
-                                                    )
-                                                )
-                                            }
+                                            true -> DBVM.deleteConnection(GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName))
+                                            false -> DBVM.insertConnection(GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName))
                                         }
                                     }
                             ) {
-                                StaticAppIcon(packageName = app.packageName, size = 80)
-                                Text(app.name, Modifier.padding(4.dp))
+                                StaticAppIcon(packageName = app.packageName, size = 150)
+                                Text(
+                                    app.name,
+                                    Modifier.padding(4.dp),
+                                    color = when (checked) {
+                                        true -> Color.Black
+                                        false -> Color.White
+                                    }
+                                )
                             }
                         }
                     }

@@ -5,9 +5,9 @@ import androidx.compose.ui.graphics.Color
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
-import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
 import com.dhruv.angular_launcher.core.AppIcon.IconStyle
 import com.dhruv.angular_launcher.core.database.prefferences.PreferencesManager
+import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -27,7 +27,7 @@ object PrefValues {
 
     // region app navigation
     var an_iconStyle: IconStyle = IconStyle()
-    var an_enlargeSelectedIconBy: Float = 0.2f
+    var an_selectedIconStyle: IconStyle = IconStyle()
     var an_shouldBlur: Boolean = false
     var an_blurAmount: Float = 0f
     var an_tint: Color = Color.Black
@@ -76,7 +76,7 @@ object PrefValues {
 
 // region app navigation
         an_iconStyle = prefManager.getData("an_iconStyle", an_iconStyle)
-        an_enlargeSelectedIconBy = prefManager.getData("an_enlargeSelectedIconBy", an_enlargeSelectedIconBy)
+        an_selectedIconStyle = prefManager.getData("an_selectedIconStyle", an_selectedIconStyle)
         an_shouldBlur = prefManager.getData("an_shouldBlur", an_shouldBlur)
         an_blurAmount = prefManager.getData("an_blurAmount", an_blurAmount)
         an_tint = prefManager.getData("an_tint", an_tint)

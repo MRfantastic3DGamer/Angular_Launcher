@@ -224,41 +224,37 @@ object RadialAppNavigationFunctions {
         return positions.map { getResult(it) }.toSet()
     }
 
+    fun getClosest (
+        touchOffset: Offset,
+        allOffsets: List<Offset>,
+        range: Float,
+    ): Int {
+        var bestDist = Float.MAX_VALUE
+        var best = -1
+        allOffsets.forEachIndexed{ i, it ->
+            val dist = MathUtils.calculateDistance(touchOffset, it)
+            if (dist < range) {
+                if (dist < bestDist) {
+                    bestDist = dist
+                    best = i
+                }
+            }
+        }
+        return best
+    }
 
-    data class IconSelectionData(
-        val bestSelection: Int,
-        val selectionData: Map<Int,Float>
-    )
     fun getIconSelection (
         touchOffset: Offset,
         allOffsets: List<Offset>,
         range: Float,
-    ): IconSelectionData {
-        var bestDist = Float.MAX_VALUE
-        var best = -1
+    ): Map<Int,Float> {
         val selectionVals = mutableMapOf<Int, Float>()
         allOffsets.forEachIndexed{ i, it ->
             val dist = MathUtils.calculateDistance(touchOffset, it)
-            if (dist < bestDist){
-                bestDist = dist
-                best = i
-            }
-            selectionVals[i] = 1-dist/range
-        }
-        return IconSelectionData(best, selectionVals)
-    }
-
-    fun getBestIndex (touchOffset:Offset, offsets: List<Offset>, possibleIndeces: List<Int>): Int {
-        var bi = -1
-        var bd = 100000f
-        for (i in possibleIndeces){
-            if (i !in offsets.indices) continue
-            val d = MathUtils.calculateDistance(touchOffset, offsets[i])
-            if (d<bd){
-                bd = d
-                bi = i
+            if (dist < range) {
+                selectionVals[i] = 1 - dist / range
             }
         }
-        return bi
+        return selectionVals
     }
 }

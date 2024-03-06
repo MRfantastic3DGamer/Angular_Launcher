@@ -2,10 +2,12 @@ package com.dhruv.angular_launcher.settings_screen.presentation.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
 import java.lang.reflect.Type
 
@@ -24,12 +26,6 @@ data class SettingsColumnData(
 
 /**
  * It is used to draw and save a list of values that must be predefined in [PrefValues]
- *
- * @param map -> key(variable name) value(data type)
- * @param drawing -> default way of drawing button for each type
- * @param saveValues -> used to update values
- * @param specialDrawing -> unique way to draw for special case/key
- * @param constraints -> for int/float values
  */
 
 @Composable
@@ -43,9 +39,9 @@ fun SettingsColumn (
 
         H1(text = data.heading)
 
-        data.values.forEach { it ->
+        data.values.forEach {
             entryForType[it.type]?.invoke(it.label, it.data, it.constraints)
-            Divider(Modifier)
+            Divider(Modifier.padding(4.dp))
         }
     }
 }

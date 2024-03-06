@@ -4,7 +4,10 @@ import android.content.Context
 import androidx.compose.ui.geometry.Offset
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.data.enums.NavigationMode
+import com.dhruv.angular_launcher.haptics.HapticsHelper
 import com.dhruv.angular_launcher.interaction_calculation.data.TriggerData
+import com.dhruv.angular_launcher.utils.MathUtils
+import kotlin.math.absoluteValue
 
 object TriggerFunctions {
     val data: TriggerData = TriggerData()
@@ -37,10 +40,12 @@ object TriggerFunctions {
 
     fun Drag(context: Context, dragAmount: Offset) {
         data.c_fingerPosition += dragAmount
+        HapticsHelper.setFingerSpeed(MathUtils.calculateDistance(dragAmount, Offset.Zero).absoluteValue)
         AccessibleScreenValues.updateScreenData(data.c_fingerPosition, dragAmount)
     }
 
     fun DragEnd() {
+        HapticsHelper.setFingerSpeed(0f)
         AccessibleScreenValues.updateScreenData(data.c_fingerPosition, null)
     }
 }

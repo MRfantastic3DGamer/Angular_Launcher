@@ -17,7 +17,7 @@ data class RadialAppNavigatorPersistentData(
 
 // look
     val iconStyle: IconStyle = IconStyle(),
-    val enlargeSelectedIconBy: Float = 0f,
+    val selectedIconStyle: IconStyle = IconStyle(),
     val shouldBlur: Boolean = false,
     val blurAmount: Float = 0f,
     val tint: Color = Color.Black,

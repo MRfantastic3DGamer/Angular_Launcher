@@ -1,11 +1,15 @@
 package com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.presentation
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateOffsetAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.AppLabelValue
+import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.CursorState
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorData
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorValues
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigationFunctions
@@ -14,13 +18,14 @@ import com.dhruv.angular_launcher.accessible_screen.components.radial_app_naviga
 import com.dhruv.angular_launcher.core.AppIcon.AppIcon
 import com.dhruv.angular_launcher.core.database.room.AppDatabase
 import com.dhruv.angular_launcher.data.enums.SelectionMode
+import com.dhruv.angular_launcher.haptics.HapticsHelper
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
 @Composable
 fun RadialAppNavigation (vm: RadialAppNavigatorVM){
 
     val context = LocalContext.current
-    val DBVM = remember() { AppDatabase.getViewModel(context) }
+    val DBVM = AppDatabase.getViewModel(context)
 
     val appsPerGroup = DBVM.groups.collectAsState(initial = emptyList()).value.map {
         it._id.toString() to DBVM.getAppsForGroup(it._id).collectAsState(initial = emptyList()).value.map { it.packageName }
@@ -46,44 +51,45 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
     val currentQualityIndex = iconPositionsCompute.qualityIndex
 
     if (vm.shouldSelectApp){
-
-        val selectionData = RadialAppNavigationFunctions.getIconSelection(vm.offsetFromCenter + vm.center, allOffsets, 100f)
-
-        val possibleSelections = RadialAppNavigationFunctions.getPossibleIconIndeces(
-            vm.offsetFromCenter,
-            vm.iconsPerRound[currentQualityIndex],
-            vm.roundsStartingDistances[currentQualityIndex],
-            skips
-        ).toList()
-
-        vm.selectionIndex = RadialAppNavigationFunctions.getBestIndex(
-            vm.center + vm.offsetFromCenter,
-            allOffsets,
-            possibleSelections
-        )
+        vm.prevSelectionIndex = vm.selectionIndex
+        vm.selectionIndex = RadialAppNavigationFunctions.getClosest(vm.offsetFromCenter + vm.center, allOffsets, 200f)
+        if (vm.selectionIndex != vm.prevSelectionIndex){
+            HapticsHelper.appSelectHaptic(context)
+            println("haptic")
+        }
     }
     else{
+        vm.prevSelectionIndex = vm.selectionIndex
         vm.selectionIndex = -1
+        vm.selectionAmount = emptyMap()
+        if (vm.selectionIndex != vm.prevSelectionIndex){
+            HapticsHelper.appSelectHaptic(context)
+            println("haptic")
+        }
     }
 
-    var selectionOffset: Offset? = null
+    val selectionOffset: Offset? = allOffsets.getOrNull(vm.selectionIndex)
+    val targetCursorPos = selectionOffset?:  if (vm.offsetFromCenter.x >= 0) vm.center else vm.center + vm.offsetFromCenter
+    val snap = vm.offsetFromCenter.x > 0f
+    val cursorPos by animateOffsetAsState(targetValue = targetCursorPos, label = "cursor-pos", animationSpec = if (snap) spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessLow) else spring(dampingRatio = Spring.DampingRatioHighBouncy, stiffness = Spring.StiffnessLow))
 
-//    println("apps: ${appsPkgsList}")
 
     if (vm.visibility){
+        vm.selectionAmount = RadialAppNavigationFunctions.getIconSelection(cursorPos, allOffsets, 200f)
+
         allOffsets.forEachIndexed { index, it ->
-            if (index == vm.selectionIndex) selectionOffset = it
             if (index in appsPkgsList.indices) {
                 val pkgName = appsPkgsList[index]
-                AppIcon(pkgName = pkgName, style = vm.iconStyle, painter = vm.appsIcons[pkgName], offset = it, selected = vm.selectionIndex == index)
+                AppIcon(pkgName = pkgName, style = vm.iconStyle, selectionStyle = vm.selectedIconStyle, painter = vm.appsIcons[pkgName], offset = it, selected = vm.selectionAmount[index]?:0f)
             }
         }
     }
 
     FluidCursorValues.updateData(FluidCursorData(
-        targetPosition = selectionOffset?:  if (vm.offsetFromCenter.x >= 0) vm.center else vm.center + vm.offsetFromCenter,
-        snap = vm.offsetFromCenter.x > 0f,
-        visibility = vm.visibility
+        targetPosition = cursorPos,
+        snap = snap,
+        visibility = vm.visibility,
+        state = if (snap) CursorState.STUCK_TO_SLIDER else if (vm.selectionIndex == -1) CursorState.FREE else CursorState.STUCK_TO_ICON
     ))
 
     AppLabelValue.updatePackageState( appsPkgsList.getOrElse(vm.selectionIndex, {"@"}) )

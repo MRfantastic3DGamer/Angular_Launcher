@@ -17,6 +17,7 @@ object FluidCursorValues {
         persistentData.value = FluidCursorPersistentData(
             fluidCursorLooks = PrefValues.fc_fluidCursorLooks,
             animationSpeed = PrefValues.fc_animationSpeed,
+
         )
     }
     fun updateData (newData: FluidCursorData){

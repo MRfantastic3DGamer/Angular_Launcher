@@ -3,17 +3,15 @@ package com.dhruv.angular_launcher.accessible_screen.components.slider.presentat
 import android.content.res.Resources
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
@@ -41,11 +39,10 @@ fun DrawGroupIconChoice(key: Int, x: Float, y: Float, resources: Resources, size
         contentDescription = key.toString(),
         Modifier
             .size(size)
-            .alignToMidPoint((Offset(x, y)).round())
-            .clip(CircleShape)
-            .background(Color.White),
+            .alignToMidPoint((Offset(x, y)).round()),
         Alignment.Center,
         ContentScale.Fit,
+        colorFilter = ColorFilter.lighting(Color.Black, Color.Black)
     )
 }
 
@@ -66,7 +63,7 @@ fun AllChoices (
     val commonX = offset.x + ScreenUtils.dpToF(width)/2
 
     allOptions.forEachIndexed{ i, n ->
-        val x = commonX - gaussian(i.toFloat(), currentSelection, 0.2f) * shift
+        val x = commonX - gaussian(i.toFloat(), currentSelection, 0.2f) * (shift - 40f)
         val y = offset.y + first + hPerElement*i
         when (selectionMode) {
             SelectionMode.NotSelected -> {}

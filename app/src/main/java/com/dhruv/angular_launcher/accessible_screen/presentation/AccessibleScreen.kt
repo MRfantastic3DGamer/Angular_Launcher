@@ -30,7 +30,7 @@ fun AccessibleScreen(mainScreenVM: AccessibleScreenVM, settingsVM: SettingsVM){
 
     val context = LocalContext.current
 
-    // Retrieve the device's wallpaper
+
     val wallpaperDrawable = remember { WallpaperManager.getInstance(context).drawable }
 
 

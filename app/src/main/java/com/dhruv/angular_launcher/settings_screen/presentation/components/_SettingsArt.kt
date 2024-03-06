@@ -2,6 +2,7 @@ package com.dhruv.angular_launcher.settings_screen.presentation.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 import com.dhruv.angular_launcher.core.AppIcon.AppIcon
 import com.dhruv.angular_launcher.core.AppIcon.IconStyle
@@ -98,16 +100,10 @@ object _SettingsArt {
                             AppIcon(
                                 pkgName = "",
                                 style = state.value,
+                                selectionStyle = IconStyle(),
                                 painter = null,
                                 offset = Offset(0f, state.value.size.value),
-                                selected = false,
-                            )
-                            AppIcon(
-                                pkgName = "",
-                                style = state.value,
-                                painter = null,
-                                offset = Offset(0f, state.value.size.value),
-                                selected = true,
+                                selected = 0f,
                             )
                         }
                         H2(text = "icon size")
@@ -197,7 +193,7 @@ object _SettingsArt {
         },
         VibrationData::class.java to { key, state, constraints ->
             val State = state as MutableState<VibrationData>
-            // TODO: scale and time changing
+            // TODO: select one of the presets in form of enum
             Collapsable(
                 text = {
                     Row (
@@ -211,9 +207,39 @@ object _SettingsArt {
                 },
                 canOpen = state.value.active
             ) {
-
+                H2(text = "vibration type")
             }
         },
+        FluidCursorLooks::class.java to { key, state, constraints ->
+            val State = state as MutableState<FluidCursorLooks>
+            Collapsable(text = {
+                H1(key)
+            }) {
+                Column {
+                    LabelForColor(label = "color", color = state.value.color) {
+                        state.value = state.value.copy(color = it)
+                    }
+                    H2(text = "radius when free")
+                    Slider(
+                        value = state.value.freeRadius,
+                        onValueChange = { state.value = state.value.copy(freeRadius = it) },
+                        valueRange = 0.04f..1f,
+                    )
+                    H2(text = "radius when at slider")
+                    Slider(
+                        value = state.value.sliderStuckRadius,
+                        onValueChange = { state.value = state.value.copy(sliderStuckRadius = it) },
+                        valueRange = 0.04f..1f,
+                    )
+                    H2(text = "radius when at icon")
+                    Slider(
+                        value = state.value.appStuckRadius,
+                        onValueChange = { state.value = state.value.copy(appStuckRadius = it) },
+                        valueRange = 0.04f..1f,
+                    )
+                }
+            }
+        }
     )
 
     @Composable
@@ -227,7 +253,7 @@ object _SettingsArt {
         Column (
             Modifier
                 .clip(RoundedCornerShape(defaultCornerRadius))
-                .background(Color.Gray)
+                .background(Color.Black)
         ) {
             Row (
                 Modifier
@@ -240,7 +266,9 @@ object _SettingsArt {
                 text()
                 Icon(
                     imageVector = if (opened) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                    contentDescription = "openDirection"
+                    contentDescription = "openDirection",
+                    Modifier,
+                    tint = Color.White
                 )
             }
 
@@ -272,7 +300,8 @@ object _SettingsArt {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp)
-                        .clip(RoundedCornerShape(defaultCornerRadius))
+                        .border(2.dp, Color.White, RoundedCornerShape(20.dp))
+                        .clip(RoundedCornerShape(20.dp))
                         .background(color)
                 )
             }
