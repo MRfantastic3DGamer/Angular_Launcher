@@ -26,6 +26,11 @@ class OnboardingVM(
     val haveStoragePermission: Boolean
         get() = Environment.isExternalStorageManager()
 
+//    return ContextCompat.checkSelfPermission(
+//    context,
+//    Manifest.permission.READ_EXTERNAL_STORAGE
+//    ) == PackageManager.PERMISSION_GRANTED
+
     var onBoardingComplete: Boolean by mutableStateOf(searchIfOnboardingIsComplete())
 
     fun goBack(){
@@ -33,11 +38,12 @@ class OnboardingVM(
     }
 
     fun goForward(){
-        val maxPages = 2
+        val maxPages = 3
         val gotPermission =
             when (currentPage) {
                 0 -> true
-                1 -> haveStoragePermission
+                1 -> true
+                2 -> true
                 else -> false
             }
         println("permission for ${currentPage}: $gotPermission")

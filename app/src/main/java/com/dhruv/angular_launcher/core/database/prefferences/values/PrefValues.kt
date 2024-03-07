@@ -2,6 +2,7 @@ package com.dhruv.angular_launcher.core.database.prefferences.values
 
 import android.content.Context
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
@@ -19,15 +20,22 @@ import kotlinx.coroutines.withContext
  */
 object PrefValues {
 
-    // region theme
-
-    var wallpaper: String = ""
-
-    // endregion
 
     // region app navigation
-    var an_iconStyle: IconStyle = IconStyle()
-    var an_selectedIconStyle: IconStyle = IconStyle()
+    var an_iconStyle: IconStyle = IconStyle(
+        size = 30.dp,
+        backGroundColor = Color.White,
+        borderColor = Color.Black,
+        borderStrokeWidth = 2.dp,
+        cornerRadios = 5.dp,
+    )
+    var an_selectedIconStyle: IconStyle = IconStyle(
+        size = 65.dp,
+        backGroundColor = Color.Black,
+        borderColor = Color.White,
+        borderStrokeWidth = 6.dp,
+        cornerRadios = 100.dp,
+    )
     var an_shouldBlur: Boolean = false
     var an_blurAmount: Float = 0f
     var an_tint: Color = Color.Black
@@ -71,7 +79,7 @@ object PrefValues {
         val prefManager = PreferencesManager.getInstance(context)
 
 // region theme
-        wallpaper = prefManager.getData("wallPaper", wallpaper)
+//        wallpaper = prefManager.getData("wallPaper", wallpaper)
 // endregion
 
 // region app navigation

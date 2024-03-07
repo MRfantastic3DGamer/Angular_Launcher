@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.dhruv.angular_launcher.onboarding.screens.DefaultApp
 import com.dhruv.angular_launcher.onboarding.screens.Introduction
 import com.dhruv.angular_launcher.onboarding.screens.MediaPermission
 
@@ -24,7 +25,7 @@ fun Onboarding(vm: OnboardingVM) {
     Box(modifier = Modifier.fillMaxSize()) {
 
         val showBackButton = remember { derivedStateOf { vm.currentPage > 0 } }
-        val showNextButton = remember { derivedStateOf { vm.currentPage < 3 } }
+        val showNextButton = remember { derivedStateOf { vm.currentPage < 4 } }
 
         AnimatedContent(targetState = vm.currentPage, label = "onboarding") {
             when (it) {
@@ -33,6 +34,9 @@ fun Onboarding(vm: OnboardingVM) {
                 }
                 1 -> {
                     MediaPermission()
+                }
+                2 -> {
+                    DefaultApp()
                 }
                 else -> {}
             }

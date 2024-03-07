@@ -50,6 +50,7 @@ class MainActivity : ComponentActivity() {
                 AppsIconsDataValues.initialize(packageManager, AppDatabase.getInstance(context).appDataDao())
                 settingsVM.exitSettings(context)
             })) }
+
             val screenVM: AccessibleScreenVM by viewModels<AccessibleScreenVM>()
             AppDatabase.getInstance(context)
 

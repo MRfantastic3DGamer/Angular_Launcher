@@ -58,7 +58,7 @@ fun SettingsScreen(
     val DBVM = AppDatabase.getViewModel(context)
     val apps = DBVM.apps.collectAsState(initial = emptyList())
 
-    var selectedTab by remember { mutableStateOf(SettingsTab.Slider) }
+    var selectedTab by remember { mutableStateOf(SettingsTab.Theme) }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -144,11 +144,7 @@ fun SettingsScreen(
                             )
                         }
                         SettingsTab.Apps -> Box(Modifier.fillMaxSize()){
-                            val appsEditingVM = remember(apps) {
-                                derivedStateOf{
-                                    AppsEditingVM(apps.value, DBVM::updateApp)
-                                }
-                            }
+                            val appsEditingVM = remember(apps) { derivedStateOf{ AppsEditingVM(apps.value, DBVM::updateApp) } }
                             AppsEditing(vm = appsEditingVM.value)
                         }
                         SettingsTab.Groups -> Box (Modifier.fillMaxSize()){

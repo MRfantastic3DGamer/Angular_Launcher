@@ -1,6 +1,5 @@
 package com.dhruv.angular_launcher.accessible_screen.presentation
 
-import android.app.WallpaperManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +19,6 @@ import com.dhruv.angular_launcher.accessible_screen.components.radial_app_naviga
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.presentation.RadialAppNavigation
 import com.dhruv.angular_launcher.accessible_screen.components.slider.SliderVM
 import com.dhruv.angular_launcher.accessible_screen.components.slider.presentation.Slider
-import com.dhruv.angular_launcher.core.wallpaper.wallpaper
 import com.dhruv.angular_launcher.interaction_calculation.AccessibleScreenTrigger
 import com.dhruv.angular_launcher.settings_screen.SettingsVM
 import com.dhruv.angular_launcher.settings_screen.presentation.SettingsScreen
@@ -31,7 +29,7 @@ fun AccessibleScreen(mainScreenVM: AccessibleScreenVM, settingsVM: SettingsVM){
     val context = LocalContext.current
 
 
-    val wallpaperDrawable = remember { WallpaperManager.getInstance(context).drawable }
+//    val wallpaperDrawable = remember { WallpaperManager.getInstance(context).drawable }
 
 
     val sliderVM by remember { mutableStateOf(SliderVM()) }
@@ -43,7 +41,7 @@ fun AccessibleScreen(mainScreenVM: AccessibleScreenVM, settingsVM: SettingsVM){
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Transparent)
-            .wallpaper(wallpaperDrawable)
+//            .wallpaper(wallpaperDrawable)
             .AccessibleScreenTrigger(context, {settingsVM.openSettings(context)}, !settingsVM.settingsOpened)
     ) {
         when (settingsVM.settingsOpened) {
