@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorValues
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
-import com.dhruv.angular_launcher.core.AppIcon.IconStyle
+import com.dhruv.angular_launcher.core.appIcon.IconStyle
 import com.dhruv.angular_launcher.core.database.apps_data.AppsIconsDataValues
 import com.dhruv.angular_launcher.data.enums.SelectionMode
 import com.example.launcher.Drawing.DrawablePainter

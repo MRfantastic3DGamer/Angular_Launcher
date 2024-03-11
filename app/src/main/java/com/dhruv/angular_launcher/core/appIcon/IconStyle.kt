@@ -1,4 +1,4 @@
-package com.dhruv.angular_launcher.core.AppIcon
+package com.dhruv.angular_launcher.core.appIcon
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
-import com.dhruv.angular_launcher.core.AppIcon.IconStyle
+import com.dhruv.angular_launcher.core.appIcon.IconStyle
 
 @Stable
 data class RadialAppNavigatorPersistentData(

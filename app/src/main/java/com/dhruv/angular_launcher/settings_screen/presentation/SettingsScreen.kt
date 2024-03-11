@@ -34,7 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
-import com.dhruv.angular_launcher.core.AppIcon.IconStyle
+import com.dhruv.angular_launcher.core.appIcon.IconStyle
 import com.dhruv.angular_launcher.core.database.room.AppDatabase
 import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
 import com.dhruv.angular_launcher.settings_screen.SettingsVM

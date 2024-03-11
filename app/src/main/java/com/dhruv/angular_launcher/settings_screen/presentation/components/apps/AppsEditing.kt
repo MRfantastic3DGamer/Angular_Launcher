@@ -33,7 +33,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.dhruv.angular_launcher.R
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.presentation.withAlpha
-import com.dhruv.angular_launcher.core.AppIcon.StaticAppIcon
+import com.dhruv.angular_launcher.core.appIcon.StaticAppIcon
 import com.dhruv.angular_launcher.settings_screen.presentation.components.H1
 import com.dhruv.angular_launcher.settings_screen.presentation.components.H2
 

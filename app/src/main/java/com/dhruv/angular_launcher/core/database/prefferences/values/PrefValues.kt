@@ -6,7 +6,7 @@ import androidx.compose.ui.unit.dp
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
-import com.dhruv.angular_launcher.core.AppIcon.IconStyle
+import com.dhruv.angular_launcher.core.appIcon.IconStyle
 import com.dhruv.angular_launcher.core.database.prefferences.PreferencesManager
 import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
 import kotlinx.coroutines.Dispatchers

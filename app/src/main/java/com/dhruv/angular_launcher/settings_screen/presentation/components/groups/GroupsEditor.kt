@@ -40,7 +40,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dhruv.angular_launcher.R
-import com.dhruv.angular_launcher.core.AppIcon.StaticAppIcon
+import com.dhruv.angular_launcher.core.appIcon.StaticAppIcon
 import com.dhruv.angular_launcher.core.database.room.AppDatabase
 import com.dhruv.angular_launcher.core.database.room.models.GroupAppCrossRef
 import com.dhruv.angular_launcher.core.database.room.models.GroupData

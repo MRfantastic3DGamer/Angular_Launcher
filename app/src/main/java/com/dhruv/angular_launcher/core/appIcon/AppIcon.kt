@@ -1,4 +1,4 @@
-package com.dhruv.angular_launcher.core.AppIcon
+package com.dhruv.angular_launcher.core.appIcon
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -69,9 +69,19 @@ fun StaticAppIcon(
     packageName: String,
     size: Int
 ) {
+    StaticAppIcon(modifier, packageName, size, size)
+}
+
+@Composable
+fun StaticAppIcon(
+    modifier: Modifier = Modifier,
+    packageName: String,
+    sizeX: Int,
+    sizeY: Int,
+) {
     if ( AppsIconsDataValues.getAppsIcons.value != null && AppsIconsDataValues.getAppsIcons.value!!.containsKey(packageName)) {
         val icon =
-            AppsIconsDataValues.getAppsIcons.value!![packageName]!!.drawable.toBitmap(size, size).asImageBitmap()
+            AppsIconsDataValues.getAppsIcons.value!![packageName]!!.drawable.toBitmap(sizeX, sizeY).asImageBitmap()
         Image(bitmap = icon, contentDescription = "icon-of-$packageName", modifier)
     }
 }
