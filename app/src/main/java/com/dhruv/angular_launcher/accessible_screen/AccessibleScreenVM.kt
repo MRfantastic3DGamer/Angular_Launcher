@@ -61,13 +61,6 @@ class AccessibleScreenVM(): ViewModel() {
                         sliderVisibility = false
                         navigationMode = NavigationMode.NotSelected
                         navigationStage = NavigationStage.SelectionModeSelection
-                        if (focusOnSlider){
-                            // TODO: on early retrieval
-                        }
-                        else{
-                            navigationMode = NavigationMode.Tap
-                            navigationStage = NavigationStage.AppSelect
-                        }
                         AppLabelValue.launchAppIfPossible()
                     }
 
