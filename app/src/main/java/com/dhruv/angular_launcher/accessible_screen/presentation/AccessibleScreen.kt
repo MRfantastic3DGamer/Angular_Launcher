@@ -1,5 +1,7 @@
 package com.dhruv.angular_launcher.accessible_screen.presentation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +25,7 @@ import com.dhruv.angular_launcher.interaction_calculation.AccessibleScreenTrigge
 import com.dhruv.angular_launcher.settings_screen.SettingsVM
 import com.dhruv.angular_launcher.settings_screen.presentation.SettingsScreen
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun AccessibleScreen(mainScreenVM: AccessibleScreenVM, settingsVM: SettingsVM){
 
@@ -35,7 +38,6 @@ fun AccessibleScreen(mainScreenVM: AccessibleScreenVM, settingsVM: SettingsVM){
     val sliderVM by remember { mutableStateOf(SliderVM()) }
     val appNavigatorVM by remember { mutableStateOf(RadialAppNavigatorVM()) }
     val appLabelVM by remember { mutableStateOf(AppLabelVM()) }
-    val fluidCursorVM by remember { mutableStateOf(FluidCursorVM()) }
 
     Box (
         modifier = Modifier
@@ -51,7 +53,7 @@ fun AccessibleScreen(mainScreenVM: AccessibleScreenVM, settingsVM: SettingsVM){
             false -> {
                 Slider(vm = sliderVM)
 
-                FluidCursor(vm = fluidCursorVM)
+
 
                 RadialAppNavigation(vm = appNavigatorVM)
 
