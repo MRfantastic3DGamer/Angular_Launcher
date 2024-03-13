@@ -15,8 +15,6 @@ import androidx.compose.ui.platform.LocalContext
 import com.dhruv.angular_launcher.accessible_screen.AccessibleScreenVM
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.AppLabelVM
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.presentation.AppLabel
-import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.FluidCursorVM
-import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.presentation.FluidCursor
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigatorVM
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.presentation.RadialAppNavigation
 import com.dhruv.angular_launcher.accessible_screen.components.slider.SliderVM
@@ -51,11 +49,9 @@ fun AccessibleScreen(mainScreenVM: AccessibleScreenVM, settingsVM: SettingsVM){
                 SettingsScreen(vm = settingsVM, exitSettings = settingsVM::exitSettings)
             }
             false -> {
-                Slider(vm = sliderVM)
-
-
-
                 RadialAppNavigation(vm = appNavigatorVM)
+
+                Slider(vm = sliderVM)
 
                 AppLabel(vm = appLabelVM)
             }

@@ -95,6 +95,10 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 
+    // for glsl
+    implementation ("androidx.palette:palette-ktx:1.0.0")
+    implementation ("com.jakewharton.timber:timber:5.0.1")
+
     // icons TODO: this needs to be removed
 //    implementation ("androidx.compose.material:material-icons-extended:1.6.2")
 
