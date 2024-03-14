@@ -56,8 +56,6 @@ fun GLShader(
         }) { glSurfaceView ->
         view = glSurfaceView
         glSurfaceView.debugFlags = DEBUG_CHECK_GL_ERROR or DEBUG_LOG_GL_CALLS
-        glSurfaceView.setShaderRenderer(
-            renderer
-        )
+        glSurfaceView.setShaderRenderer(renderer)
     }
 }

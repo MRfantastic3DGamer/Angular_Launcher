@@ -3,6 +3,7 @@ package com.dhruv.angular_launcher.haptics
 import android.content.Context
 import android.os.VibrationEffect
 import android.os.Vibrator
+import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
 
 object HapticsHelper {
 
@@ -26,8 +27,10 @@ object HapticsHelper {
     fun appSelectHaptic (
         context: Context
     ){
-        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        vibrator.vibrate(selectedAppHaptic)
+        if (PrefValues.an_vibration.active){
+            val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            vibrator.vibrate(selectedAppHaptic)
+        }
     }
 
 
@@ -49,8 +52,10 @@ object HapticsHelper {
     fun groupSelectHaptic (
         context: Context
     ){
-        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        vibrator.vibrate(selectedGroupHaptic)
+        if (PrefValues.sl_vibration.active) {
+            val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            vibrator.vibrate(selectedGroupHaptic)
+        }
     }
 
     fun toggleSettingsHaptic (

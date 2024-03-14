@@ -20,6 +20,16 @@ import kotlinx.coroutines.withContext
  */
 object PrefValues {
 
+    // region theme
+
+    var t_bg_path: String = ""
+    var t_bg_path_1: String = ""
+    var t_bg_path_2: String = ""
+    var t_bg_path_3: String = ""
+    var t_bg_path_4: String = ""
+    var t_bg_path_5: String = ""
+
+    // endregion
 
     // region app navigation
     var an_iconStyle: IconStyle = IconStyle(
@@ -40,13 +50,13 @@ object PrefValues {
     var an_blurAmount: Float = 0f
     var an_tint: Color = Color.Black
 
-    var an_option1: IconCoordinatesGenerationInput = IconCoordinatesGenerationInput(250.0, 150.0, 150.0, 20)
-    var an_option2: IconCoordinatesGenerationInput = IconCoordinatesGenerationInput(250.0, 125.0, 125.0, 20)
-    var an_option3: IconCoordinatesGenerationInput = IconCoordinatesGenerationInput(250.0, 100.0, 100.0, 20)
-    var an_option4: IconCoordinatesGenerationInput = IconCoordinatesGenerationInput(250.0, 75.0, 75.0, 30)
-    var an_option5: IconCoordinatesGenerationInput = IconCoordinatesGenerationInput(250.0, 50.0, 50.0, 40)
+    var an_option1: IconCoordinatesGenerationInput = IconCoordinatesGenerationInput(250.0, 175.0, 225.0, 20)
+    var an_option2: IconCoordinatesGenerationInput = IconCoordinatesGenerationInput(250.0, 150.0, 200.0, 20)
+    var an_option3: IconCoordinatesGenerationInput = IconCoordinatesGenerationInput(250.0, 125.0, 175.0, 20)
+    var an_option4: IconCoordinatesGenerationInput = IconCoordinatesGenerationInput(250.0, 100.0, 150.0, 30)
+    var an_option5: IconCoordinatesGenerationInput = IconCoordinatesGenerationInput(250.0, 75.0, 125.0, 40)
 
-    var an_vibration: VibrationData = VibrationData(false, 1f, 1f)
+    var an_vibration: VibrationData = VibrationData(true, 1f, 1f)
     // endregion
 
     // region fluid cursor
@@ -56,7 +66,7 @@ object PrefValues {
 
     // region slider
 
-    var sl_vibration: VibrationData = VibrationData()
+    var sl_vibration: VibrationData = VibrationData(active = true)
     var sl_tint: Color = Color.Black
     var sl_shouldBlur: Boolean = false
     var sl_selectionRadios: Float = 100f
@@ -75,11 +85,16 @@ object PrefValues {
 
     val changedValuesMap = mutableMapOf<String, Any>()
 
-    suspend fun loadAllValues(context: Context){
+    fun loadAllValues(context: Context){
         val prefManager = PreferencesManager.getInstance(context)
 
 // region theme
-//        wallpaper = prefManager.getData("wallPaper", wallpaper)
+        t_bg_path = prefManager.getData("t_bg_path", t_bg_path)
+        t_bg_path_1 = prefManager.getData("t_bg_path_1", t_bg_path_1)
+        t_bg_path_2 = prefManager.getData("t_bg_path_2", t_bg_path_2)
+        t_bg_path_3 = prefManager.getData("t_bg_path_3", t_bg_path_3)
+        t_bg_path_4 = prefManager.getData("t_bg_path_4", t_bg_path_4)
+        t_bg_path_5 = prefManager.getData("t_bg_path_5", t_bg_path_5)
 // endregion
 
 // region app navigation

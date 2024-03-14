@@ -21,6 +21,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -50,26 +51,26 @@ object _SettingsArt {
         mapOf<Type, @Composable (String, MutableState<Any>, Pair<Any, Any>?) -> Unit>(
             Float::class.java to { key, state, constraints ->
                 Column {
-                    H1(text = key)
-//                    if (constraints != null) {
-//                        Slider(
-//                            value = state.value.toString().toFloat(),
-//                            onValueChange = { state.value = it },
-//                            valueRange = constraints.first.toString()
-//                                .toFloat()..constraints.second.toString().toFloat(),
-//                        )
-//                    } else {
-//                        TextField(
-//                            value = state.value.toString(),
-//                            onValueChange = { state.value = it.toFloat() },
-//                            maxLines = 1
-//                        )
-//                    }
+                    H2(text = "$key: ${state.value.toString().toFloat().toInt()}")
+                    if (constraints != null) {
+                        Slider(
+                            value = state.value.toString().toFloat(),
+                            onValueChange = { state.value = it },
+                            valueRange = constraints.first.toString()
+                                .toFloat()..constraints.second.toString().toFloat(),
+                        )
+                    } else {
+                        TextField(
+                            value = state.value.toString(),
+                            onValueChange = { state.value = it.toFloat() },
+                            maxLines = 1
+                        )
+                    }
                 }
             },
             Int::class.java to { key, state, constraints ->
                 Column {
-                    H1(text = key)
+                    H2(text = key)
 //                    if (constraints != null) {
 //                        Slider(
 //                            value = state.value.toString().toFloat(),
@@ -205,30 +206,23 @@ object _SettingsArt {
             VibrationData::class.java to { key, state, constraints ->
                 val State = state as MutableState<VibrationData>
                 // TODO: select one of the presets in form of enum
-                Collapsable(
-                    text = {
-                        Row(
-                            Modifier,
-                            Arrangement.SpaceBetween,
-                            Alignment.CenterVertically
-                        ) {
-                            H1(text = "should vibrate")
-                            Checkbox(
-                                checked = state.value.active,
-                                onCheckedChange = {
-                                    state.value = state.value.copy(active = !state.value.active)
-                                })
-                        }
-                    },
-                    canOpen = state.value.active
+                Row(
+                    Modifier,
+                    Arrangement.SpaceBetween,
+                    Alignment.CenterVertically
                 ) {
-                    H2(text = "vibration type")
+                    H2(text = key)
+                    Checkbox(
+                        checked = state.value.active,
+                        onCheckedChange = {
+                            state.value = state.value.copy(active = !state.value.active)
+                        })
                 }
             },
             FluidCursorLooks::class.java to { key, state, constraints ->
                 val State = state as MutableState<FluidCursorLooks>
                 Collapsable(text = {
-                    H1(key)
+                    H2(key)
                 }) {
                     Column {
                         LabelForColor(label = "color", color = state.value.color) {

@@ -44,6 +44,7 @@ import com.dhruv.angular_launcher.core.appIcon.StaticAppIcon
 import com.dhruv.angular_launcher.core.database.room.AppDatabase
 import com.dhruv.angular_launcher.core.database.room.models.GroupAppCrossRef
 import com.dhruv.angular_launcher.core.database.room.models.GroupData
+import com.dhruv.angular_launcher.settings_screen.presentation.components.H1
 import com.dhruv.angular_launcher.settings_screen.presentation.components.H2
 
 @Composable
@@ -62,7 +63,7 @@ fun GroupsEditor (vm: GroupsEditingVM){
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
-        Text("Created Groups:")
+        H1(text = "Created Groups:")
         Spacer(modifier = Modifier.height(8.dp))
         LazyColumn {
             items(
@@ -70,11 +71,14 @@ fun GroupsEditor (vm: GroupsEditingVM){
                 key = { it._id }
             ) {group ->
                 Group(group) { vm.getGroup(group) }
+                Spacer(modifier = Modifier.height(10.dp))
             }
             item {
                 Button(
                     onClick = { DBVM.insertGroup(GroupData(name = "group ${groups.size}", iconKey = R.drawable.group_social.toString())) },
-                    Modifier.fillMaxWidth().padding(8.dp)
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
                 ) {
                     Text(text = "add new group",
                         Modifier
@@ -151,8 +155,19 @@ fun GroupsEditor (vm: GroupsEditingVM){
                                     )
                                     .clickable {
                                         when (checked) {
-                                            true -> DBVM.deleteConnection(GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName))
-                                            false -> DBVM.insertConnection(GroupAppCrossRef(vm.selectedGroup!!._id, app.packageName))
+                                            true -> DBVM.deleteConnection(
+                                                GroupAppCrossRef(
+                                                    vm.selectedGroup!!._id,
+                                                    app.packageName
+                                                )
+                                            )
+
+                                            false -> DBVM.insertConnection(
+                                                GroupAppCrossRef(
+                                                    vm.selectedGroup!!._id,
+                                                    app.packageName
+                                                )
+                                            )
                                         }
                                     }
                             ) {

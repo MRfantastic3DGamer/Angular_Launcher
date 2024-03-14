@@ -19,6 +19,9 @@ object ScreenUtils {
     val screenSize: Offset
         get() = Offset(screenWidth, screenHeight)
 
+    val HPerW: Float
+        get() = screenHeight / screenWidth
+
     fun fromRight(f: Float): Float = screenWidth  - f
     fun fromRight(dp: Dp): Dp = fToDp(screenWidth) - dp
     fun fromDown(f: Float): Float  = screenHeight - f

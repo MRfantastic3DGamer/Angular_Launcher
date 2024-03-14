@@ -38,31 +38,31 @@ fun AppNavigation (
                 data = SettingsColumnData("look", null, listOf(
                     EntryData("default icon style", iconStyle as MutableState<Any>, IconStyle::class.java),
                     EntryData("selected Icon style", selectedIconStyle as MutableState<Any>, IconStyle::class.java),
-                    EntryData("should blur", shouldBlur as MutableState<Any>, Boolean::class.java),
-                    EntryData("blur amount", blurAmount as MutableState<Any>, Float::class.java),
-                    EntryData("tint", tint as MutableState<Any>, Color::class.java),
+//                    EntryData("should blur", shouldBlur as MutableState<Any>, Boolean::class.java),
+//                    EntryData("blur amount", blurAmount as MutableState<Any>, Float::class.java),
+//                    EntryData("tint", tint as MutableState<Any>, Color::class.java),
                 )),
                 entryForType = _SettingsArt.DefaultEntry
             )
         }
-        item {
-            // Display settings related to icon positioning generation options
-            SettingsColumn(
-                data = SettingsColumnData("Icons Positioning Generation Options", null, listOf(
-                    EntryData("Option 1", option1 as MutableState<Any>, IconCoordinatesGenerationInput::class.java),
-                    EntryData("Option 2", option2 as MutableState<Any>, IconCoordinatesGenerationInput::class.java),
-                    EntryData("Option 3", option3 as MutableState<Any>, IconCoordinatesGenerationInput::class.java),
-                    EntryData("Option 4", option4 as MutableState<Any>, IconCoordinatesGenerationInput::class.java),
-                    EntryData("Option 5", option5 as MutableState<Any>, IconCoordinatesGenerationInput::class.java),
-                )),
-                entryForType = _SettingsArt.DefaultEntry
-            )
-        }
+//        item {
+//            // Display settings related to icon positioning generation options
+//            SettingsColumn(
+//                data = SettingsColumnData("Icons Positioning Generation Options", null, listOf(
+//                    EntryData("Option 1", option1 as MutableState<Any>, IconCoordinatesGenerationInput::class.java),
+//                    EntryData("Option 2", option2 as MutableState<Any>, IconCoordinatesGenerationInput::class.java),
+//                    EntryData("Option 3", option3 as MutableState<Any>, IconCoordinatesGenerationInput::class.java),
+//                    EntryData("Option 4", option4 as MutableState<Any>, IconCoordinatesGenerationInput::class.java),
+//                    EntryData("Option 5", option5 as MutableState<Any>, IconCoordinatesGenerationInput::class.java),
+//                )),
+//                entryForType = _SettingsArt.DefaultEntry
+//            )
+//        }
         item {
             // Display settings related to feel
             SettingsColumn(
                 data = SettingsColumnData("Feel", null, listOf(
-                    EntryData("Vibration Time", vibrationData as MutableState<Any>, VibrationData::class.java),
+                    EntryData("vibrate on selection change", vibrationData as MutableState<Any>, VibrationData::class.java),
                 )),
                 entryForType = _SettingsArt.DefaultEntry
             )

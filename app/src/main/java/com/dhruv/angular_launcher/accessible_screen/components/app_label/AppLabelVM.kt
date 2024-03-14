@@ -19,8 +19,14 @@ class AppLabelVM: ViewModel() {
         AppLabelValue.GetData.observeForever {
             offset = it.position
             if (it.appPackage != appPkg){
-                prevPkg = appPkg
-                appPkg = it.appPackage
+                if (appPkg == "-@"){
+                    appPkg = "@"
+                    prevPkg = "@"
+                }
+                else{
+                    prevPkg = appPkg
+                    appPkg = it.appPackage
+                }
                 iconJiggleTrigger = true
             }
             visibility = appPkg != "@"

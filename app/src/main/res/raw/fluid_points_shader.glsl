@@ -9,6 +9,7 @@ precision mediump float;
 uniform float u_time;
 uniform vec2 u_resolution;
 uniform vec2 u_mouse;
+uniform vec2 u_interaction;
 
 uniform float u_positions_X[MAX_ICONS];
 uniform float u_positions_Y[MAX_ICONS];
@@ -16,7 +17,7 @@ uniform float u_positions_Y[MAX_ICONS];
 
 void main() {
 
-    float value = 1./distance(gl_FragCoord.xy, u_mouse);
+    float value = 1./distance(gl_FragCoord.xy, u_mouse) * 1.5;
     vec2 t_pos = vec2(0., 0.);
     float t_dist = 100000.;
 
@@ -33,8 +34,8 @@ void main() {
 
     float insideCircle = step(value, radius);
 
-    vec4 color = insideCircle * vec4(1.0, 1.0, 1.0, 0.0);
-    color += (1.0 - insideCircle) * vec4(0.0, 0.0, 0.0, 1.0);
+    vec4 color = insideCircle * vec4(0.0, 0.0, 0.0, 0.0);
+    color += (1.0 - insideCircle) * vec4(1.0, 1.0, 1.0, 1.0);
 
     gl_FragColor = color;
 }

@@ -24,7 +24,6 @@ import com.dhruv.angular_launcher.accessible_screen.components.app_label.AppLabe
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.AppLabelValue
 import com.dhruv.angular_launcher.core.appIcon.StaticAppIcon
 import com.dhruv.angular_launcher.core.database.room.AppDatabase
-import com.dhruv.angular_launcher.debug.DebugLayerValues
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import kotlin.math.roundToInt
 
@@ -44,7 +43,7 @@ fun AppLabel (vm: AppLabelVM) {
     if (iconJiggle == 1.2f) {
         vm.iconJiggleTrigger = false
     }
-    DebugLayerValues.addString("icon jiggle (${vm.iconJiggleTrigger}): $iconJiggle", "icon jiggle")
+//    DebugLayerValues.addString("icon jiggle (${vm.iconJiggleTrigger}): $iconJiggle", "icon jiggle")
 
     if (AppLabelValue.useLaunchTrigger()) {
         val launchIntent = context.packageManager.getLaunchIntentForPackage(vm.prevPkg)
@@ -52,7 +51,7 @@ fun AppLabel (vm: AppLabelVM) {
         if (launchIntent != null) {
             context.startActivity(launchIntent)
         }
-        println("launched app ${AppLabelValue.GetData.value!!.appPackage}")
+        println("launched app ${vm.prevPkg}")
     }
     if (vm.visibility) {
         Box(modifier = Modifier.fillMaxSize()) {

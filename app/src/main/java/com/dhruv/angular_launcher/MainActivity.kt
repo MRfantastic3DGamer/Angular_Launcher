@@ -38,16 +38,15 @@ class MainActivity : ComponentActivity() {
         ScreenUtils.screenWidth = this.resources.displayMetrics.widthPixels.toFloat()
         ScreenUtils.screenHeight = this.resources.displayMetrics.heightPixels.toFloat()
 
+        AppsIconsDataValues.initialize(packageManager, AppDatabase.getInstance(context).appDataDao())
 
         setContent {
             val haptic = LocalHapticFeedback.current
 
-//            val scope = rememberCoroutineScope()
             val debugLayerVM by remember { mutableStateOf(DebugLayerVM()) }
 
             val settingsVM by remember { mutableStateOf(SettingsVM()) }
             val onboardingVM by remember { mutableStateOf(OnboardingVM(endOnboarding = {
-                AppsIconsDataValues.initialize(packageManager, AppDatabase.getInstance(context).appDataDao())
                 settingsVM.exitSettings(context)
             })) }
 

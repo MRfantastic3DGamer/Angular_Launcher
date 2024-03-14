@@ -56,7 +56,12 @@ fun AppsEditing (vm: AppsEditingVM) {
             ) {
                 H1(text = "Apps")
                 IconButton(onClick = { vm.ascending = !vm.ascending }) {
-                    Icon(imageVector = if (vm.ascending) Icons.Outlined.KeyboardArrowDown else Icons.Outlined.KeyboardArrowUp, contentDescription = "sort")
+                    Icon(
+                        imageVector = if (vm.ascending) Icons.Outlined.KeyboardArrowDown else Icons.Outlined.KeyboardArrowUp,
+                        contentDescription = "sort",
+                        Modifier,
+                        tint = Color.White,
+                    )
                 }
             }
         }

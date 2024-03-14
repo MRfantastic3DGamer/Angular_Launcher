@@ -80,7 +80,6 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
         vm.selectionIndex = RadialAppNavigationFunctions.getClosest(vm.offsetFromCenter + vm.center, allOffsets, 200f)
         if (vm.selectionIndex != vm.prevSelectionIndex){
             HapticsHelper.appSelectHaptic(context)
-            println("haptic")
         }
     }
     else{
@@ -89,7 +88,6 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
         vm.selectionAmount = emptyMap()
         if (vm.selectionIndex != vm.prevSelectionIndex){
             HapticsHelper.appSelectHaptic(context)
-            println("haptic")
         }
     }
 

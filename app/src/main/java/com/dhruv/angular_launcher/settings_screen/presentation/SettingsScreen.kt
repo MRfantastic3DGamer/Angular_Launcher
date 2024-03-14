@@ -68,7 +68,9 @@ fun SettingsScreen(
             Modifier.fillMaxSize()
         ){
             NavigationRail (
-                modifier = Modifier.width(50.dp),
+                modifier = Modifier
+                    .width(50.dp)
+                    .background(Color.Black),
                 containerColor = Color.Transparent,
                 contentColor = Color.Black,
                 windowInsets = WindowInsets(0,0,0,0),
@@ -76,10 +78,20 @@ fun SettingsScreen(
                     Icon(imageVector = Icons.Rounded.KeyboardArrowLeft, contentDescription = "back")
                 },
             ){
-                SettingsTab.entries.forEach {
-                    tabButton(text = it.name, selectedTab == it) {
-                        selectedTab = it
-                    }
+                tabButton(text = SettingsTab.Theme.name, selectedTab == SettingsTab.Theme) {
+                    selectedTab = SettingsTab.Theme
+                }
+                tabButton(text = SettingsTab.Apps.name, selectedTab == SettingsTab.Apps) {
+                    selectedTab = SettingsTab.Apps
+                }
+                tabButton(text = SettingsTab.Groups.name, selectedTab == SettingsTab.Groups) {
+                    selectedTab = SettingsTab.Groups
+                }
+                tabButton(text = SettingsTab.Slider.name, selectedTab == SettingsTab.Slider) {
+                    selectedTab = SettingsTab.Slider
+                }
+                tabButton(text = SettingsTab.AppNavigation.name, selectedTab == SettingsTab.AppNavigation) {
+                    selectedTab = SettingsTab.AppNavigation
                 }
             }
 

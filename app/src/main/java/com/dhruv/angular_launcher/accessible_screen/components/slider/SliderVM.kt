@@ -1,6 +1,8 @@
 package com.dhruv.angular_launcher.accessible_screen.components.slider
 
+import android.content.Context
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
@@ -12,9 +14,15 @@ import com.dhruv.angular_launcher.accessible_screen.components.slider.SliderFunc
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 import com.dhruv.angular_launcher.data.enums.SelectionMode
+import com.dhruv.angular_launcher.settings_screen.data.SettingsTab
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
-class SliderVM:ViewModel() {
+class SliderVM(
+    private val openSettings: (Context, SettingsTab) -> Unit
+) : ViewModel() {
+    fun goToEditGroups(context: Context) {
+        openSettings(context, SettingsTab.Groups)
+    }
 
     var selectionMode: SelectionMode by mutableStateOf(SelectionMode.NotSelected)
     var shouldUpdateSelection: Boolean by mutableStateOf(false)
@@ -43,6 +51,8 @@ class SliderVM:ViewModel() {
     var selectionIndex: Int by mutableStateOf(0)
     var selectionPosY: Float by mutableStateOf(0f)
     var touchPos: Offset by mutableStateOf(Offset.Zero)
+
+    var moveToSettingsValue by mutableFloatStateOf(0f)
 
     init {
         SliderValues.GetPersistentData.observeForever {

@@ -36,7 +36,7 @@ class AccessibleScreenVM(): ViewModel() {
                 NavigationStage.SelectionModeSelection -> {
 
                     // TODO: make it editable
-                    val selectionChoice = arrayListOf(SelectionMode.ByAlphabet, SelectionMode.ByGroup, SelectionMode.BySearch)
+                    val selectionChoice = arrayListOf(SelectionMode.ByAlphabet, SelectionMode.ByGroup, SelectionMode.ByGroup)
 
                     val screenHeight = ScreenUtils.screenHeight
                     val firstCutHeight = PrefValues.s_firstCut * screenHeight
@@ -61,7 +61,9 @@ class AccessibleScreenVM(): ViewModel() {
                         sliderVisibility = false
                         navigationMode = NavigationMode.NotSelected
                         navigationStage = NavigationStage.SelectionModeSelection
-                        AppLabelValue.launchAppIfPossible()
+                        if (!focusOnSlider) {
+                            AppLabelValue.launchAppIfPossible()
+                        }
                     }
 
                     SliderValues.updateSliderData(

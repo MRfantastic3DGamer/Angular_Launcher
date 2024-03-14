@@ -46,9 +46,6 @@ fun Slider (
     }
 
     LaunchedEffect(key1 = vm.touchPos){
-//        DebugLayerValues.addString((allOptions.size-1).toString(), "el_cnt")
-//        DebugLayerValues.addString((vm.height).toString(), "sl_h")
-//        DebugLayerValues.addString((vm.touchPos.y - vm.sliderPos.y).toString(), "f-pos")
         if (vm.shouldUpdateSelection) {
             val selection = SliderFunctions.calculateCurrentSelection(
                 allOptions.size,
@@ -61,7 +58,6 @@ fun Slider (
                 HapticsHelper.groupSelectHaptic(context)
             }
             vm.selectionPosY = selection.posY
-//            DebugLayerValues.addString((selection.index).toString(), "sl_select")
         }
     }
 
@@ -89,7 +85,15 @@ fun Slider (
         )
     )
 
+    // open settings if user is trying to use groups but does`nt have em
     val groupsAvailable = allOptions.isNotEmpty()
+    if (!groupsAvailable && vm.visible){
+        vm.moveToSettingsValue += 0.01f
+        if (vm.moveToSettingsValue > 2.5){
+            vm.moveToSettingsValue = 0f
+            vm.goToEditGroups(context)
+        }
+    }
     AnimatedVisibility(
         visible = !groupsAvailable && vm.visible,
         Modifier,

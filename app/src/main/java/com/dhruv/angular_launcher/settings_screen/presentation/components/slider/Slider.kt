@@ -32,37 +32,37 @@ fun Slider (
             // Display settings related to main properties
             SettingsColumn(
                 data = SettingsColumnData("Main", null, listOf(
-                    EntryData("Width", width as MutableState<Any>, Float::class.java),
-                    EntryData("Height", height as MutableState<Any>, Float::class.java),
+                    EntryData("Width", width as MutableState<Any>, Float::class.java, constraints = Pair(80f, 120f)),
+                    EntryData("Height", height as MutableState<Any>, Float::class.java, constraints = Pair(1000f, 1600f)),
                 )),
                 entryForType = _SettingsArt.DefaultEntry
             )
         }
 
-        item {
-            // Display settings related to constraints
-            SettingsColumn(
-                data = SettingsColumnData("Constraints", null, listOf(
-                    EntryData("Top Padding", topPadding as MutableState<Any>, Float::class.java),
-                    EntryData("Down Padding", downPadding as MutableState<Any>, Float::class.java),
-                )),
-                entryForType = _SettingsArt.DefaultEntry
-            )
-        }
+//        item {
+//            // Display settings related to constraints
+//            SettingsColumn(
+//                data = SettingsColumnData("Constraints", null, listOf(
+//                    EntryData("Top Padding", topPadding as MutableState<Any>, Float::class.java),
+//                    EntryData("Down Padding", downPadding as MutableState<Any>, Float::class.java),
+//                )),
+//                entryForType = _SettingsArt.DefaultEntry
+//            )
+//        }
 
-        item {
-            // Display settings related to looks
-            SettingsColumn(
-                data = SettingsColumnData("Looks", null, listOf(
-                    EntryData("Trigger Curve Edge Count", triggerCurveEdgeCount as MutableState<Any>, Int::class.java),
-                    EntryData("Selection Curve Offset", selectionCurveOffset as MutableState<Any>, Float::class.java),
-                    EntryData("Should Blur", shouldBlur as MutableState<Any>, Boolean::class.java),
-                    EntryData("Blur Amount", blurAmount as MutableState<Any>, Float::class.java),
-                    EntryData("Tint", tint as MutableState<Any>, Color::class.java),
-                )),
-                entryForType = _SettingsArt.DefaultEntry
-            )
-        }
+//        item {
+//            // Display settings related to looks
+//            SettingsColumn(
+//                data = SettingsColumnData("Looks", null, listOf(
+//                    EntryData("Trigger Curve Edge Count", triggerCurveEdgeCount as MutableState<Any>, Int::class.java),
+//                    EntryData("Selection Curve Offset", selectionCurveOffset as MutableState<Any>, Float::class.java),
+//                    EntryData("Should Blur", shouldBlur as MutableState<Any>, Boolean::class.java),
+//                    EntryData("Blur Amount", blurAmount as MutableState<Any>, Float::class.java),
+//                    EntryData("Tint", tint as MutableState<Any>, Color::class.java),
+//                )),
+//                entryForType = _SettingsArt.DefaultEntry
+//            )
+//        }
 
         item {
             // Display settings related to feel

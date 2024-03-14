@@ -70,8 +70,8 @@ open class ShaderRenderer : GLSurfaceView.Renderer {
     private val bytesPerFloat = 4
 
     val max_icons = 100
-    private var mouseX = 0f
-    private var mouseY = 0f
+    private var mouse = Offset.Infinite
+    private var interactionPos = Offset.Infinite
 
     private var iconsPosX = listOf<Float>()
     private var iconsPosY = listOf<Float>()
@@ -86,9 +86,13 @@ open class ShaderRenderer : GLSurfaceView.Renderer {
     private var snapshotBuffer = initializeSnapshotBuffer(0, 0)
 
 
+    fun interactionTrigger(pos: Offset) {
+        interactionPos = pos
+        frameCount = 0f
+    }
+
     fun updateMousePos(x: Float, y:Float) {
-        mouseX = x
-        mouseY = y
+        mouse = Offset(x, y)
     }
 
     fun setIcons(positions: List<Offset>){
@@ -167,6 +171,7 @@ open class ShaderRenderer : GLSurfaceView.Renderer {
                 resolutionUniformLocation = glGetUniformLocation(newProgramId, "u_resolution")
                 timeUniformLocation = glGetUniformLocation(newProgramId, "u_time")
                 cursorUniformLocation = glGetUniformLocation(newProgramId, "u_mouse")
+                interactionUniformLocation = glGetUniformLocation(newProgramId, "u_interaction")
                 iconsXUniformLocation = glGetUniformLocation(newProgramId, "u_positions_X")
                 iconsYUniformLocation = glGetUniformLocation(newProgramId, "u_positions_Y")
             } else {
@@ -200,6 +205,7 @@ open class ShaderRenderer : GLSurfaceView.Renderer {
     private var resolutionUniformLocation: Int? = null
     private var timeUniformLocation: Int? = null
     private var cursorUniformLocation: Int? = null
+    private var interactionUniformLocation: Int? = null
     private var iconsXUniformLocation: Int? = null
     private var iconsYUniformLocation: Int? = null
 
@@ -243,7 +249,11 @@ open class ShaderRenderer : GLSurfaceView.Renderer {
             }
 
             cursorUniformLocation?.let {
-                glUniform2f(it, mouseX, mouseY)
+                glUniform2f(it, mouse.x, mouse.y)
+            }
+
+            interactionUniformLocation?.let {
+                glUniform2f(it, interactionPos.x, interactionPos.y)
             }
 
             iconsXUniformLocation?.let {
