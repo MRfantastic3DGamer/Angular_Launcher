@@ -1,28 +1,20 @@
 package com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.presentation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateOffsetAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
-import com.dhruv.angular_launcher.R
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.AppLabelValue
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.FluidCursorVM
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.CursorState
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorData
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorValues
-import com.dhruv.angular_launcher.accessible_screen.components.glsl_art.composable.GLShader
-import com.dhruv.angular_launcher.accessible_screen.components.glsl_art.renderer.ShaderRenderer
-import com.dhruv.angular_launcher.accessible_screen.components.glsl_art.renderer.readTextFileFromResource
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigationFunctions
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigatorVM
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorValues
@@ -32,27 +24,12 @@ import com.dhruv.angular_launcher.data.enums.SelectionMode
 import com.dhruv.angular_launcher.haptics.HapticsHelper
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun RadialAppNavigation (vm: RadialAppNavigatorVM){
 
     val context = LocalContext.current
     val DBVM = AppDatabase.getViewModel(context)
     val fluidCursorVM by remember { mutableStateOf(FluidCursorVM()) }
-
-    val fragmentShader = context.readTextFileFromResource(R.raw.fluid_points_shader)
-    val vertexShader = context.readTextFileFromResource(R.raw.simple_vertex_shader)
-
-
-    val shaderRenderer = remember {
-        ShaderRenderer().apply {
-            setShaders(
-                fragmentShader,
-                vertexShader,
-                "MainListing polka shade"
-            )
-        }
-    }
 
     val appsPerGroup = DBVM.groups.collectAsState(initial = emptyList()).value.map {
         it._id.toString() to DBVM.getAppsForGroup(it._id).collectAsState(initial = emptyList()).value.map { it.packageName }
@@ -107,18 +84,13 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
 
     AppLabelValue.updatePackageState( appsPkgsList.getOrElse(vm.selectionIndex, {"@"}) )
 
-    shaderRenderer.updateMousePos(cursorPos.x, ScreenUtils.fromDown(cursorPos.y))
-    GLShader(
-        modifier = Modifier
-            .fillMaxSize(),
-        renderer = shaderRenderer,
-    )
+    vm.mousePosToShader(cursorPos.x, ScreenUtils.fromDown(cursorPos.y))
 
     if (vm.visibility){
         vm.selectionAmount = RadialAppNavigationFunctions.getIconSelection(cursorPos, allOffsets, 200f)
         val iconSizeOffset = Offset(vm.iconStyle.size.value, vm.iconStyle.size.value)
 
-        shaderRenderer.setIcons(allOffsets.map { it.copy(y = ScreenUtils.fromDown(it.y)) })
+        vm.iconPositionsToShader(allOffsets.map { it.copy(y = ScreenUtils.fromDown(it.y)) })
         allOffsets.forEachIndexed { index, it ->
             if (index in appsPkgsList.indices) {
                 val pkgName = appsPkgsList[index]
@@ -129,6 +101,6 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
 //        FluidCursor(vm = fluidCursorVM)
     }
     else{
-        shaderRenderer.setIcons(emptyList())
+        vm.iconPositionsToShader(emptyList())
     }
 }

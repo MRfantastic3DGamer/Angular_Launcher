@@ -17,7 +17,7 @@ uniform float u_positions_Y[MAX_ICONS];
 
 void main() {
 
-    float value = 1./distance(gl_FragCoord.xy, u_mouse) * 1.5;
+    float value = 1./distance(gl_FragCoord.xy, u_mouse) * 1.2;
     vec2 t_pos = vec2(0., 0.);
     float t_dist = 100000.;
 
