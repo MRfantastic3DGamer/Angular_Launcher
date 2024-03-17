@@ -1,21 +1,30 @@
 package com.dhruv.angular_launcher.settings_screen.presentation.components.theme
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -28,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -35,8 +45,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import com.dhruv.angular_launcher.accessible_screen.components.glsl_art.renderer.SHADER_START
 import com.dhruv.angular_launcher.core.database.prefferences.PreferencesManager
 import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.settings_screen.presentation.components.H1
+import com.dhruv.angular_launcher.settings_screen.presentation.components.H2
 
 
 val MainImageWidth = 200
@@ -56,21 +69,7 @@ fun Theme () {
     var bg4 by remember { mutableStateOf(PrefValues.t_bg_path_4) }
     var bg5 by remember { mutableStateOf(PrefValues.t_bg_path_5) }
 
-    ShaderEditor(
-        lines = shader,
-        onChangeLine = { i, s ->
-            shader = shader.toMutableList().apply { set(i, s) }
-        },
-        onDelLine = { i ->
-            shader = shader.toMutableList().apply { removeAt(i) }
-        },
-        onNewLine = { i ->
-            shader = shader.toMutableList().apply { add(i, "") }
-        },
-        onFinishEditing = {
-            prefManager.saveData("t_shader", createPera(shader))
-        }
-    )
+    var isEditingShader by remember { mutableStateOf(false) }
 
     val picker = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
@@ -114,6 +113,58 @@ fun Theme () {
             bg5 = uris[4]
         }
     }
+
+    Column {
+        DefaultShaderOption(name = "Blob apps") {
+            shader = GetLines(DefaultShaderOptions.blobs_Apps)
+            prefManager.saveData("t_shader", createPera(shader))
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        AnimatedVisibility(visible = !isEditingShader) {
+            Button(onClick = {
+                prefManager.saveData("t_shader", createPera(shader))
+                isEditingShader = true
+            }) {
+                H2(text = "start editing")
+            }
+        }
+        Spacer(modifier = Modifier.height(2.dp))
+        AnimatedVisibility(visible = isEditingShader) {
+            ShaderEditor(
+                lines = shader,
+                onChangeLine = { i, s ->
+                    shader = shader.toMutableList().apply { set(i, s) }
+                },
+                onDelLine = { i ->
+                    shader = shader.toMutableList().apply { removeAt(i) }
+                },
+                onNewLine = { i ->
+                    shader = shader.toMutableList().apply { add(i, "") }
+                },
+                onFinishEditing = {
+                    prefManager.saveData("t_shader", createPera(shader))
+                },
+                copy = {
+                    val shaderText = SHADER_START + "\n" + createPera(shader)
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+                        val clipboard =
+                            context.getSystemService(Context.CLIPBOARD_SERVICE) as android.text.ClipboardManager
+                        clipboard.setText(shaderText)
+                    } else {
+                        val clipboard =
+                            context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        val clip = ClipData.newPlainText("Copied Text", shaderText)
+                        clipboard.setPrimaryClip(clip)
+                    }
+                },
+                closeEditor = {
+                    isEditingShader = false
+                }
+            )
+        }
+    }
+
+
 
 //    Column {
 //
@@ -194,8 +245,25 @@ fun GetLines(pera: String): MutableList<String> {
 }
 fun createPera(lines: List<String>): String{
     var res = ""
-    lines.forEach { res += "\n$it" }
+    lines.forEachIndexed{i, it ->
+        res += "${ if (i != 0) "\n" else ""}$it"
+    }
     return res
+}
+
+@Composable
+fun DefaultShaderOption(name: String, onSelect: ()->Unit) {
+    Text(
+        text = name,
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp, vertical = 5.dp)
+            .clip(RoundedCornerShape(100))
+            .background(Color(1.0f, 0.922f, 0.231f, 1.0f))
+            .clickable {
+                onSelect()
+            }
+    )
 }
 
 @Composable
@@ -204,11 +272,13 @@ fun ShaderEditor(
     onNewLine: (Int) -> Unit,
     onDelLine: (Int) -> Unit,
     onChangeLine: (Int, String) -> Unit,
-    onFinishEditing: ()->Unit,
+    onFinishEditing: () -> Unit,
+    copy: ()->Unit,
+    closeEditor: () -> Unit,
 ) {
     LazyColumn {
         item {
-            Text(text = "Editor")
+            H1(text = "Editor")
         }
         items(lines.size) { i ->
 
@@ -221,7 +291,9 @@ fun ShaderEditor(
             ) {
                 TextField(
                     value = lines[i],
-                    onValueChange = { onChangeLine(i, it) },
+                    onValueChange = {
+                        onChangeLine(i, it)
+                    },
                     Modifier
                         .fillMaxWidth()
                         .background(Color.Black),
@@ -249,7 +321,6 @@ fun ShaderEditor(
                                     .size(20.dp)
                                     .clickable {
                                         onDelLine(i)
-                                        onFinishEditing()
                                     }
                             )
                             Divider()
@@ -261,7 +332,6 @@ fun ShaderEditor(
                                     .size(20.dp)
                                     .clickable {
                                         onNewLine(i + 1)
-                                        onFinishEditing()
                                     }
                             )
                         }
@@ -276,9 +346,34 @@ fun ShaderEditor(
                             fontSize = TextUnit(10f, TextUnitType.Sp)
                         )
                     },
-                    keyboardActions = KeyboardActions(onAny = { onFinishEditing() })
                 )
             }
+        }
+        item {
+            Row (
+                Modifier.fillMaxWidth(),
+                Arrangement.SpaceEvenly,
+                Alignment.CenterVertically
+            ){
+                Button(
+                    onClick = { closeEditor() },
+                ) {
+                    H2(text = "close")
+                }
+                Button(
+                    onClick = { copy() },
+                ) {
+                    H2(text = "copy")
+                }
+                Button(
+                    onClick = { onFinishEditing() },
+                ) {
+                    H2(text = "save")
+                }
+            }
+        }
+        item {
+            Spacer(modifier = Modifier.height(500.dp))
         }
     }
 }
@@ -291,23 +386,13 @@ private fun EditorPrev() {
     "vec2 t_pos = vec2(0., 0.);",
     "float t_dist = 100000.;",
     "",
-    "for(int i=0;i<MAX_ICONS;++i)",
+    "for(int i=0;i<com.dhruv.angular_launcher.accessible_screen.components.glsl_art.MAX_ICONS;++i)",
     "{",
     "    if (u_positions_X[i] == -10000.)",
     "        break;",
     "    t_pos = vec2(u_positions_X[i], u_positions_Y[i]);",
     "    t_dist = min(t_dist, distance(gl_FragCoord.xy, t_pos));",
     "}",
-    "value += 1./t_dist;",
-    "",
-    "float radius = 1./50.0;",
-    "",
-    "float insideCircle = step(value, radius);",
-    "",
-    "vec4 color = insideCircle * vec4(0.0, 0.0, 0.0, 0.0);",
-    "color += (1.0 - insideCircle) * vec4(1.0, 1.0, 1.0, 1.0);",
-    "",
-    "gl_FragColor = color;",
     )
-    ShaderEditor(lines = lines, {i->}, {i->}, {i,s -> }, {})
+    ShaderEditor(lines = lines, { i->}, { i->}, { i, s -> }, {}, {}, {})
 }

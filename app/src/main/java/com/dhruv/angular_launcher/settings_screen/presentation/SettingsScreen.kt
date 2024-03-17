@@ -174,7 +174,7 @@ fun SettingsScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd),
         ) {
-            Text(text = "Save")
+            Text(text = "Back")
         }
     }
 }

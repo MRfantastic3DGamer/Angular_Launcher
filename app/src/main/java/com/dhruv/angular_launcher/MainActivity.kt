@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalHapticFeedback
 import com.dhruv.angular_launcher.accessible_screen.AccessibleScreenVM
 import com.dhruv.angular_launcher.accessible_screen.presentation.AccessibleScreen
 import com.dhruv.angular_launcher.core.database.apps_data.AppsIconsDataValues
@@ -41,8 +40,6 @@ class MainActivity : ComponentActivity() {
         AppsIconsDataValues.initialize(packageManager, AppDatabase.getInstance(context).appDataDao())
 
         setContent {
-            val haptic = LocalHapticFeedback.current
-
             val debugLayerVM by remember { mutableStateOf(DebugLayerVM()) }
 
             val settingsVM by remember { mutableStateOf(SettingsVM()) }

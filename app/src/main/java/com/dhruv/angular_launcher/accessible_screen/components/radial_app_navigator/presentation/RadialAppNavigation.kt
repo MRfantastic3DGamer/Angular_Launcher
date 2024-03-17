@@ -6,12 +6,9 @@ import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.AppLabelValue
-import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.FluidCursorVM
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.CursorState
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorData
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorValues
@@ -29,10 +26,9 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
 
     val context = LocalContext.current
     val DBVM = AppDatabase.getViewModel(context)
-    val fluidCursorVM by remember { mutableStateOf(FluidCursorVM()) }
 
     val appsPerGroup = DBVM.groups.collectAsState(initial = emptyList()).value.map {
-        it._id.toString() to DBVM.getAppsForGroup(it._id).collectAsState(initial = emptyList()).value.map { it.packageName }
+        it._id.toString() to DBVM.getVisibleAppsForGroup(it._id).collectAsState(initial = emptyList()).value.map { it.packageName }
     }.toMap()
 
     val appsPkgsList: List<String> = when (vm.selectionMode) {

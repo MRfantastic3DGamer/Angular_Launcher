@@ -30,6 +30,7 @@ object AppsIconsDataValues {
             newData.forEach { app ->
                 appsDao.insert(app)
             }
+//            appsDao.deleteExtraApps(newData.map { it.packageName })
         }
     }
 }

@@ -21,4 +21,7 @@ interface AppDataDao {
 
     @Query("SELECT * FROM apps WHERE visible = 1 ORDER BY name")
     fun getAllVisibleApps(): Flow<List<AppData>>
+
+    @Query("DELETE FROM apps WHERE apps.name NOT IN (:installedApps)")
+    fun deleteExtraApps(installedApps: List<String>)
 }

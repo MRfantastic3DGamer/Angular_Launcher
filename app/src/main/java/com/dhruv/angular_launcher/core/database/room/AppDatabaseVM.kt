@@ -82,6 +82,10 @@ class AppDatabaseVM(
     fun getAppsForGroup(groupId: Int): Flow<List<AppData>> {
         return groupAppCrossRefDao.getAppsForGroup(groupId)
     }
+    // Functions for GroupAppCrossRefDao
+    fun getVisibleAppsForGroup(groupId: Int): Flow<List<AppData>> {
+        return groupAppCrossRefDao.getVisibleAppsForGroup(groupId)
+    }
     fun getGroupsForApp(appId: String): Flow<List<GroupData>> {
         return groupAppCrossRefDao.getGroupsForApp(appId)
     }

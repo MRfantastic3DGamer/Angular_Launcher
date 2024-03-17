@@ -4,7 +4,6 @@
 precision mediump float;
 #endif
 #define MAX_ICONS 100
-#define INTERACTION_START_DISTANCE 100
 
 uniform float u_time;
 uniform vec2 u_resolution;

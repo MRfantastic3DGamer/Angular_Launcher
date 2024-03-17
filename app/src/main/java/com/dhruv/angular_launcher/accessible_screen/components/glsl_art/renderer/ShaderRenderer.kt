@@ -36,6 +36,7 @@ import android.opengl.GLES20.glValidateProgram
 import android.opengl.GLES20.glVertexAttribPointer
 import android.opengl.GLES20.glViewport
 import android.opengl.GLSurfaceView
+import android.opengl.GLUtils
 import android.os.Trace
 import androidx.compose.ui.geometry.Offset
 import androidx.palette.graphics.Palette
@@ -76,6 +77,7 @@ open class ShaderRenderer : GLSurfaceView.Renderer {
     private var iconsPosX = listOf<Float>()
     private var iconsPosY = listOf<Float>()
 
+    // texture buffer
     private val verticesData by lazy {
         ByteBuffer.allocateDirect(quadVertices.size * bytesPerFloat)
             .order(ByteOrder.nativeOrder()).asFloatBuffer().also {
@@ -128,9 +130,12 @@ open class ShaderRenderer : GLSurfaceView.Renderer {
 
     private var programId: Int? = null
 
-    private lateinit var fragmentShader: String
+    private var fragmentShader: String = ""
     private lateinit var vertexShader: String
     private lateinit var eventSource: String
+    private var texturesChanged = false
+    private val textures = mutableMapOf<String, Bitmap>()
+    private val textureBindings = mutableMapOf<String, Bitmap>()
 
     fun setShaders(fragmentShader: String, vertexShader: String, source: String) {
         this.fragmentShader = fragmentShader
@@ -138,6 +143,17 @@ open class ShaderRenderer : GLSurfaceView.Renderer {
         this.eventSource = source
         shouldPlay.compareAndSet(false, true)
         isProgramChanged.compareAndSet(false, true)
+    }
+
+    fun setTexture(name: String, texture: Bitmap) {
+        textures[name] = texture
+        texturesChanged = true
+        GLUtils.texImage2D(
+            0,
+            0,
+            texture,
+            0
+        )
     }
 
     private fun setupProgram() {
@@ -149,7 +165,7 @@ open class ShaderRenderer : GLSurfaceView.Renderer {
                 return
             }
 
-            val fragShader = createAndVerifyShader(fragmentShader, GL_FRAGMENT_SHADER)
+            val fragShader = createAndVerifyShader(fragmentShader!!, GL_FRAGMENT_SHADER)
             val vertShader = createAndVerifyShader(vertexShader, GL_VERTEX_SHADER)
 
             glAttachShader(newProgramId, vertShader)
@@ -172,8 +188,11 @@ open class ShaderRenderer : GLSurfaceView.Renderer {
                 timeUniformLocation = glGetUniformLocation(newProgramId, "u_time")
                 cursorUniformLocation = glGetUniformLocation(newProgramId, "u_mouse")
                 interactionUniformLocation = glGetUniformLocation(newProgramId, "u_interaction")
+                texture1UniformLocation = glGetUniformLocation(newProgramId, "u_texture1")
                 iconsXUniformLocation = glGetUniformLocation(newProgramId, "u_positions_X")
                 iconsYUniformLocation = glGetUniformLocation(newProgramId, "u_positions_Y")
+                textureUniformLocations = textures.map { it.key to glGetUniformLocation(newProgramId, it.key) }.toMap().toMutableMap()
+
             } else {
 //                Timber.d("Validating of program failed.");
                 return
@@ -206,8 +225,10 @@ open class ShaderRenderer : GLSurfaceView.Renderer {
     private var timeUniformLocation: Int? = null
     private var cursorUniformLocation: Int? = null
     private var interactionUniformLocation: Int? = null
+    private var texture1UniformLocation: Int? = null
     private var iconsXUniformLocation: Int? = null
     private var iconsYUniformLocation: Int? = null
+    private var textureUniformLocations = mutableMapOf<String, Int?>()
 
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -254,6 +275,10 @@ open class ShaderRenderer : GLSurfaceView.Renderer {
 
             interactionUniformLocation?.let {
                 glUniform2f(it, interactionPos.x, interactionPos.y)
+            }
+
+            texture1UniformLocation.let {
+
             }
 
             iconsXUniformLocation?.let {
@@ -351,7 +376,7 @@ open class ShaderRenderer : GLSurfaceView.Renderer {
     private val shouldPlay = AtomicBoolean(false)
 
     fun onResume() {
-        shouldPlay.compareAndSet(false, ::fragmentShader.isInitialized)
+        shouldPlay.compareAndSet(false, true)
     }
 
     fun onPause() {
@@ -382,3 +407,22 @@ fun Context.readTextFileFromResource(
     }
     return body.toString()
 }
+
+val SHADER_START = """
+    #version 100
+
+    #ifdef GL_ES
+    precision mediump float;
+    #endif
+    #define com.dhruv.angular_launcher.accessible_screen.components.glsl_art.MAX_ICONS 100
+
+    uniform float u_time;
+    uniform vec2 u_resolution;
+    uniform vec2 u_mouse;
+    uniform vec2 u_interaction;
+
+    uniform float u_positions_X[com.dhruv.angular_launcher.accessible_screen.components.glsl_art.MAX_ICONS];
+    uniform float u_positions_Y[com.dhruv.angular_launcher.accessible_screen.components.glsl_art.MAX_ICONS];
+"""
+
+val SHADER_SOURCE = "MainListing polka shade"

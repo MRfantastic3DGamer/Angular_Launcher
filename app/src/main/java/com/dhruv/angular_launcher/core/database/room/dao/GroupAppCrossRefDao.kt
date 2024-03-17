@@ -25,6 +25,10 @@ interface GroupAppCrossRefDao {
     fun getAppsForGroup(groupId: Int): Flow<List<AppData>>
 
     @Transaction
+    @Query("SELECT apps.* FROM apps INNER JOIN group_app_cross_ref ON apps.packageName = group_app_cross_ref.appId WHERE group_app_cross_ref.groupId = :groupId AND apps.visible = 1")
+    fun getVisibleAppsForGroup(groupId: Int): Flow<List<AppData>>
+
+    @Transaction
     @Query("SELECT groups.* FROM groups INNER JOIN group_app_cross_ref ON groups._id = group_app_cross_ref.groupId WHERE group_app_cross_ref.appId = :appId")
     fun getGroupsForApp(appId: String): Flow<List<GroupData>>
 

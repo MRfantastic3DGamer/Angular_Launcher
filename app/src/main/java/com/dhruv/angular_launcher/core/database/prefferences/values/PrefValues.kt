@@ -28,7 +28,7 @@ object PrefValues {
             vec2 t_pos = vec2(0., 0.);
             float t_dist = 100000.;
         
-            for(int i=0;i<MAX_ICONS;++i)
+            for(int i=0;i<com.dhruv.angular_launcher.accessible_screen.components.glsl_art.MAX_ICONS;++i)
             {
                 if (u_positions_X[i] == -10000.)
                     break;
@@ -167,12 +167,12 @@ object PrefValues {
     suspend fun save(context: Context){
         return withContext(Dispatchers.IO){
             val prefManager = PreferencesManager.getInstance(context)
-            println("saving")
+//            println("saving")
             changedValuesMap.forEach { (key, value) ->
-                println("$key -> $value")
+//                println("$key -> $value")
                 prefManager.saveData(key, value.toString())
             }
-            println("saving complete")
+//            println("saving complete")
         }
     }
 }
