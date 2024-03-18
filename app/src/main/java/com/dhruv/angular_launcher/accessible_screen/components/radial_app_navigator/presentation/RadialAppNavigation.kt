@@ -82,15 +82,22 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
 
     vm.mousePosToShader(cursorPos.x, ScreenUtils.fromDown(cursorPos.y))
 
+    val iconSizeOffset = Offset(vm.iconStyle.size.value, vm.iconStyle.size.value)
     if (vm.visibility){
         vm.selectionAmount = RadialAppNavigationFunctions.getIconSelection(cursorPos, allOffsets, 200f)
-        val iconSizeOffset = Offset(vm.iconStyle.size.value, vm.iconStyle.size.value)
 
         vm.iconPositionsToShader(allOffsets.map { it.copy(y = ScreenUtils.fromDown(it.y)) })
         allOffsets.forEachIndexed { index, it ->
             if (index in appsPkgsList.indices) {
                 val pkgName = appsPkgsList[index]
-                AppIcon(pkgName = pkgName, style = vm.iconStyle, selectionStyle = vm.selectedIconStyle, painter = vm.appsIcons[pkgName], offset = it, selected = vm.selectionAmount[index]?:0f)
+                AppIcon(
+                    pkgName = pkgName,
+                    style = vm.iconStyle,
+                    selectionStyle = vm.selectedIconStyle,
+                    painter = vm.appsIcons[pkgName],
+                    offset = it,
+                    selected = vm.selectionAmount[index] ?: 0f
+                )
             }
         }
 

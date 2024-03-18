@@ -5,8 +5,8 @@ import android.content.SharedPreferences
 import androidx.compose.ui.graphics.Color
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
-import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
 import com.dhruv.angular_launcher.core.appIcon.IconStyle
+import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
 
 class PreferencesManager private constructor(context: Context) {
 
@@ -52,6 +52,11 @@ class PreferencesManager private constructor(context: Context) {
         editor.putString(key, value.toString())
         editor.apply()
     }
+    fun saveData(key: String, value: ShaderData) {
+        val editor = sharedPreferences.edit()
+        editor.putString(key, value.toString())
+        editor.apply()
+    }
 
     fun getData(key: String, defaultValue: String): String {
         return sharedPreferences.getString(key, defaultValue) ?: defaultValue
@@ -75,6 +80,10 @@ class PreferencesManager private constructor(context: Context) {
     fun getData(key: String, defaultValue: IconStyle): IconStyle {
         val storedValue = sharedPreferences.getString(key, defaultValue.toString())
         return IconStyle.fromString(storedValue ?: defaultValue.toString())
+    }
+    fun getData(key: String, defaultValue: ShaderData): ShaderData {
+        val storedValue = sharedPreferences.getString(key, defaultValue.toString())
+        return ShaderData.fromString(storedValue ?: defaultValue.toString())
     }
     fun getData(key: String, defaultValue: Color): Color {
         val storedValue = sharedPreferences.getString(key, ColortoString(defaultValue))

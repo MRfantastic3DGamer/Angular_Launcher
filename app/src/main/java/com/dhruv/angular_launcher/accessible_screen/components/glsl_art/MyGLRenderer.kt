@@ -1,10 +1,13 @@
 package com.dhruv.angular_launcher.accessible_screen.components.glsl_art
+import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.GLUtils
 import android.util.Size
 import androidx.compose.ui.geometry.Offset
+import com.dhruv.angular_launcher.core.database.prefferences.ShaderData
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import javax.microedition.khronos.egl.EGLConfig
@@ -14,48 +17,50 @@ const val MAX_ICONS = 100
 
 class MyGLRenderer(
     screenSize: Size,
-    private val textures: Map<String, Bitmap>
+    private val resources: Resources,
+    private val shaderData: ShaderData,
 ) : GLSurfaceView.Renderer {
     private var textureHandle: Int = 0
     private lateinit var bitmap: Bitmap
 
     private val vertexShaderCode =
-        "attribute vec4 aPosition;" +
-                "attribute vec2 aTexCoord;" +
-                "varying vec2 vTexCoord;" +
-                "void main() {" +
-                "  gl_Position = aPosition;" +
-                "  vTexCoord = aTexCoord / vec2(${screenSize.height/ screenSize.width}., 1.);" +
-                "}"
+"attribute vec4 aPosition;" +
+"attribute vec2 aTexCoord;" +
+"varying vec2 vTexCoord;" +
+"void main() {" +
+"   gl_Position = aPosition;" +
+"   vTexCoord = aTexCoord / vec2(${screenSize.height/ screenSize.width}., 1.);" +
+"}"
 
-    private val fragmentShaderCode = """
-        #version 100
-        #ifdef GL_ES
-        precision mediump float;
-        #endif
-        #define com.dhruv.angular_launcher.accessible_screen.components.glsl_art.MAX_ICONS $MAX_ICONS
-        
-        varying vec2 vTexCoord;
-        """ +
-        textures.keys.map { "uniform sampler2D u$it" } +
-        """
-        
-        uniform float u_time;
-        uniform vec2  u_resolution;
-        uniform vec2  u_mouse;
-        uniform vec2  u_interaction;
-        
-        uniform float u_positions_X[com.dhruv.angular_launcher.accessible_screen.components.glsl_art.MAX_ICONS];
-        uniform float u_positions_Y[com.dhruv.angular_launcher.accessible_screen.components.glsl_art.MAX_ICONS];
-        
-        float MOD(float a, float b) {return a - b * floor(a / b);}
-        vec2 MOD(vec2 a, float b) {return vec2(MOD(a.x, b), MOD(a.y, b));}
+    private val fragmentShaderCode =
+"""
+#version 100
+#ifdef GL_ES
+precision mediump float;
+#endif
+#define MAX_ICONS $MAX_ICONS
 
-        void main() {
-            // Sample the texture using wrapped coordinates
-            gl_FragColor = texture2D(uTexture, MOD(vTexCoord + uOffset, 1.));
-        }
-    """.trimIndent()
+varying vec2 vTexCoord;
+
+""" +
+        // add all textures
+        shaderData.textures.keys.map { "uniform sampler2D u_$it;" }.toList().joinToString(separator = "\n") +
+"""
+
+uniform float u_time;
+uniform vec2  u_resolution;
+uniform vec2  u_mouse;
+uniform vec2  u_interaction;
+
+uniform float u_positions_X[MAX_ICONS];
+uniform float u_positions_Y[MAX_ICONS];
+
+float MOD(float a, float b) {return a - b * floor(a / b);}
+vec2 MOD(vec2 a, float b) {return vec2(MOD(a.x, b), MOD(a.y, b));}
+
+""" +
+        // add user formed shader
+        shaderData.code
 
     private var program: Int = 0
 
@@ -93,6 +98,7 @@ class MyGLRenderer(
             else{
                 offsetsX.add(-10000f)
                 offsetsY.add(-10000f)
+                break
             }
         }
         iconsPosX = offsetsX
@@ -101,7 +107,10 @@ class MyGLRenderer(
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
-        textures.forEach { loadTexture(it.value) }
+        shaderData.textures.forEach {
+            val bitmap = BitmapFactory.decodeResource(resources, it.value)
+            loadTexture(bitmap)
+        }
         setupShader()
     }
 
@@ -114,15 +123,15 @@ class MyGLRenderer(
         mouseHandler?.let { GLES20.glUniform2f(it, mousePos.x, mousePos.y) }
         interactionHandler?.let { GLES20.glUniform2f(it, mousePos.x, mousePos.y) }
         iconsXUniformLocation?.let {
-            if (iconsPosX.size == MAX_ICONS) {
-                for (i in 0 until MAX_ICONS)
-                    GLES20.glUniform1f(it + i, iconsPosX[i])
+            for (i in 0 until MAX_ICONS) {
+                if (i >= iconsPosX.size) break
+                GLES20.glUniform1f(it + i, iconsPosX[i])
             }
         }
         iconsYUniformLocation?.let {
-            if (iconsPosY.size == MAX_ICONS){
-                for (i in 0 until  MAX_ICONS)
-                    GLES20.glUniform1f(it + i, iconsPosY[i])
+            for (i in 0 until  MAX_ICONS) {
+                if (i >= iconsPosY.size) break
+                GLES20.glUniform1f(it + i, iconsPosY[i])
             }
         }
 
@@ -155,6 +164,7 @@ class MyGLRenderer(
     private fun setupShader() {
         val vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode)
         val fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode)
+        println(fragmentShaderCode)
 
         program = GLES20.glCreateProgram().also {
             GLES20.glAttachShader(it, vertexShader)
@@ -166,7 +176,8 @@ class MyGLRenderer(
         resolutionHandler = GLES20.glGetUniformLocation(program, "u_resolution")
         mouseHandler = GLES20.glGetUniformLocation(program, "u_mouse")
         interactionHandler = GLES20.glGetUniformLocation(program, "u_interaction")
-
+        iconsXUniformLocation = GLES20.glGetUniformLocation(program, "u_positions_X")
+        iconsYUniformLocation = GLES20.glGetUniformLocation(program, "u_positions_Y")
     }
 
     private fun loadShader(type: Int, shaderCode: String): Int {
@@ -185,7 +196,7 @@ class MyGLRenderer(
         val textureCoordHandle = GLES20.glGetAttribLocation(program, "aTexCoord")
         GLES20.glEnableVertexAttribArray(textureCoordHandle)
 
-        val texturesUniformHandle = textures.map { it.key to GLES20.glGetUniformLocation(program, it.key) }.toMap()
+        val texturesUniformHandle = shaderData.textures.map { it.key to GLES20.glGetUniformLocation(program, it.key) }.toMap()
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle)

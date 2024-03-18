@@ -288,9 +288,10 @@ fun IconsCoordinatesInputPrev() {
 fun Collapsable(
     text: @Composable () -> Unit,
     canOpen: Boolean = true,
-    content: @Composable () -> Unit,
+    initialState: Boolean = false,
+    content: @Composable () -> Unit
 ) {
-    var opened by remember { mutableStateOf(false) }
+    var opened by remember { mutableStateOf(initialState) }
 
     Column (
         Modifier
@@ -420,5 +421,5 @@ fun H2 (text: String){
 
 @Composable
 fun H3 (text: String){
-    Text(text = text)
+    Text(text = text, Modifier.padding( vertical = 1.dp, horizontal = 8.dp), color = Color.White, fontSize = TextUnit(16f, TextUnitType.Sp))
 }

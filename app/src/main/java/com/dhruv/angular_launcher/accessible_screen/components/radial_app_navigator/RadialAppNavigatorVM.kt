@@ -15,8 +15,8 @@ import com.dhruv.angular_launcher.data.enums.SelectionMode
 import com.example.launcher.Drawing.DrawablePainter
 
 class RadialAppNavigatorVM(
-    val mousePosToShader: (Float, Float) -> Unit,
-    val iconPositionsToShader: (List<Offset>) -> Unit,
+    var mousePosToShader: (Float, Float) -> Unit,
+    var iconPositionsToShader: (List<Offset>) -> Unit,
 ):ViewModel() {
 
     var visibility by mutableStateOf(false)

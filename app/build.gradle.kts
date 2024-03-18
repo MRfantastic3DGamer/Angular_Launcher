@@ -55,6 +55,17 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    sourceSets {
+        getByName("main") {
+            res {
+                srcDirs(
+                    "src\\main\\res",
+                    "src\\main\\res\\drawable\\noise",
+                    "src\\main\\res\\drawable\\noise_textures",
+                )
+            }
+        }
+    }
 }
 
 dependencies {
@@ -104,4 +115,7 @@ dependencies {
 
     // for permissions
 //    implementation ("io.github.farimarwat:permissionmate-compose:1.1")
+
+    // coil
+//    implementation ("io.coil-kt:coil:2.6.0")
 }

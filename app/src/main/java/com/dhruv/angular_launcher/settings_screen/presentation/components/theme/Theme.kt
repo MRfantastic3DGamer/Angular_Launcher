@@ -4,7 +4,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -20,6 +19,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -32,6 +34,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,11 +48,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import com.dhruv.angular_launcher.accessible_screen.components.glsl_art.renderer.SHADER_START
+import com.dhruv.angular_launcher.accessible_screen.components.glsl_art.DefaultShaders
 import com.dhruv.angular_launcher.core.database.prefferences.PreferencesManager
 import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.settings_screen.presentation.components.H1
 import com.dhruv.angular_launcher.settings_screen.presentation.components.H2
+import com.dhruv.angular_launcher.settings_screen.presentation.components.theme.components.TextureViewer
 
 
 val MainImageWidth = 200
@@ -61,7 +65,8 @@ fun Theme () {
     val contentResolver = context.contentResolver
     val prefManager = PreferencesManager.getInstance(context)
 
-    var shader by remember { mutableStateOf( GetLines(PrefValues.t_shader)) }
+    var textures = remember { mutableStateListOf<Pair<Int, Int>>() }
+    var shaderCode by remember { mutableStateOf(GetLines(PrefValues.t_shader.code)) }
     var bg by remember { mutableStateOf(PrefValues.t_bg_path) }
     var bg1 by remember { mutableStateOf(PrefValues.t_bg_path_1) }
     var bg2 by remember { mutableStateOf(PrefValues.t_bg_path_2) }
@@ -113,16 +118,25 @@ fun Theme () {
             bg5 = uris[4]
         }
     }
+    fun saveShader(){
+        // TODO
+    }
 
     Column {
-        DefaultShaderOption(name = "Blob apps") {
-            shader = GetLines(DefaultShaderOptions.blobs_Apps)
-            prefManager.saveData("t_shader", createPera(shader))
+
+        H2(text = "Sample shaders")
+        Spacer(modifier = Modifier.height(20.dp))
+        LazyVerticalGrid(columns = GridCells.Adaptive(100.dp)) {
+            items(DefaultShaders) {
+                Button(onClick = {  }) {
+                    Text(text = it.name)
+                }
+            }
         }
         Spacer(modifier = Modifier.height(20.dp))
         AnimatedVisibility(visible = !isEditingShader) {
             Button(onClick = {
-                prefManager.saveData("t_shader", createPera(shader))
+                saveShader()
                 isEditingShader = true
             }) {
                 H2(text = "start editing")
@@ -131,31 +145,31 @@ fun Theme () {
         Spacer(modifier = Modifier.height(2.dp))
         AnimatedVisibility(visible = isEditingShader) {
             ShaderEditor(
-                lines = shader,
+                lines = shaderCode,
+                shaderTap = { image, stream ->
+                    val temp = Pair(image, stream)
+                    if (textures.contains(temp)) textures.remove(temp)
+                    else textures.add(temp)
+                },
                 onChangeLine = { i, s ->
-                    shader = shader.toMutableList().apply { set(i, s) }
+                    shaderCode = shaderCode.toMutableList().apply { set(i, s) }
                 },
                 onDelLine = { i ->
-                    shader = shader.toMutableList().apply { removeAt(i) }
+                    shaderCode = shaderCode.toMutableList().apply { removeAt(i) }
                 },
                 onNewLine = { i ->
-                    shader = shader.toMutableList().apply { add(i, "") }
+                    shaderCode = shaderCode.toMutableList().apply { add(i, "") }
                 },
                 onFinishEditing = {
-                    prefManager.saveData("t_shader", createPera(shader))
+
+//                    prefManager.saveData("t_shader", ShaderData("custom shader", textures, createPera(shaderCode)))
                 },
                 copy = {
-                    val shaderText = SHADER_START + "\n" + createPera(shader)
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-                        val clipboard =
-                            context.getSystemService(Context.CLIPBOARD_SERVICE) as android.text.ClipboardManager
-                        clipboard.setText(shaderText)
-                    } else {
-                        val clipboard =
-                            context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        val clip = ClipData.newPlainText("Copied Text", shaderText)
-                        clipboard.setPrimaryClip(clip)
-                    }
+                    val shaderText = createPera(shaderCode)
+                    val clipboard =
+                        context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val clip = ClipData.newPlainText("Copied Text", shaderText)
+                    clipboard.setPrimaryClip(clip)
                 },
                 closeEditor = {
                     isEditingShader = false
@@ -164,80 +178,7 @@ fun Theme () {
         }
     }
 
-
-
-//    Column {
-//
-//        ImagePrev(uriString = bg, contentResolver = contentResolver, MainImageWidth) {}
-//
-//        LazyVerticalGrid(columns = GridCells.Adaptive(100.dp)) {
-//            item(key = "new") {
-//                IconButton(
-//                    onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
-//                    modifier = Modifier.size(ImageWidth.dp, (ImageWidth * ScreenUtils.HPerW).dp)
-//                ) {
-//                    Icon(
-//                        imageVector = Icons.Default.Add,
-//                        contentDescription = "add",
-//                        Modifier
-//                            .size(10.dp)
-//                            .size(20.dp),
-//                        tint = Color.White
-//                    )
-//                }
-//            }
-//            item(key = "1") {
-//                ImagePrev(uriString = bg1, contentResolver, ImageWidth) {
-//                    bg = bg1
-//                    prefManager.saveData("t_bg_path", bg)
-//                }
-//            }
-//            item(key = "2") {
-//                ImagePrev(uriString = bg2, contentResolver, ImageWidth) {
-//                    bg = bg2
-//                    prefManager.saveData("t_bg_path", bg)
-//                }
-//            }
-//            item(key = "3") {
-//                ImagePrev(uriString = bg3, contentResolver, ImageWidth) {
-//                    bg = bg3
-//                    prefManager.saveData("t_bg_path", bg)
-//                }
-//            }
-//            item(key = "4") {
-//                ImagePrev(uriString = bg4, contentResolver, ImageWidth) {
-//                    bg = bg4
-//                    prefManager.saveData("t_bg_path", bg)
-//                }
-//            }
-//            item(key = "5") {
-//                ImagePrev(uriString = bg5, contentResolver, ImageWidth) {
-//                    bg = bg5
-//                    prefManager.saveData("t_bg_path", bg)
-//                }
-//            }
-//        }
-//    }
 }
-
-//@Composable
-//fun ImagePrev(uriString: String, contentResolver: ContentResolver, width: Int, onTap: ()->Unit) {
-//    val uri = Uri.parse(uriString)
-//    val bitmap = BitmapFromURI(uri = uri, contentResolver = contentResolver)?.asImageBitmap()
-//    if (bitmap != null) {
-//        Image(
-//            bitmap = bitmap,
-//            contentDescription = "bg-image",
-//            Modifier
-//                .size(width.dp, (width * ScreenUtils.HPerW).dp)
-//                .padding(5.dp)
-//                .clip(RoundedCornerShape(10.dp))
-//                .clickable { onTap() },
-//            Alignment.Center,
-//            ContentScale.FillBounds
-//        )
-//    }
-//}
 
 fun GetLines(pera: String): MutableList<String> {
     val res = pera.split("\n").toMutableList()
@@ -268,112 +209,132 @@ fun DefaultShaderOption(name: String, onSelect: ()->Unit) {
 
 @Composable
 fun ShaderEditor(
-    lines: List<String>,
+    shaderTap: (Int, Int) -> Unit,
     onNewLine: (Int) -> Unit,
     onDelLine: (Int) -> Unit,
-    onChangeLine: (Int, String) -> Unit,
+    lines: List<String>,
     onFinishEditing: () -> Unit,
-    copy: ()->Unit,
+    copy: () -> Unit,
     closeEditor: () -> Unit,
+    onChangeLine: (Int, String) -> Unit,
 ) {
-    LazyColumn {
-        item {
-            H1(text = "Editor")
-        }
-        items(lines.size) { i ->
+    val context = LocalContext.current
+    val resources = context.resources
 
-            val isComment = lines[i].length >= 2 && lines[0] == "/" && lines[1] == "/"
+    /**
+     * l1 - compressed texture
+     * p.start - image
+     * p.end - stream
+     */
+    val selectedTextures by remember { mutableStateOf(setOf<Pair<Int, Int>>()) }
 
-            Row (
-                Modifier,
-                Arrangement.Start,
-                Alignment.CenterVertically
-            ) {
-                TextField(
-                    value = lines[i],
-                    onValueChange = {
-                        onChangeLine(i, it)
-                    },
-                    Modifier
-                        .fillMaxWidth()
-                        .background(Color.Black),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Black,
-                        unfocusedContainerColor = Color.Black,
-                        disabledContainerColor = Color.Black,
-                        cursorColor = Color.Cyan,
-                        focusedTextColor = Color.White,
-                        disabledTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                    ),
-                    trailingIcon = {
-                        Column(
-                            modifier = Modifier
-                                .width(15.dp),
-                            verticalArrangement = Arrangement.SpaceEvenly,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Delete,
-                                contentDescription = "delete",
-                                tint = Color.Red,
-                                modifier = Modifier
-                                    .size(20.dp)
-                                    .clickable {
-                                        onDelLine(i)
-                                    }
-                            )
-                            Divider()
-                            Icon(
-                                imageVector = Icons.Filled.Add,
-                                contentDescription = "add",
-                                tint = Color.Green,
-                                modifier = Modifier
-                                    .size(20.dp)
-                                    .clickable {
-                                        onNewLine(i + 1)
-                                    }
-                            )
-                        }
-                    },
-                    label = { Text(text = (i + 1).toString())},
-                    textStyle = when (isComment) {
-                        true -> TextStyle(
-                            fontSize = TextUnit(8f, TextUnitType.Sp),
-                            color = Color.Green
-                        )
-                        false -> TextStyle(
-                            fontSize = TextUnit(10f, TextUnitType.Sp)
-                        )
-                    },
-                )
+    Column {
+        LazyColumn {
+
+            TextureViewer(selectedTextures = selectedTextures, resources = resources, onSelect = shaderTap)
+
+            // TODO texture compressing module
+
+            item {
+                H1(text = "fragment code Editor")
+                H2(text = "this code will run in parallel for each pixel")
             }
-        }
-        item {
-            Row (
-                Modifier.fillMaxWidth(),
-                Arrangement.SpaceEvenly,
-                Alignment.CenterVertically
-            ){
-                Button(
-                    onClick = { closeEditor() },
+
+            items(lines.size) { i ->
+
+                val isComment = lines[i].length >= 2 && lines[0] == "/" && lines[1] == "/"
+
+                Row (
+                    Modifier,
+                    Arrangement.Start,
+                    Alignment.CenterVertically
                 ) {
-                    H2(text = "close")
-                }
-                Button(
-                    onClick = { copy() },
-                ) {
-                    H2(text = "copy")
-                }
-                Button(
-                    onClick = { onFinishEditing() },
-                ) {
-                    H2(text = "save")
+                    TextField(
+                        value = lines[i],
+                        onValueChange = {
+                            onChangeLine(i, it)
+                        },
+                        Modifier
+                            .fillMaxWidth()
+                            .background(Color.Black),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Black,
+                            unfocusedContainerColor = Color.Black,
+                            disabledContainerColor = Color.Black,
+                            cursorColor = Color.Cyan,
+                            focusedTextColor = Color.White,
+                            disabledTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                        ),
+                        trailingIcon = {
+                            Column(
+                                modifier = Modifier
+                                    .width(15.dp),
+                                verticalArrangement = Arrangement.SpaceEvenly,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Delete,
+                                    contentDescription = "delete",
+                                    tint = Color.Red,
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .clickable {
+                                            onDelLine(i)
+                                        }
+                                )
+                                Divider()
+                                Icon(
+                                    imageVector = Icons.Filled.Add,
+                                    contentDescription = "add",
+                                    tint = Color.Green,
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .clickable {
+                                            onNewLine(i + 1)
+                                        }
+                                )
+                            }
+                        },
+                        label = { Text(text = (i + 1).toString())},
+                        textStyle = when (isComment) {
+                            true -> TextStyle(
+                                fontSize = TextUnit(8f, TextUnitType.Sp),
+                                color = Color.Green
+                            )
+                            false -> TextStyle(
+                                fontSize = TextUnit(10f, TextUnitType.Sp)
+                            )
+                        },
+                    )
                 }
             }
-        }
-        item {
-            Spacer(modifier = Modifier.height(500.dp))
+            item {
+                Row (
+                    Modifier.fillMaxWidth(),
+                    Arrangement.SpaceEvenly,
+                    Alignment.CenterVertically
+                ){
+                    Button(
+                        onClick = { closeEditor() },
+                    ) {
+                        H2(text = "close")
+                    }
+                    Button(
+                        onClick = { copy() },
+                    ) {
+                        H2(text = "copy")
+                    }
+                    Button(
+                        onClick = { onFinishEditing() },
+                    ) {
+                        H2(text = "save")
+                    }
+                }
+            }
+            item {
+                Spacer(modifier = Modifier.height(500.dp))
+            }
         }
     }
 }
@@ -394,5 +355,5 @@ private fun EditorPrev() {
     "    t_dist = min(t_dist, distance(gl_FragCoord.xy, t_pos));",
     "}",
     )
-    ShaderEditor(lines = lines, { i->}, { i->}, { i, s -> }, {}, {}, {})
+    ShaderEditor({_,_-> }, { }, { }, lines = lines, {}, {}, {}) { _, _ -> }
 }

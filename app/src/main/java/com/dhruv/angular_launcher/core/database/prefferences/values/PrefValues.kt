@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
+import com.dhruv.angular_launcher.accessible_screen.components.glsl_art.DefaultShaders
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 import com.dhruv.angular_launcher.core.appIcon.IconStyle
 import com.dhruv.angular_launcher.core.database.prefferences.PreferencesManager
+import com.dhruv.angular_launcher.core.database.prefferences.ShaderData
 import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -22,31 +24,7 @@ object PrefValues {
 
     // region theme
 
-    var t_shader: String = """
-        void main() {
-            float value = 1./distance(gl_FragCoord.xy, u_mouse) * 1.2;
-            vec2 t_pos = vec2(0., 0.);
-            float t_dist = 100000.;
-        
-            for(int i=0;i<com.dhruv.angular_launcher.accessible_screen.components.glsl_art.MAX_ICONS;++i)
-            {
-                if (u_positions_X[i] == -10000.)
-                    break;
-                t_pos = vec2(u_positions_X[i], u_positions_Y[i]);
-                t_dist = min(t_dist, distance(gl_FragCoord.xy, t_pos));
-            }
-            value += 1./t_dist;
-        
-            float radius = 1./50.0;
-        
-            float insideCircle = step(value, radius);
-        
-            vec4 color = insideCircle * vec4(0.0, 0.0, 0.0, 0.0);
-            color += (1.0 - insideCircle) * vec4(1.0, 1.0, 1.0, 1.0);
-        
-            gl_FragColor = color;
-        }
-    """
+    var t_shader: ShaderData = DefaultShaders[0]
     var t_bg_path: String = ""
     var t_bg_path_1: String = ""
     var t_bg_path_2: String = ""
