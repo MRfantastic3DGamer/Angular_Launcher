@@ -35,9 +35,7 @@ class MyGLRenderer(
     private val fragmentShaderCode =
 """
 #version 100
-#ifdef GL_ES
 precision mediump float;
-#endif
 #define MAX_ICONS $MAX_ICONS
 
 varying vec2 vTexCoord;

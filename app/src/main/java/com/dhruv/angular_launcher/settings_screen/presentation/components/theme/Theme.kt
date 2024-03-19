@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.dhruv.angular_launcher.accessible_screen.components.glsl_art.DefaultShaders
 import com.dhruv.angular_launcher.core.database.prefferences.PreferencesManager
+import com.dhruv.angular_launcher.core.database.prefferences.ShaderData
 import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
 import com.dhruv.angular_launcher.settings_screen.presentation.components.H1
 import com.dhruv.angular_launcher.settings_screen.presentation.components.H2
@@ -128,7 +129,11 @@ fun Theme () {
         Spacer(modifier = Modifier.height(20.dp))
         LazyVerticalGrid(columns = GridCells.Adaptive(100.dp)) {
             items(DefaultShaders) {
-                Button(onClick = {  }) {
+                Button(onClick = {
+                    // todo textures = it.textures
+                    shaderCode = GetLines(it.code)
+                    prefManager.saveData("t_shader", ShaderData("custom shader", emptyMap(), createPera(shaderCode)))
+                }) {
                     Text(text = it.name)
                 }
             }
@@ -161,8 +166,7 @@ fun Theme () {
                     shaderCode = shaderCode.toMutableList().apply { add(i, "") }
                 },
                 onFinishEditing = {
-
-//                    prefManager.saveData("t_shader", ShaderData("custom shader", textures, createPera(shaderCode)))
+                    prefManager.saveData("t_shader", ShaderData("custom shader", emptyMap(), createPera(shaderCode)))
                 },
                 copy = {
                     val shaderText = createPera(shaderCode)
