@@ -7,6 +7,7 @@ import com.dhruv.angular_launcher.data.enums.SelectionMode
 @Stable
 data class RadialAppNavigatorData(
     val sliderPositionY: Float = 0f,
+    val sliderHeight: Float = 0f,
     val center: Offset = Offset.Zero,
     val sliderSelection: String = "@",
     val offsetFromCenter: Offset = Offset.Zero,

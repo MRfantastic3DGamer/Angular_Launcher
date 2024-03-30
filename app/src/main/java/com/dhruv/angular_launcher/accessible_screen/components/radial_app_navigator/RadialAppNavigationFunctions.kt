@@ -2,11 +2,11 @@ package com.dhruv.angular_launcher.accessible_screen.components.radial_app_navig
 
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.Dp
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.IconCoordinate
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorData
-import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
 import com.dhruv.angular_launcher.data.enums.SelectionMode
-import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
+import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationScheme
 import com.dhruv.angular_launcher.utils.MathUtils
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import kotlin.math.PI
@@ -19,13 +19,14 @@ object RadialAppNavigationFunctions {
         selectionPaddingX: Float,
         selectionPosY: Float,
         sliderWidth: Float,
+        sliderHeight: Float,
         selection: String,
         sliderPosY: Float,
         touchPos: Offset,
         visibility: Boolean,
         selectionMode: SelectionMode,
     ): RadialAppNavigatorData {
-        val center = Offset(ScreenUtils.fromRight(sliderWidth+ selectionPaddingX), selectionPosY)
+        val center = Offset(ScreenUtils.fromRight(sliderWidth + selectionPaddingX), selectionPosY)
         return RadialAppNavigatorData(
             sliderSelection = selection,
             center = center,
@@ -34,6 +35,7 @@ object RadialAppNavigationFunctions {
             shouldSelectApp = touchPos.x < center.x && visibility,
             visibility = visibility,
             selectionMode = selectionMode,
+            sliderHeight = sliderHeight
         )
     }
 
@@ -50,12 +52,14 @@ object RadialAppNavigationFunctions {
         count: Int,
         sliderPosY: Float,
         iconSize: Float,
+        sliderHeight: Float,
+        sliderWidth: Dp,
     ): IconOffsetComputeResult {
-        val sliderHeight = ScreenUtils.dpToF(SliderValues.GetPersistentData.value!!.height)
         val top = sliderPosY + 50f
         val bot = sliderPosY + sliderHeight - 50f
+//        println("top:$top, bot:$bot")
         val left = 100f
-        val right = ScreenUtils.dpToF(ScreenUtils.fromRight(SliderValues.GetPersistentData.value!!.width)) - 50f - iconSize/2
+        val right = ScreenUtils.dpToF(ScreenUtils.fromRight(sliderWidth)) - 50f - iconSize/2
         val iconSizeOffset = Offset(2.5f, 2.5f)
 
         fun getResult(iconSizePreset: Int): IconOffsetComputeResult {
@@ -104,7 +108,7 @@ object RadialAppNavigationFunctions {
         val iconsPerRound: List<Int>,
         val startingPointOfRound: List<Float>,
     )
-    fun generateIconCoordinates (input: IconCoordinatesGenerationInput): IconCoordinatesResult {
+    fun generateIconCoordinates (input: IconCoordinatesGenerationScheme): IconCoordinatesResult {
         val startingRadius = input.startingRadius
         val radiusDiff = input.radiusDiff
         val iconDistance = input.iconDistance

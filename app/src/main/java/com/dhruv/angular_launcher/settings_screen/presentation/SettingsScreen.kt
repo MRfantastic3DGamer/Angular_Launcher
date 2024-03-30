@@ -32,11 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
-import com.dhruv.angular_launcher.core.appIcon.IconStyle
 import com.dhruv.angular_launcher.core.database.room.AppDatabase
-import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
+import com.dhruv.angular_launcher.core.database.room.ThemeDatabase
 import com.dhruv.angular_launcher.settings_screen.SettingsVM
 import com.dhruv.angular_launcher.settings_screen.data.SettingsTab
 import com.dhruv.angular_launcher.settings_screen.presentation.components.app_navigator.AppNavigation
@@ -45,6 +43,7 @@ import com.dhruv.angular_launcher.settings_screen.presentation.components.apps.A
 import com.dhruv.angular_launcher.settings_screen.presentation.components.cursor.FluidCursor
 import com.dhruv.angular_launcher.settings_screen.presentation.components.groups.GroupsEditingVM
 import com.dhruv.angular_launcher.settings_screen.presentation.components.groups.GroupsEditor
+import com.dhruv.angular_launcher.settings_screen.presentation.components.shader.Shader
 import com.dhruv.angular_launcher.settings_screen.presentation.components.slider.Slider
 import com.dhruv.angular_launcher.settings_screen.presentation.components.tabButton
 import com.dhruv.angular_launcher.settings_screen.presentation.components.theme.Theme
@@ -59,6 +58,7 @@ fun SettingsScreen(
     val apps = DBVM.apps.collectAsState(initial = emptyList())
 
     var selectedTab by remember { mutableStateOf(SettingsTab.Theme) }
+    val themeVM by remember { mutableStateOf(ThemeDatabase.getViewModel(context)) }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -81,17 +81,20 @@ fun SettingsScreen(
                 tabButton(text = SettingsTab.Theme.name, selectedTab == SettingsTab.Theme) {
                     selectedTab = SettingsTab.Theme
                 }
-                tabButton(text = SettingsTab.Apps.name, selectedTab == SettingsTab.Apps) {
-                    selectedTab = SettingsTab.Apps
-                }
-                tabButton(text = SettingsTab.Groups.name, selectedTab == SettingsTab.Groups) {
-                    selectedTab = SettingsTab.Groups
+                tabButton(text = SettingsTab.Shader.name, selected = selectedTab == SettingsTab.Shader) {
+                    selectedTab = SettingsTab.Shader
                 }
                 tabButton(text = SettingsTab.Slider.name, selectedTab == SettingsTab.Slider) {
                     selectedTab = SettingsTab.Slider
                 }
                 tabButton(text = SettingsTab.AppNavigation.name, selectedTab == SettingsTab.AppNavigation) {
                     selectedTab = SettingsTab.AppNavigation
+                }
+                tabButton(text = SettingsTab.Apps.name, selectedTab == SettingsTab.Apps) {
+                    selectedTab = SettingsTab.Apps
+                }
+                tabButton(text = SettingsTab.Groups.name, selectedTab == SettingsTab.Groups) {
+                    selectedTab = SettingsTab.Groups
                 }
             }
 
@@ -119,39 +122,19 @@ fun SettingsScreen(
                         SettingsTab.Theme -> Box (Modifier.fillMaxSize()){
                             Theme()
                         }
+                        SettingsTab.Shader -> Box (Modifier.fillMaxSize()){
+                            Shader()
+                        }
                         SettingsTab.Slider -> Box (Modifier.fillMaxSize()){
                             Slider(
-                                width = vm.tryToGetState("sl_width") as MutableState<Float>,
-                                height = vm.tryToGetState("sl_height") as MutableState<Float>,
-                                topPadding = vm.tryToGetState("sl_topPadding") as MutableState<Float>,
-                                downPadding = vm.tryToGetState("sl_downPadding") as MutableState<Float>,
-                                triggerCurveEdgeCount = vm.tryToGetState("sl_triggerCurveEdgeCount") as MutableState<Int>,
-                                selectionCurveOffset = vm.tryToGetState("sl_selectionCurveOffset") as MutableState<Float>,
-                                shouldBlur = vm.tryToGetState("sl_shouldBlur") as MutableState<Boolean>,
-                                blurAmount = vm.tryToGetState("sl_blurAmount") as MutableState<Float>,
-                                tint = vm.tryToGetState("sl_tint") as MutableState<Color>,
                                 vibration = vm.tryToGetState("sl_vibration") as MutableState<VibrationData>,
                             )
                         }
                         SettingsTab.FluidCursor -> Box (Modifier.fillMaxSize()){
-                            FluidCursor(
-                                looks = vm.tryToGetState("fc_fluidCursorLooks") as MutableState<FluidCursorLooks>,
-                                animationSpeed = vm.tryToGetState("fc_animationSpeed") as MutableState<Float>,
-                            )
+                            FluidCursor()
                         }
                         SettingsTab.AppNavigation -> Box (Modifier.fillMaxSize()){
-
                             AppNavigation(
-                                iconStyle = vm.tryToGetState("an_iconStyle") as MutableState<IconStyle>,
-                                selectedIconStyle = vm.tryToGetState("an_selectedIconStyle") as MutableState<IconStyle>,
-                                shouldBlur = vm.tryToGetState("an_shouldBlur") as MutableState<Boolean>,
-                                blurAmount = vm.tryToGetState("an_blurAmount") as MutableState<Float>,
-                                tint = vm.tryToGetState("an_tint") as MutableState<Color>,
-                                option1 = vm.tryToGetState("an_option1") as MutableState<IconCoordinatesGenerationInput>,
-                                option2 = vm.tryToGetState("an_option2") as MutableState<IconCoordinatesGenerationInput>,
-                                option3 = vm.tryToGetState("an_option3") as MutableState<IconCoordinatesGenerationInput>,
-                                option4 = vm.tryToGetState("an_option4") as MutableState<IconCoordinatesGenerationInput>,
-                                option5 = vm.tryToGetState("an_option5") as MutableState<IconCoordinatesGenerationInput>,
                                 vibrationData = vm.tryToGetState("an_vibration") as MutableState<VibrationData>,
                             )
                         }

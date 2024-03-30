@@ -5,36 +5,26 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorValues
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
-import com.dhruv.angular_launcher.core.appIcon.IconStyle
 import com.dhruv.angular_launcher.core.database.apps_data.AppsIconsDataValues
 import com.dhruv.angular_launcher.data.enums.SelectionMode
 import com.example.launcher.Drawing.DrawablePainter
 
 class RadialAppNavigatorVM(
-    var mousePosToShader: (Float, Float) -> Unit,
     var iconPositionsToShader: (List<Offset>) -> Unit,
 ):ViewModel() {
 
     var visibility by mutableStateOf(false)
     var selectionMode: SelectionMode by mutableStateOf(SelectionMode.NotSelected)
 
-    var iconStyle by mutableStateOf(IconStyle())
-    var selectedIconStyle by mutableStateOf(IconStyle())
-
-    var shouldBlur by mutableStateOf(false)
-    var blurAmount by mutableStateOf(0f)
-    var tint by mutableStateOf(Color.Black)
-
     // feel
     var vibration by mutableStateOf(VibrationData())
 
-    var roundsStartingDistances: List<List<Float>> by mutableStateOf(listOf())
     var iconsPerRound: List<List<Int>> by mutableStateOf(listOf())
 
+    var sliderHeight by mutableStateOf(0f)
     var sliderPosY: Float by mutableStateOf(0f)
     var center: Offset by mutableStateOf(Offset(500f, 100f))
     var offsetFromCenter: Offset by mutableStateOf(Offset.Zero)
@@ -51,18 +41,11 @@ class RadialAppNavigatorVM(
         AppsIconsDataValues.getAppsIcons.observeForever { if (it != null) appsIcons = it }
         RadialAppNavigatorValues.GetPersistentData.observeForever {
 
-            println("updating p data")
-
-            iconStyle = it.iconStyle
-            selectedIconStyle = it.selectedIconStyle
-            shouldBlur = it.shouldBlur
-            blurAmount = it.blurAmount
-            tint = it.tint
+//            println("updating p data")
 
             // feel
             vibration = it.vibration
 
-            roundsStartingDistances = it.roundStartingDistances
             iconsPerRound = it.iconsPerRound
         }
         RadialAppNavigatorValues.GetData.observeForever {
@@ -75,6 +58,8 @@ class RadialAppNavigatorVM(
             offsetFromCenter = it.offsetFromCenter
 
             shouldSelectApp = it.shouldSelectApp
+
+            sliderHeight = it.sliderHeight
         }
     }
 }

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Editor</title>
+  <style type="text/css" media="screen">
+    body {
+        overflow: hidden;
+    }
+
+    #editor {
+        margin: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+  </style>
+</head>
+<body>
+
+<pre id="editor">#version 100
+
+#ifdef GL_ES
+precision mediump float;
+#endif
+#define MAX_ICONS 100
+
+uniform float u_time;
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform vec2 u_interaction;
+
+uniform float u_positions_X[MAX_ICONS];
+uniform float u_positions_Y[MAX_ICONS];
+
+vec3 randomColor(int value) {
+    // Use a hash function to ensure the same input produces the same output color
+    float r = fract(sin(float(value) * 12.9898) * 43758.5453);
+    float g = fract(sin(float(value) * 78.233) * 43758.5453);
+    float b = fract(sin(float(value) * 45.7269) * 43758.5453);
+
+    return vec3(r, g, b);
+}
+
+void main() {
+    vec3 color = vec3(1.);
+    gl_FragColor = vec4(color, 1.);
+}</pre>
+<button type="" onclick="load()">Save</button>
+
+<script src="src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor")
+    editor.setTheme("ace/theme/pastel_on_dark")
+    editor.session.setMode("ace/mode/glsl")
+</script>
+<script>
+
+    function setCode(code){
+        editor.setValue(code)
+    }
+
+    function getCode(){
+        let code = editor.getValue()
+        return code
+    }
+</script>
+
+</body>
+</html>

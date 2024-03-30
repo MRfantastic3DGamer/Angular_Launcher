@@ -7,7 +7,8 @@ import android.opengl.GLSurfaceView
 import android.opengl.GLUtils
 import android.util.Size
 import androidx.compose.ui.geometry.Offset
-import com.dhruv.angular_launcher.core.database.prefferences.ShaderData
+import com.dhruv.angular_launcher.core.resources.ShaderData
+import com.dhruv.angular_launcher.utils.ScreenUtils
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import javax.microedition.khronos.egl.EGLConfig
@@ -16,7 +17,6 @@ import javax.microedition.khronos.opengles.GL10
 const val MAX_ICONS = 100
 
 class MyGLRenderer(
-    screenSize: Size,
     private val resources: Resources,
     private val shaderData: ShaderData,
 ) : GLSurfaceView.Renderer {
@@ -29,36 +29,10 @@ class MyGLRenderer(
 "varying vec2 vTexCoord;" +
 "void main() {" +
 "   gl_Position = aPosition;" +
-"   vTexCoord = aTexCoord / vec2(${screenSize.height/ screenSize.width}., 1.);" +
+"   vTexCoord = aTexCoord / vec2(${ScreenUtils.screenSizeDp.height/ ScreenUtils.screenSizeDp.width}., 1.);" +
 "}"
 
-    private val fragmentShaderCode =
-"""
-#version 100
-precision mediump float;
-#define MAX_ICONS $MAX_ICONS
-
-varying vec2 vTexCoord;
-
-""" +
-        // add all textures
-        shaderData.textures.keys.map { "uniform sampler2D u_$it;" }.toList().joinToString(separator = "\n") +
-"""
-
-uniform float u_time;
-uniform vec2  u_resolution;
-uniform vec2  u_mouse;
-uniform vec2  u_interaction;
-
-uniform float u_positions_X[MAX_ICONS];
-uniform float u_positions_Y[MAX_ICONS];
-
-float MOD(float a, float b) {return a - b * floor(a / b);}
-vec2 MOD(vec2 a, float b) {return vec2(MOD(a.x, b), MOD(a.y, b));}
-
-""" +
-        // add user formed shader
-        shaderData.code
+    private val fragmentShaderCode = shaderData.code
 
     private var program: Int = 0
 
@@ -68,6 +42,10 @@ vec2 MOD(vec2 a, float b) {return vec2(MOD(a.x, b), MOD(a.y, b));}
     private var interactionHandler: Int? = null
     private var iconsXUniformLocation: Int? = null
     private var iconsYUniformLocation: Int? = null
+
+    private var battery = 0
+    private var dateAndTime = intArrayOf()
+    private var frame = 0
 
     private var time = 0f
     private var resolution = Size(0,0)
@@ -82,7 +60,7 @@ vec2 MOD(vec2 a, float b) {return vec2(MOD(a.x, b), MOD(a.y, b));}
     }
 
     fun updateMousePos(x: Float, y:Float) {
-        mousePos = Offset(x, y)
+        mousePos = Offset(x, ScreenUtils.fromDown(y))
     }
 
     fun setIcons(positions: List<Offset>){
@@ -249,4 +227,5 @@ vec2 MOD(vec2 a, float b) {return vec2(MOD(a.x, b), MOD(a.y, b));}
         GLES20.glDisableVertexAttribArray(positionHandle)
         GLES20.glDisableVertexAttribArray(textureCoordHandle)
     }
+    
 }

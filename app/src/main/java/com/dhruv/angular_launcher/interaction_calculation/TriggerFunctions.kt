@@ -2,6 +2,7 @@ package com.dhruv.angular_launcher.interaction_calculation
 
 import android.content.Context
 import androidx.compose.ui.geometry.Offset
+import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorValues
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.data.enums.NavigationMode
 import com.dhruv.angular_launcher.haptics.HapticsHelper
@@ -36,16 +37,19 @@ object TriggerFunctions {
         c_fingerPosition = offset
 
         AccessibleScreenValues.updateScreenData(c_fingerPosition, offset)
+        FluidCursorValues.updateTouchPosition(c_fingerPosition)
     }
 
     fun Drag(context: Context, dragAmount: Offset) {
         c_fingerPosition += dragAmount
         HapticsHelper.setFingerSpeed(MathUtils.calculateDistance(dragAmount, Offset.Zero).absoluteValue)
         AccessibleScreenValues.updateScreenData(c_fingerPosition, dragAmount)
+        FluidCursorValues.updateTouchPosition(c_fingerPosition)
     }
 
     fun DragEnd() {
         HapticsHelper.setFingerSpeed(0f)
         AccessibleScreenValues.updateScreenData(c_fingerPosition, null)
+        FluidCursorValues.updateTouchPosition(c_fingerPosition)
     }
 }

@@ -23,7 +23,7 @@ fun DebugLayer (vm: DebugLayerVM){
     ){
         LazyColumn(){
             items(vm.strings){
-                Text(text = it, color = Color.Black)
+                Text(text = it, color = Color.White)
             }
         }
 

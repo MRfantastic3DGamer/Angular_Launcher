@@ -22,7 +22,7 @@ object DebugLayerValues {
 
     fun addString (value: String, key: String){
         stringsMap[key] = value
-        strings.value = stringsMap.values.toList()
+        strings.value = stringsMap.map { "${it.key}: ${it.value}" }
     }
     fun addLine (value: Pair<Offset,Offset>, key: String){
         linesMap[key] = value

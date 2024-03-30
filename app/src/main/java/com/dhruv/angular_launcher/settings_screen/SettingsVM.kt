@@ -8,11 +8,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.AppLabelValue
-import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorValues
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.data.RadialAppNavigatorValues
 import com.dhruv.angular_launcher.accessible_screen.components.slider.data.SliderValues
 import com.dhruv.angular_launcher.accessible_screen.data.AccessibleScreenValues
 import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
+import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationScheme
 import com.dhruv.angular_launcher.haptics.HapticsHelper
 import com.dhruv.angular_launcher.settings_screen.data.SettingsTab
 import kotlinx.coroutines.Dispatchers
@@ -49,8 +49,6 @@ class SettingsVM : ViewModel() {
                 async { PrefValues.loadAllValues(context) }.await().also {
                     AccessibleScreenValues.markPersistentDataDirty()
                     SliderValues.markPersistentDataDirty()
-                    RadialAppNavigatorValues.markPersistentDataDirty()
-                    FluidCursorValues.markPersistentDataDirty()
                     settingsOpened = true
                 }
             }
@@ -64,14 +62,13 @@ class SettingsVM : ViewModel() {
         openSettings(context)
     }
 
-    fun exitSettings(context: Context){
+    fun exitSettings(context: Context, iconCoordinatesGenerationSchemes: List<IconCoordinatesGenerationScheme>){
         viewModelScope.launch {
             async { save(context) }.await().also {
                 async { PrefValues.loadAllValues(context) }.await().also {
                     AccessibleScreenValues.markPersistentDataDirty()
                     SliderValues.markPersistentDataDirty()
-                    RadialAppNavigatorValues.markPersistentDataDirty()
-                    FluidCursorValues.markPersistentDataDirty()
+                    RadialAppNavigatorValues.markPersistentDataDirty(iconCoordinatesGenerationSchemes)
                     settingsOpened = false
                 }
             }

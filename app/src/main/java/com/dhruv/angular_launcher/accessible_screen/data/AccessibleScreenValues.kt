@@ -1,11 +1,9 @@
 package com.dhruv.angular_launcher.accessible_screen.data
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.dhruv.angular_launcher.core.database.prefferences.values.PrefValues
-import com.dhruv.angular_launcher.utils.ScreenUtils
 
 object AccessibleScreenValues {
     private val _persistentData           = MutableLiveData(ScreenPersistentData())
@@ -26,10 +24,6 @@ object AccessibleScreenValues {
 
     private fun createPersistentData(): ScreenPersistentData {
         return ScreenPersistentData(
-            sliderWidth = ScreenUtils.fToDp(PrefValues.sl_width),
-            sliderHeight = ScreenUtils.fToDp(PrefValues.sl_height),
-            topPadding = PrefValues.sl_topPadding.dp,
-            bottomPadding = PrefValues.sl_downPadding.dp,
             firstCut = PrefValues.s_firstCut,
             secondCut = PrefValues.s_secondCut,
         )

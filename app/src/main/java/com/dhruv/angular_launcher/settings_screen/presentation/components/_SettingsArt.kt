@@ -41,7 +41,7 @@ import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 import com.dhruv.angular_launcher.core.appIcon.AppIcon
 import com.dhruv.angular_launcher.core.appIcon.IconStyle
-import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
+import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationScheme
 import java.lang.reflect.Type
 import kotlin.math.roundToInt
 
@@ -152,8 +152,8 @@ object _SettingsArt {
                     }
                 }
             },
-            IconCoordinatesGenerationInput::class.java to { key, state, constraints ->
-                val State = state as MutableState<IconCoordinatesGenerationInput>
+            IconCoordinatesGenerationScheme::class.java to { key, state, constraints ->
+                val State = state as MutableState<IconCoordinatesGenerationScheme>
 
                 Column(
                     modifier = Modifier
@@ -280,8 +280,8 @@ fun IconStylePrev() {
 @Preview
 @Composable
 fun IconsCoordinatesInputPrev() {
-    val COORDINATES = remember { mutableStateOf(IconCoordinatesGenerationInput()) }
-    _SettingsArt.DefaultEntry[IconCoordinatesGenerationInput::class.java]?.invoke("icons coordinates generation input", COORDINATES as MutableState<Any>, null)
+    val COORDINATES = remember { mutableStateOf(IconCoordinatesGenerationScheme()) }
+    _SettingsArt.DefaultEntry[IconCoordinatesGenerationScheme::class.java]?.invoke("icons coordinates generation input", COORDINATES as MutableState<Any>, null)
 }
 
 @Composable
@@ -327,7 +327,7 @@ fun Collapsable(
 }
 
 @Composable
-private fun LabelForColor( label: String , color: Color, onUpdate: (Color)->Unit){
+fun LabelForColor( label: String , color: Color, onUpdate: (Color)->Unit){
     val red = color.red
     val green = color.green
     val blue = color.blue
@@ -410,6 +410,153 @@ fun LabelForFloat(
 }
 
 @Composable
+fun LabelForEnum(
+    key: String,
+    value: Int,
+    options: Map<Int, Pair<String, String>>,
+    onUpdate: (Int) -> Unit,
+) {
+    Collapsable(text = {
+        H2(text = "$key : ${options[value]?.first}")
+    }) {
+        Column {
+            options.forEach { (value, data) ->
+                Column(
+                    modifier = Modifier.clickable { onUpdate(value) }
+                ) {
+                    H3(text = data.first)
+                    H4(text = data.second)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LabelForIconStyle(
+    key: String,
+    style: IconStyle,
+    onUpdate: (IconStyle) -> Unit
+) {
+    Column(
+        modifier = Modifier
+    ) {
+        Collapsable(text = { H1(text = key) }) {
+            Column(
+                Modifier
+            ) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(style.size + 20.dp),
+                    Arrangement.SpaceEvenly,
+                    Alignment.CenterVertically,
+                ) {
+                    AppIcon(
+                        pkgName = "",
+                        style = style,
+                        selectionStyle = IconStyle(),
+                        painter = null,
+                        offset = Offset(0f, style.size.value),
+                        selected = 0f,
+                    )
+                }
+                LabelForFloat(
+                    key = "icon size",
+                    min = 5f,
+                    value = style.size.value,
+                    max = 100f
+                ) { newValue ->
+                    onUpdate(style.copy(size = newValue.dp))
+                }
+
+                LabelForFloat(
+                    key = "border size",
+                    min = 0f,
+                    value = style.borderStrokeWidth.value,
+                    max = 20f
+                ) { newValue ->
+                    onUpdate(style.copy(borderStrokeWidth = newValue.dp))
+                }
+                LabelForColor(
+                    "border color",
+                    color = style.borderColor,
+                    onUpdate = { onUpdate(style.copy(borderColor = it)) }
+                )
+                LabelForFloat(
+                    key = "corner radios",
+                    min = 0f,
+                    value = style.cornerRadios.value,
+                    max = (style.size.value * 0.5f)
+                ) {
+                    onUpdate(style.copy(cornerRadios = it.dp))
+                }
+                LabelForColor(
+                    "Background color",
+                    color = style.backGroundColor,
+                    onUpdate = { onUpdate(style.copy(backGroundColor = it)) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun LabelForIconsPositioningScheme(
+    key: String,
+    state: IconCoordinatesGenerationScheme,
+    onUpdate: (IconCoordinatesGenerationScheme) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
+    ) {
+        Collapsable({ H1(key) }) {
+            Column(
+                Modifier
+                    .padding(horizontal = 16.dp)
+            ) {
+                LabelForFloat(
+                    key = "starting radios",
+                    min = 0f,
+                    value = state.startingRadius.toFloat(),
+                    max = 500f
+                ) {
+                    onUpdate(state.copy(startingRadius = it.toDouble()))
+                }
+                Divider()
+                LabelForFloat(
+                    key = "radius diff per round",
+                    min = 0f,
+                    value = state.radiusDiff.toFloat(),
+                    max = 500f
+                ) {
+                    onUpdate(state.copy(radiusDiff = it.toDouble()))
+                }
+                Divider()
+                LabelForFloat(
+                    key = "distance between icon",
+                    min = 0f,
+                    value = state.iconDistance.toFloat(),
+                    max = 500f
+                ) {
+                    onUpdate(state.copy(iconDistance = it.toDouble()))
+                }
+                Divider()
+                LabelForInt(
+                    key = "rounds",
+                    min = 5,
+                    value = state.rounds,
+                    max = 40
+                ) {
+                    onUpdate(state.copy(rounds = it))
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun H1 (text: String){
     Text(text = text, Modifier.padding( vertical = 4.dp, horizontal = 8.dp), color = Color.White, fontSize = TextUnit(25f, TextUnitType.Sp))
 }
@@ -422,4 +569,9 @@ fun H2 (text: String){
 @Composable
 fun H3 (text: String){
     Text(text = text, Modifier.padding( vertical = 1.dp, horizontal = 8.dp), color = Color.White, fontSize = TextUnit(16f, TextUnitType.Sp))
+}
+
+@Composable
+fun H4 (text: String){
+    Text(text = text, Modifier.padding( vertical = 1.dp, horizontal = 8.dp), color = Color.Gray, fontSize = TextUnit(12f, TextUnitType.Sp))
 }

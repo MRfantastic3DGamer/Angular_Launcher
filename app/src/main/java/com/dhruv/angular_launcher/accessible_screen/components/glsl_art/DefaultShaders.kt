@@ -1,6 +1,6 @@
 package com.dhruv.angular_launcher.accessible_screen.components.glsl_art
 
-import com.dhruv.angular_launcher.core.database.prefferences.ShaderData
+import com.dhruv.angular_launcher.core.resources.ShaderData
 
 val DefaultShaders = listOf(
     ShaderData(

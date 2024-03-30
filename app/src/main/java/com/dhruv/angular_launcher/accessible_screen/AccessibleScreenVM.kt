@@ -30,7 +30,7 @@ class AccessibleScreenVM(): ViewModel() {
         AccessibleScreenValues.GetData.observeForever {
 
             val collisionQuality = 5f
-            val sliderLeftBound: Float = ScreenUtils.fromRight( ScreenUtils.dpToF(SliderValues.GetPersistentData.value!!.width) )
+            val sliderLeftBound: Float = ScreenUtils.fromRight( 50f ) // todo: plug it in with the new theme system
 
             when (navigationStage) {
                 NavigationStage.SelectionModeSelection -> {

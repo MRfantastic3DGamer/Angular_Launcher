@@ -6,7 +6,8 @@ import androidx.compose.ui.graphics.Color
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorLooks
 import com.dhruv.angular_launcher.accessible_screen.data.VibrationData
 import com.dhruv.angular_launcher.core.appIcon.IconStyle
-import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationInput
+import com.dhruv.angular_launcher.core.resources.ShaderData
+import com.dhruv.angular_launcher.data.models.IconCoordinatesGenerationScheme
 
 class PreferencesManager private constructor(context: Context) {
 
@@ -27,7 +28,12 @@ class PreferencesManager private constructor(context: Context) {
         editor.putString(key, value)
         editor.apply()
     }
-    fun saveData(key: String, value: IconCoordinatesGenerationInput) {
+    fun saveData(key: String, value: Int) {
+        val editor = sharedPreferences.edit()
+        editor.putInt(key, value)
+        editor.apply()
+    }
+    fun saveData(key: String, value: IconCoordinatesGenerationScheme) {
         val editor = sharedPreferences.edit()
         editor.putString(key, value.toString())
         editor.apply()
@@ -62,7 +68,7 @@ class PreferencesManager private constructor(context: Context) {
         return sharedPreferences.getString(key, defaultValue) ?: defaultValue
     }
     fun getData(key: String, defaultValue: Int): Int {
-        return sharedPreferences.getString(key, defaultValue.toString())?.toIntOrNull() ?: defaultValue
+        return sharedPreferences.getInt(key, defaultValue)
     }
     fun getData(key: String, defaultValue: Boolean): Boolean {
         return sharedPreferences.getString(key, defaultValue.toString()).toBoolean()
@@ -73,9 +79,9 @@ class PreferencesManager private constructor(context: Context) {
     fun getData(key: String, defaultValue: Float): Float {
         return sharedPreferences.getString(key, defaultValue.toString())?.toFloat() ?: defaultValue
     }
-    fun getData(key: String, defaultValue: IconCoordinatesGenerationInput): IconCoordinatesGenerationInput {
+    fun getData(key: String, defaultValue: IconCoordinatesGenerationScheme): IconCoordinatesGenerationScheme {
         val storedValue = sharedPreferences.getString(key, defaultValue.toString())
-        return IconCoordinatesGenerationInput.fromString(storedValue ?: defaultValue.toString())
+        return IconCoordinatesGenerationScheme.fromString(storedValue ?: defaultValue.toString())
     }
     fun getData(key: String, defaultValue: IconStyle): IconStyle {
         val storedValue = sharedPreferences.getString(key, defaultValue.toString())
