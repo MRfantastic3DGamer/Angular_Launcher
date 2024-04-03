@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,7 +44,6 @@ import com.dhruv.angular_launcher.accessible_screen.components.glsl_art.AllDefau
 import com.dhruv.angular_launcher.settings_screen.presentation.components.H3
 
 fun LazyListScope.textureViewer(
-    visibility: Boolean,
     allMaps: Map<String, List<Pair<Int, IntRange>>>,
     selectedTextures: Set<Pair<Int,Int>>,
     resources: Resources,
@@ -55,62 +53,57 @@ fun LazyListScope.textureViewer(
 
     allMaps.keys.forEach { group ->
         item {
-            AnimatedVisibility(visible = visibility) {
-                var open by remember { mutableStateOf(false) }
-                Column {
-                    Row (
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp)
-                            .height(34.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(Color.Black)
-                            .clickable
-                            {
-                                open = !open
-                                println(allMaps[group])
-                            },
-                        Arrangement.SpaceBetween,
-                        Alignment.CenterVertically
-                    ) {
-                        Row {
-                            Spacer(modifier = Modifier.width(10.dp))
-                            H3(text = group)
-                        }
-                        Row {
-                            Icon(
-                                imageVector = if (open) Icons.Rounded.KeyboardArrowDown else Icons.Rounded.KeyboardArrowUp,
-                                contentDescription = "open-close",
-                                tint = Color.White
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                        }
-                    }
+            var open by remember { mutableStateOf(false) }
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp)
+                    .height(34.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color.Black)
+                    .clickable
+                    {
+                        open = !open
+                        println(allMaps[group])
+                    },
+                Arrangement.SpaceBetween,
+                Alignment.CenterVertically
+            ) {
+                Row {
+                    Spacer(modifier = Modifier.width(10.dp))
+                    H3(text = group)
+                }
+                Row {
+                    Icon(
+                        imageVector = if (open) Icons.Rounded.KeyboardArrowDown else Icons.Rounded.KeyboardArrowUp,
+                        contentDescription = "open-close",
+                        tint = Color.White
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                }
+            }
 
-                    AnimatedVisibility(visible = open) {
-                        LazyHorizontalGrid(
-                            rows = GridCells.Adaptive(100.dp),
-                            modifier = Modifier
-                                .height(400.dp)
-                        ) {
-                            allMaps[group]!!.forEach { pack ->
-                                val image = pack.first
-                                val imageBitmap = BitmapFactory.decodeResource(resources, image)
-                                this.items(pack.second.toList()){ stream ->
-                                    ImageStreamView(
-                                        modifier = Modifier
-                                            .clickable { onSelect(image, stream) },
-                                        key = pack.first.toString(),
-                                        bitmap = imageBitmap.asImageBitmap(),
-                                        stream = stream,
-                                        selected = selectedTextures.contains(Pair(image, stream))
-                                    )
-                                }
-                            }
+            AnimatedVisibility(visible = open) {
+                LazyHorizontalGrid(
+                    rows = GridCells.Adaptive(100.dp),
+                    modifier = Modifier
+                        .height(400.dp)
+                ) {
+                    allMaps[group]!!.forEach { pack ->
+                        val image = pack.first
+                        val imageBitmap = BitmapFactory.decodeResource(resources, image)
+                        this.items(pack.second.toList()) { stream ->
+                            ImageStreamView(
+                                modifier = Modifier
+                                    .clickable { onSelect(image, stream) },
+                                key = pack.first.toString(),
+                                bitmap = imageBitmap.asImageBitmap(),
+                                stream = stream,
+                                selected = selectedTextures.contains(Pair(image, stream))
+                            )
                         }
                     }
                 }
-
             }
         }
     }

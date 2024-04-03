@@ -4,11 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -16,7 +14,6 @@ import com.dhruv.angular_launcher.accessible_screen.AccessibleScreenVM
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.AppLabelVM
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.presentation.AppLabel
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.FluidCursorVM
-import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.data.FluidCursorValues
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.presentation.FluidCursor
 import com.dhruv.angular_launcher.accessible_screen.components.glsl_art.MyGLSurfaceContent
 import com.dhruv.angular_launcher.accessible_screen.components.radial_app_navigator.RadialAppNavigatorVM
@@ -40,19 +37,9 @@ fun AccessibleScreen(mainScreenVM: AccessibleScreenVM, settingsVM: SettingsVM) {
     val themeVM by remember { mutableStateOf(ThemeDatabase.getViewModel(context)) }
 
     val sliderVM by remember { mutableStateOf(SliderVM(openSettings = settingsVM::openSettings)) }
-    var appNavigatorVM by remember { mutableStateOf(
-        RadialAppNavigatorVM(
-            iconPositionsToShader = { /*renderer::setIcons*/ }
-        )
-    ) }
+    val appNavigatorVM by remember { mutableStateOf(RadialAppNavigatorVM()) }
     val appLabelVM by remember { mutableStateOf(AppLabelVM()) }
-    var fluidCursorVM by remember { mutableStateOf(FluidCursorVM()) }
-
-    LaunchedEffect(key1 = themeVM.renderer) {
-        if (themeVM.renderer != null) {
-            FluidCursorValues.updateShaderPosition = themeVM.renderer!!::updateMousePos
-        }
-    }
+    val fluidCursorVM by remember { mutableStateOf(FluidCursorVM()) }
 
     Box(
         modifier = Modifier
@@ -74,9 +61,6 @@ fun AccessibleScreen(mainScreenVM: AccessibleScreenVM, settingsVM: SettingsVM) {
                 SettingsScreen(vm = settingsVM, exitSettings = {
                     settingsVM.exitSettings(it, themeVM.currTheme.getIconPositioningSchemes())
                     themeVM.renderer = themeVM.currTheme.getRenderer(resources)
-                    appNavigatorVM = appNavigatorVM.apply {
-                        iconPositionsToShader = themeVM.renderer!!::setIcons
-                    }
                 })
             }
 

@@ -1,11 +1,6 @@
 package com.dhruv.angular_launcher.core.database.room
 
-import android.content.Context
-import android.content.res.Configuration
 import android.content.res.Resources
-import android.icu.text.SimpleDateFormat
-import android.media.AudioManager
-import android.os.BatteryManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -21,7 +16,6 @@ import com.dhruv.angular_launcher.core.database.room.models.setShader
 import com.dhruv.angular_launcher.settings_screen.ThemeUIEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.Date
 
 class ThemeDatabaseVM(
     private val themeDataDao: ThemeDataDao,
@@ -36,74 +30,53 @@ class ThemeDatabaseVM(
         renderer = MyGLRenderer(resources, currTheme.getShader())
     }
 
+    fun addData(key: String, value: Any) {
+        if (currTheme.getShader().resourcesAsked.contains(key))
+            renderer?.PrepareData(key, value)
+    }
+
     fun onUIInput(uiEvent: ThemeUIEvent){
         when (uiEvent) {
-            is ThemeUIEvent.SaveShaderCode -> {
+            is ThemeUIEvent.SaveShaderToCurrentTheme -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    currTheme.let {
-                        themeDataDao.update(it.setShader(uiEvent.shaderData))
-                        renderer = MyGLRenderer(uiEvent.resources, uiEvent.shaderData)
-                    }
+                    currTheme = currTheme.setShader(uiEvent.shaderData)
+                    themeDataDao.update(currTheme)
+                    prepareRenderer(uiEvent.resources)
                 }
             }
             is ThemeUIEvent.ApplyTheme -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     PreferencesManager.getInstance(uiEvent.context).saveData("theme_id", uiEvent.id)
                     currTheme = themeDataDao.getThemeById(uiEvent.id)
-                    renderer = MyGLRenderer(uiEvent.resources, currTheme.getShader())
+                    prepareRenderer(uiEvent.resources)
                 }
             }
             is ThemeUIEvent.SaveTheme -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     themeDataDao.insert(uiEvent.data)
                     currTheme = uiEvent.data
-                    renderer = MyGLRenderer(uiEvent.resources, uiEvent.data.getShader())
+                    prepareRenderer(uiEvent.resources)
                 }
             }
             is ThemeUIEvent.UpdateCurrentTheme -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     themeDataDao.update(uiEvent.data)
                     currTheme = uiEvent.data
-                    renderer = MyGLRenderer(uiEvent.resources, uiEvent.data.getShader())
+                    prepareRenderer(uiEvent.resources)
                 }
             }
             is ThemeUIEvent.SaveCopyTheme -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     themeDataDao.insert(uiEvent.data.getCopy())
                     currTheme = uiEvent.data
-                    renderer = MyGLRenderer(uiEvent.resources, uiEvent.data.getShader())
+                    prepareRenderer(uiEvent.resources)
                 }
             }
             is ThemeUIEvent.DeleteTheme -> {
                 viewModelScope.launch(Dispatchers.IO) {
-
                     themeDataDao.delete(uiEvent.id)
                 }
             }
         }
-    }
-
-    fun GetBattery(context: Context): Int {
-        val batteryManager = context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
-        val batLevel: Int = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-        return batLevel
-    }
-
-    fun GetDateTime(): List<Int> {
-        val sdf = SimpleDateFormat("dd:MM:yyyy:HH:mm:ss")
-        val currentDateAndTime = sdf.format(Date())
-        return currentDateAndTime.split(":").map { it.toInt() }
-    }
-
-    fun GetVolume(context: Context): Float {
-        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-        val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-        return currentVolume.toFloat() / maxVolume.toFloat()
-    }
-
-    fun GetDarkMode(context: Context): Int {
-        val currentNightMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        return if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) 1 else 0
     }
 }

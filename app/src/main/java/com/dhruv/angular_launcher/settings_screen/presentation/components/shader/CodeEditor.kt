@@ -3,19 +3,16 @@ package com.dhruv.angular_launcher.settings_screen.presentation.components.shade
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.dhruv.angular_launcher.settings_screen.presentation.components.H3
 
 
 @Composable
 fun CodeEditor(
-    onSave: () -> Unit,
     code: TextFieldValue,
     onChange: (TextFieldValue) -> Unit
 ) {
@@ -29,10 +26,6 @@ fun CodeEditor(
         )
 
         Spacer(modifier = Modifier.height(10.dp))
-
-        Button(onClick = onSave) {
-            H3(text = "save code")
-        }
     }
 
 //    val touch = EditorTouch()

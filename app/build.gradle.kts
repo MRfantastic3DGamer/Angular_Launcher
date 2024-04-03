@@ -110,11 +110,8 @@ dependencies {
     implementation ("androidx.palette:palette-ktx:1.0.0")
     implementation ("com.jakewharton.timber:timber:5.0.1")
 
-    // icons TODO: this needs to be removed
-//    implementation ("androidx.compose.material:material-icons-extended:1.6.2")
-
-    // for permissions
-//    implementation ("io.github.farimarwat:permissionmate-compose:1.1")
+    // for sensors
+    implementation("com.mutualmobile:composesensors:1.1.2")
 
     // coil
 //    implementation ("io.coil-kt:coil:2.6.0")

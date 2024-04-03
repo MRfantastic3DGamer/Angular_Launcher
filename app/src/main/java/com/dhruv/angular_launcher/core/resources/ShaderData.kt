@@ -1,38 +1,37 @@
 package com.dhruv.angular_launcher.core.resources
 
 data class ShaderData(
-    val name: String = "unnamed",
-    val resourcesAsked: Set<String> = emptySet(),
+    val name: String = "blob apps",
+    val resourcesAsked: Set<String> = setOf(
+        AllResources.TouchPosition.name,
+        AllResources.IconsPositions.name,
+        AllResources.IconsCount.name,
+    ),
     val textures: Map<String, Int> = emptyMap(),
     val code: String =
-        """
+"""
 #version 100
 
 #ifdef GL_ES
 precision mediump float;
 #endif
+
 #define MAX_ICONS 100
 
-uniform float u_time;
 uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-uniform vec2 u_interaction;
-
-uniform float u_positions_X[MAX_ICONS];
-uniform float u_positions_Y[MAX_ICONS];
-
+uniform vec2 TouchPosition;
+uniform vec2 IconsPositions[MAX_ICONS];
+uniform int IconsCount;
 
 void main() {
-
-    float value = 1./distance(gl_FragCoord.xy, u_mouse) * 1.2;
+    
+    float value = 1./distance(gl_FragCoord.xy, TouchPosition) * 1.2;
     vec2 t_pos = vec2(0., 0.);
     float t_dist = 100000.;
 
-    for(int i=0;i<MAX_ICONS;++i)
+    for(int i=0;i<IconsCount;++i)
     {
-        if (u_positions_X[i] == -10000.)
-            break;
-        t_pos = vec2(u_positions_X[i], u_positions_Y[i]);
+        t_pos = IconsPositions[i];
         t_dist = min(t_dist, distance(gl_FragCoord.xy, t_pos));
     }
     value += 1./t_dist;
@@ -44,7 +43,7 @@ void main() {
     vec4 color = insideCircle * vec4(0.0, 0.0, 0.0, 0.0);
     color += (1.0 - insideCircle) * vec4(1.0, 1.0, 1.0, 1.0);
 
-    gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = color;
 }
 """
 ) {
@@ -57,7 +56,7 @@ void main() {
             require(parts.size == 4) { "Invalid string format for ShaderData : $str" }
 
             val name = parts[0]
-            val resourcesStr = parts[0]
+            val resourcesStr = parts[1]
             val resourcesAsked = if (resourcesStr == EMPTY) emptySet() else
                 resourcesStr.split(",").toSet()
             val texturesStr = parts[2]
@@ -76,9 +75,7 @@ void main() {
     override fun toString(): String {
         val resourcesStr = if (resourcesAsked.isEmpty()) EMPTY else
             resourcesAsked.joinToString(",") { it }
-        val texturesStr = if (textures.isEmpty()) {
-            EMPTY
-        } else {
+        val texturesStr = if (textures.isEmpty()) EMPTY else {
             textures.entries.joinToString(",") { "${it.key}=${it.value}" }
         }
         return "$name$DELIMITER$resourcesStr$DELIMITER$texturesStr$DELIMITER$code"

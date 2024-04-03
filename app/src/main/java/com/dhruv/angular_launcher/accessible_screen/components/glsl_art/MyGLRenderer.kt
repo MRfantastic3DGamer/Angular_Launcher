@@ -5,20 +5,21 @@ import android.graphics.BitmapFactory
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.GLUtils
-import android.util.Size
 import androidx.compose.ui.geometry.Offset
+import com.dhruv.angular_launcher.core.resources.AllResources
 import com.dhruv.angular_launcher.core.resources.ShaderData
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
+import kotlin.math.min
 
 const val MAX_ICONS = 100
 
 class MyGLRenderer(
     private val resources: Resources,
-    private val shaderData: ShaderData,
+    val shaderData: ShaderData,
 ) : GLSurfaceView.Renderer {
     private var textureHandle: Int = 0
     private lateinit var bitmap: Bitmap
@@ -36,78 +37,71 @@ class MyGLRenderer(
 
     private var program: Int = 0
 
-    private var timeHandler: Int? = null
-    private var resolutionHandler: Int? = null
-    private var mouseHandler: Int? = null
-    private var interactionHandler: Int? = null
-    private var iconsXUniformLocation: Int? = null
-    private var iconsYUniformLocation: Int? = null
+    private val uniformLocations: MutableMap<String, Int?> = mutableMapOf()
+    private val uniformValues: MutableMap<String, Any> = mutableMapOf()
 
-    private var battery = 0
-    private var dateAndTime = intArrayOf()
     private var frame = 0
 
-    private var time = 0f
-    private var resolution = Size(0,0)
-    private var mousePos = -Offset.Infinite
-    private var interactionPos = -Offset.Infinite
-    private var iconsPosX = listOf<Float>()
-    private var iconsPosY = listOf<Float>()
-
-    fun interactionTrigger(pos: Offset) {
-        interactionPos = pos
-        time = 0f
-    }
-
-    fun updateMousePos(x: Float, y:Float) {
-        mousePos = Offset(x, ScreenUtils.fromDown(y))
-    }
-
-    fun setIcons(positions: List<Offset>){
-        val offsetsX = mutableListOf<Float>()
-        val offsetsY = mutableListOf<Float>()
-        for (i in 0 until MAX_ICONS){
-            if (i in positions.indices){
-                offsetsX.add(positions[i].x)
-                offsetsY.add(positions[i].y)
-            }
-            else{
-                offsetsX.add(-10000f)
-                offsetsY.add(-10000f)
-                break
-            }
-        }
-        iconsPosX = offsetsX
-        iconsPosY = offsetsY
+    fun PrepareData(key: String, value: Any){
+        uniformValues[key] = value
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
-        shaderData.textures.forEach {
-            val bitmap = BitmapFactory.decodeResource(resources, it.value)
-            loadTexture(bitmap)
-        }
+        loadTextures(
+            shaderData.textures.map {
+                BitmapFactory.decodeResource(resources, it.value)
+            }
+        )
         setupShader()
     }
 
     override fun onDrawFrame(gl: GL10?) {
+        println("uniformValues: $uniformValues")
         GLES20.glDisable(GL10.GL_DITHER)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
 
-        timeHandler?.let { GLES20.glUniform1f(it, time) }
-        resolutionHandler?.let { GLES20.glUniform2f(it, resolution.width.toFloat(), resolution.height.toFloat()) }
-        mouseHandler?.let { GLES20.glUniform2f(it, mousePos.x, mousePos.y) }
-        interactionHandler?.let { GLES20.glUniform2f(it, mousePos.x, mousePos.y) }
-        iconsXUniformLocation?.let {
-            for (i in 0 until MAX_ICONS) {
-                if (i >= iconsPosX.size) break
-                GLES20.glUniform1f(it + i, iconsPosX[i])
-            }
+        if (uniformValues.containsKey(AllResources.Frame.name)){
+            GLES20.glUniform1i(uniformLocations[AllResources.Frame.name]!!, frame)
+            frame += 1
         }
-        iconsYUniformLocation?.let {
-            for (i in 0 until  MAX_ICONS) {
-                if (i >= iconsPosY.size) break
-                GLES20.glUniform1f(it + i, iconsPosY[i])
+        uniformLocations.forEach{(key, location) ->
+            location?.let { l ->
+                val value = uniformValues.getOrDefault(key, null)
+                if (value is Float) GLES20.glUniform1f(l, value)
+                if (value is FloatArray) {
+                    when (value.size) {
+                        1 -> {GLES20.glUniform1f(l, value[0])}
+                        2 -> {GLES20.glUniform2f(l, value[0], value[1])}
+                        3 -> {GLES20.glUniform3f(l, value[0], value[1], value[2])}
+                        4 -> {GLES20.glUniform4f(l, value[0], value[1], value[2], value[3])}
+                        else -> {}
+                    }
+                }
+                if (value is Int) GLES20.glUniform1i(l, value)
+                if (value is IntArray) {
+                    when (value.size) {
+                        1 -> {GLES20.glUniform1i(l, value[0])}
+                        2 -> {GLES20.glUniform2i(l, value[0], value[1])}
+                        3 -> {GLES20.glUniform3i(l, value[0], value[1], value[2])}
+                        4 -> {GLES20.glUniform4i(l, value[0], value[1], value[2], value[3])}
+                        6 -> {
+                            GLES20.glUniform3i(l, value[0], value[1], value[2])
+                            GLES20.glUniform3i(l+3, value[3], value[4], value[5])
+                        }
+                        else -> {}
+                    }
+                }
+                if (value is Boolean) GLES20.glUniform1i(l, if (value) 1 else 0)
+                if (value is List<*>) {
+                    val len = value.size
+                    if (len > 0 && value[0] is Offset) {
+                        for (i in 0 until  min(len, 100)) {
+                            val offset = value[i] as Offset
+                            GLES20.glUniform2f(l + i, offset.x, offset.y)
+                        }
+                    }
+                }
             }
         }
 
@@ -116,25 +110,23 @@ class MyGLRenderer(
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         GLES20.glViewport(0, 0, width, height)
-        resolution = Size(width, height)
     }
 
-    private fun loadTexture(bitmap: Bitmap) {
-        val textures = IntArray(1)
-        GLES20.glGenTextures(1, textures, 0)
-        textureHandle = textures[0]
+    private fun loadTextures(bitmaps: List<Bitmap>) {
+        val textures = (1..bitmaps.size).toList().toIntArray()
+        GLES20.glGenTextures(bitmaps.size, textures, 0)
+        textures.forEachIndexed { index, textureHandle ->
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle)
 
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle)
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST)
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST)
 
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST)
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST)
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE)
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE)
 
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE)
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE)
-
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
-
-        bitmap.recycle()
+            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+            bitmaps[index].recycle()
+        }
     }
 
     private fun setupShader() {
@@ -148,12 +140,7 @@ class MyGLRenderer(
             GLES20.glLinkProgram(it)
         }
 
-        timeHandler = GLES20.glGetUniformLocation(program, "u_time")
-        resolutionHandler = GLES20.glGetUniformLocation(program, "u_resolution")
-        mouseHandler = GLES20.glGetUniformLocation(program, "u_mouse")
-        interactionHandler = GLES20.glGetUniformLocation(program, "u_interaction")
-        iconsXUniformLocation = GLES20.glGetUniformLocation(program, "u_positions_X")
-        iconsYUniformLocation = GLES20.glGetUniformLocation(program, "u_positions_Y")
+        shaderData.resourcesAsked.forEach { uniformLocations[it] = GLES20.glGetUniformLocation(program, it) }
     }
 
     private fun loadShader(type: Int, shaderCode: String): Int {
@@ -176,7 +163,7 @@ class MyGLRenderer(
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle)
-        texturesUniformHandle.forEach { key, uniformLocation -> GLES20.glUniform1i(uniformLocation, 0) }
+        texturesUniformHandle.forEach { (key, uniformLocation) -> GLES20.glUniform1i(uniformLocation, 0) }
 
         // Define vertices and texture coordinates here and pass them to OpenGL ES buffers
         // Example vertices and texture coordinates
@@ -227,5 +214,4 @@ class MyGLRenderer(
         GLES20.glDisableVertexAttribArray(positionHandle)
         GLES20.glDisableVertexAttribArray(textureCoordHandle)
     }
-    
 }

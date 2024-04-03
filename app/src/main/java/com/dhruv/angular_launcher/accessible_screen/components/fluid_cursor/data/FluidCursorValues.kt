@@ -8,8 +8,6 @@ object FluidCursorValues {
     private var persistentData = MutableLiveData(FluidCursorPersistentData(FluidCursorLooks(), 1f))
     private var data = MutableLiveData(FluidCursorData())
 
-    var updateShaderPosition: (Float, Float) -> Unit = {x,y -> }
-
     val GetPersistentData: LiveData<FluidCursorPersistentData>
         get() = persistentData
     val GetData: LiveData<FluidCursorData>
@@ -18,7 +16,6 @@ object FluidCursorValues {
     fun updateTouchPosition(pos: Offset) {
         data.value = data.value!!.copy(touchPos = pos)
         val target = getCursorTargetPosition()
-        updateShaderPosition(target.x, target.y)
     }
 
     fun updatesFromAppsNavigator(selectionOffset: Offset?) {

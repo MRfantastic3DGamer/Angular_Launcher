@@ -26,9 +26,11 @@ import com.dhruv.angular_launcher.accessible_screen.components.radial_app_naviga
 import com.dhruv.angular_launcher.accessible_screen.components.slider.SliderFunctions
 import com.dhruv.angular_launcher.accessible_screen.components.slider.SliderVM
 import com.dhruv.angular_launcher.accessible_screen.components.slider.presentation.components.AllChoices
+import com.dhruv.angular_launcher.accessible_screen.components.slider.presentation.components.GroupIconPositions
 import com.dhruv.angular_launcher.core.database.room.AppDatabase
 import com.dhruv.angular_launcher.core.database.room.ThemeDatabase
 import com.dhruv.angular_launcher.core.database.room.models.getSliderHeight
+import com.dhruv.angular_launcher.core.resources.AllResources
 import com.dhruv.angular_launcher.data.enums.SelectionMode
 import com.dhruv.angular_launcher.haptics.HapticsHelper
 import com.dhruv.angular_launcher.utils.ScreenUtils
@@ -39,7 +41,8 @@ fun Slider (
 ){
     val context = LocalContext.current
     val DBVM = AppDatabase.getViewModel(context)
-    val theme = ThemeDatabase.getViewModel(context).currTheme
+    val themeVM = ThemeDatabase.getViewModel(context)
+    val theme = themeVM.currTheme
 
 
     val allOptions: List<String> = when (vm.selectionMode) {
@@ -73,6 +76,7 @@ fun Slider (
             vm.selectionPosY = selection.posY
             if (vm.selectionIndex != vm.prevSelectionIndex){
                 HapticsHelper.groupSelectHaptic(context)
+                themeVM.addData(AllResources.SelectedGroupIndex.name, vm.selectionIndex)
             }
             FluidCursorValues.updatesFromSlider(
                 vm.sliderPos + Offset(0f, selection.posY),
@@ -133,25 +137,28 @@ fun Slider (
             Text(text = "please add a group from settings")
         }
     }
+
+    val groupIconOffsets = GroupIconPositions(
+        offset = currentOffset,
+        height = height,
+        width = ScreenUtils.fToDp(theme.sliderWidth - 20),
+        optionsCount = allOptions.size,
+        currentSelection = currentFuzzySelection,
+        shift = ScreenUtils.dpToF(theme.sidePadding.dp)
+    )
+    themeVM.addData(AllResources.GroupsPositions.name, groupIconOffsets)
+
     AnimatedVisibility(
         visible = groupsAvailable && vm.visible,
         Modifier,
         enter = fadeIn(),
         exit = fadeOut(),
     ) {
-//        GlassOverWallpaper(
-//            Modifier.fillMaxSize(),
-//            path = path,
-//            blur = 10.dp
-//        )
         AllChoices(
-            offset = currentOffset,
-            height = height,
             width = ScreenUtils.fToDp(theme.sliderWidth - 20),
             allOptions = allOptions,
-            currentSelection = currentFuzzySelection,
-            shift = ScreenUtils.dpToF(theme.sidePadding.dp),
             selectionMode = vm.selectionMode,
+            offsets = groupIconOffsets
         )
     }
 }

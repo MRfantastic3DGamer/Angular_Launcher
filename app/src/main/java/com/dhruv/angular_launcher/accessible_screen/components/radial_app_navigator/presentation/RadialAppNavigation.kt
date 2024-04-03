@@ -19,6 +19,7 @@ import com.dhruv.angular_launcher.core.appIcon.AppIcon
 import com.dhruv.angular_launcher.core.database.room.AppDatabase
 import com.dhruv.angular_launcher.core.database.room.ThemeDatabase
 import com.dhruv.angular_launcher.core.database.room.models.getIconStyles
+import com.dhruv.angular_launcher.core.resources.AllResources
 import com.dhruv.angular_launcher.data.enums.SelectionMode
 import com.dhruv.angular_launcher.haptics.HapticsHelper
 import com.dhruv.angular_launcher.utils.ScreenUtils
@@ -61,6 +62,7 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
         vm.prevSelectionIndex = vm.selectionIndex
         vm.selectionIndex = RadialAppNavigationFunctions.getClosest(vm.offsetFromCenter + vm.center, usedOffsets, 200f)
         if (vm.selectionIndex != vm.prevSelectionIndex){
+            themeVM.addData(AllResources.SelectedIconIndex.name, vm.selectionIndex)
             HapticsHelper.appSelectHaptic(context)
         }
         // endregion
@@ -90,7 +92,10 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
     if (vm.visibility){
         vm.selectionAmount = RadialAppNavigationFunctions.getIconSelection(cursorPos, usedOffsets, 200f)
 
-        vm.iconPositionsToShader(usedOffsets.map { it.copy(y = ScreenUtils.fromDown(it.y)) })
+        // update in shader
+        themeVM.addData(AllResources.IconsCount.name, usedOffsets.size)
+        themeVM.addData(AllResources.IconsPositions.name, usedOffsets.map { it.copy(y = ScreenUtils.fromDown(it.y)) })
+
         usedOffsets.forEachIndexed { index, it ->
             if (index in appsPkgsList.indices) {
                 val pkgName = appsPkgsList[index]
@@ -106,6 +111,8 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
         }
     }
     else{
-        vm.iconPositionsToShader(emptyList())
+        // update in shader
+        themeVM.addData(AllResources.IconsCount.name, 0)
+        themeVM.addData(AllResources.IconsPositions.name, emptyList<Offset>())
     }
 }

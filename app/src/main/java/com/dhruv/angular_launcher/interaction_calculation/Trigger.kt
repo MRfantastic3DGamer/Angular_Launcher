@@ -30,8 +30,8 @@ fun Modifier.AccessibleScreenTrigger(
                         change.consume()
                         TriggerFunctions.Drag(context, dragAmount)
                     },
-                    onDragEnd = { TriggerFunctions.DragEnd() },
-                    onDragCancel = { TriggerFunctions.DragEnd() },
+                    onDragEnd = { TriggerFunctions.DragEnd(context) },
+                    onDragCancel = { TriggerFunctions.DragEnd(context) },
                 )
             }
     else

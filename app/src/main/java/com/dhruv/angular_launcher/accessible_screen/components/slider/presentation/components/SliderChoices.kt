@@ -46,33 +46,43 @@ fun DrawGroupIconChoice(key: Int, x: Float, y: Float, resources: Resources, size
     )
 }
 
-@Composable
-fun AllChoices (
+fun GroupIconPositions(
     offset: Offset,
     height: Float,
     width: Dp,
-    allOptions: List<String>,
+    optionsCount: Int,
     currentSelection: Float,
     shift: Float,
-    selectionMode: SelectionMode
-){
-    val hPerElement = height/(allOptions.size)
+    ): List<Offset> {
+    val hPerElement = height/(optionsCount)
     val first = hPerElement/2
-    val context = LocalContext.current
-
     val commonX = offset.x + ScreenUtils.dpToF(width)/2
-
-    allOptions.forEachIndexed{ i, n ->
+    return (0 until optionsCount).map { i ->
         val x = commonX - gaussian(i.toFloat(), currentSelection, 0.2f) * (shift - 40f)
         val y = offset.y + first + hPerElement*i
-        when (selectionMode) {
-            SelectionMode.NotSelected -> {}
-            SelectionMode.ByAlphabet -> {
-                DrawTextChoice(n, x, y)
+        Offset(x,y)
+    }
+}
+
+@Composable
+fun AllChoices(
+    allOptions: List<String>,
+    offsets: List<Offset>,
+    selectionMode: SelectionMode,
+    width: Dp
+) {
+    val context = LocalContext.current
+    when (selectionMode) {
+        SelectionMode.NotSelected,
+        SelectionMode.BySearch -> {}
+        SelectionMode.ByAlphabet -> {
+            allOptions.forEachIndexed { index, s ->
+                DrawTextChoice(s, offsets[index].x, offsets[index].y)
             }
-            SelectionMode.BySearch -> {}
-            SelectionMode.ByGroup -> {
-                DrawGroupIconChoice(key = n.toInt(), x = x, y = y, resources = context.resources, size = width)
+        }
+        SelectionMode.ByGroup -> {
+            allOptions.forEachIndexed { index, n ->
+                DrawGroupIconChoice(key = n.toInt(), x = offsets[index].x, y = offsets[index].y, resources = context.resources, size = width)
             }
         }
     }
@@ -82,15 +92,17 @@ fun AllChoices (
 fun Modifier.alignToMidPoint(
     offset: IntOffset
 ): Modifier {
-    return this.offset { offset }.layout { measurable, constraints ->
-        val placeable = measurable.measure(constraints)
+    return this
+        .offset { offset }
+        .layout { measurable, constraints ->
+            val placeable = measurable.measure(constraints)
 
-        val translation = - IntOffset(placeable.width / 2, placeable.height / 2)
+            val translation = -IntOffset(placeable.width / 2, placeable.height / 2)
 
-        layout(placeable.width, placeable.height) {
-            placeable.placeRelative(translation)
+            layout(placeable.width, placeable.height) {
+                placeable.placeRelative(translation)
+            }
         }
-    }
 }
 
 

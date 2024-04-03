@@ -12,9 +12,7 @@ import com.dhruv.angular_launcher.core.database.apps_data.AppsIconsDataValues
 import com.dhruv.angular_launcher.data.enums.SelectionMode
 import com.example.launcher.Drawing.DrawablePainter
 
-class RadialAppNavigatorVM(
-    var iconPositionsToShader: (List<Offset>) -> Unit,
-):ViewModel() {
+class RadialAppNavigatorVM():ViewModel() {
 
     var visibility by mutableStateOf(false)
     var selectionMode: SelectionMode by mutableStateOf(SelectionMode.NotSelected)
