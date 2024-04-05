@@ -105,7 +105,7 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
 
         // update in shader
         themeVM.addData(AllResources.IconsCount.name, usedOffsets.size)
-        themeVM.addData(AllResources.IconsPositions.name, usedOffsets.map { it.copy(y = ScreenUtils.fromDown(it.y)) })
+        themeVM.addData(AllResources.IconsPositions.name, usedOffsets.map { ScreenUtils.ShaderOffset(it) })
 
         usedOffsets.forEachIndexed { index, it ->
             if (index in appsPkgsList.indices) {

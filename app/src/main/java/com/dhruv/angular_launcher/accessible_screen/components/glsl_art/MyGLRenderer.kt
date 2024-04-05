@@ -182,6 +182,8 @@ class MyGLRenderer(
         }
 
         shaderData.resourcesAsked.forEach { uniformLocations[it] = GLES20.glGetUniformLocation(program, it) }
+        println("IconsPositions: ${uniformLocations[AllResources.IconsPositions.name]}")
+        println("GroupsPositions: ${uniformLocations[AllResources.GroupsPositions.name]}")
     }
 
     private fun loadShader(type: Int, shaderCode: String): Int {

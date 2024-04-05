@@ -4,34 +4,26 @@ precision highp float;
 #else
 precision mediump float;
 #endif
-#define MAX_ICONS 100
-uniform vec2 GroupsPositions[MAX_ICONS];
-uniform int SelectedGroupIndex;
-uniform int Frame;
+
+uniform vec2 GroupsPositions[50];
 uniform float GroupZoneStartRadios;
 uniform float GroupZoneEndRadios;
+uniform int GroupsCount;
+uniform int SelectedGroupIndex;
 
-#define adjust vec2(0.0, -40.0)
+uniform int IconsCount;
+uniform int SelectedIconIndex;
+uniform vec2 IconsPositions[100];
+
+uniform int Frame;
+
 #define sr 100.0
+#define adjust vec2(0.0, -40.0)
+
 #define spacing 10.0
 #define dotSize 10.0
-
-void main() {
-
+vec3 triPolka(float mask){
     float rep = 5.0;
-
-    vec2 center = GroupsPositions[SelectedGroupIndex] + adjust;
-    float selectionDist = distance(gl_FragCoord.xy, center);
-    float isInGroupZone;
-    if (selectionDist > GroupZoneStartRadios - 100.0 && selectionDist < GroupZoneEndRadios + 100.0) {
-        // Smooth interpolation from 0.0 to 1.0 based on the distance to the zone boundary
-        isInGroupZone = smoothstep(GroupZoneStartRadios - 100.0, GroupZoneStartRadios, selectionDist);
-        isInGroupZone *= 1.0 - smoothstep(GroupZoneEndRadios, GroupZoneEndRadios + 100.0, selectionDist);
-    } else {
-        isInGroupZone = 0.0; // Outside the group zone
-    }
-    float tr = (1.0 - smoothstep(0.0, 1.0, sin(float(Frame) * 0.01 - selectionDist * 0.01)*1.2)) * isInGroupZone;
-
     vec2 uv = (gl_FragCoord.xy / rep);
 
     // Define the angle of rotation in radians
@@ -49,10 +41,10 @@ void main() {
     c = cos(angleB);
     mat2 rotationMatrixB = mat2(c, -s, s, c);
 
-    // Rotate the UV coordinates
-    vec2 uvR = rotationMatrixR * uv + vec2(float(Frame) * 0.01, float(Frame) * 0.02);
-    vec2 uvG = rotationMatrixG * uv + vec2(float(Frame) * 0.02, float(Frame) * 0.01);
-    vec2 uvB = rotationMatrixB * uv + vec2(float(Frame) * 0.00, float(Frame) * 0.01);
+    // Rotate and move the UV coordinates
+    vec2 uvR = rotationMatrixR * uv + vec2(float(Frame) * 0.10   , float(Frame) * 0.02   );
+    vec2 uvG = rotationMatrixG * uv + vec2(float(Frame) * (-0.12), float(Frame) * (-0.01));
+    vec2 uvB = rotationMatrixB * uv + vec2(float(Frame) * 0.07   , float(Frame) * 0.1    );
 
     vec2 gridCellPosR = floor(uvR / spacing) * spacing;
     vec2 gridCellPosG = floor(uvG / spacing) * spacing;
@@ -68,9 +60,37 @@ void main() {
 
     vec3 color = vec3(0.0);
 
-    if (distanceToCenterR < dotSize * tr) { color.r = 1.0; }
-    if (distanceToCenterG < dotSize * tr) { color.g = 1.0; }
-    if (distanceToCenterB < dotSize * tr) { color.b = 1.0; }
+    if (distanceToCenterR < dotSize * mask) { color.r = 1.0; }
+    if (distanceToCenterG < dotSize * mask) { color.g = 1.0; }
+    if (distanceToCenterB < dotSize * mask) { color.b = 1.0; }
 
-    gl_FragColor = vec4(color, 1.0);
+    return color;
+}
+
+void main() {
+
+    vec2 center = GroupsPositions[SelectedGroupIndex] + adjust;
+    float selectionDist = distance(gl_FragCoord.xy, center);
+    float isInGroupZone;
+    if (selectionDist > GroupZoneStartRadios - 300.0 && selectionDist < GroupZoneEndRadios + 300.0) {
+        // Smooth interpolation from 0.0 to 1.0 based on the distance to the zone boundary
+        isInGroupZone = smoothstep(-200.0, -100.0, selectionDist - GroupZoneStartRadios);
+        isInGroupZone *= 1.0 - smoothstep(100.0, 200.0, selectionDist - GroupZoneEndRadios);
+    } else {
+        isInGroupZone = 0.0; // Outside the group zone
+    }
+    float wave = (1.0 - smoothstep(0.0, 1.0, sin(float(Frame) * 0.01 - selectionDist * 0.01)*1.2)) * isInGroupZone;
+    float sliderH = smoothstep(-100.0, 0.0, 1000.0 - 130.0 - gl_FragCoord.x);
+    float sliderV = smoothstep(-100.0, 0.0, GroupsPositions[0].y + 50.0 - gl_FragCoord.y) * smoothstep(-100.0, 0.0, gl_FragCoord.y - GroupsPositions[GroupsCount-1].y + 50.0);
+    float slider = (1.0 - sliderH) * sliderV;
+
+    float iconCloseness = 1000000.0;
+    for(int i=0; i<IconsCount; ++i){
+        iconCloseness = min(iconCloseness, distance(gl_FragCoord.xy, IconsPositions[i]))/100.0;
+    }
+
+    float mask = clamp(0.0, wave + slider, 1.0);
+    if(SelectedGroupIndex == -1){ mask = 0.0; }
+
+    gl_FragColor = vec4(vec3(iconCloseness), 1.0);
 }
