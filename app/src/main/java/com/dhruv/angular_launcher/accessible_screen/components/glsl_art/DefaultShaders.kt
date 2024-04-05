@@ -11,6 +11,104 @@ val ThemesFor_GettingBasicDataToDrawStuff = listOf(
 )
 
 val ShadersFor_GettingBasicDataToDrawStuff = listOf(
+
+    ShaderData(
+        name = "test",
+        resourcesAsked = setOf(
+            AllResources.GroupsPositions.name,
+            AllResources.SelectedGroupIndex.name,
+            AllResources.GroupZoneStartRadios.name,
+            AllResources.GroupZoneEndRadios.name,
+            AllResources.IconsCount.name,
+            AllResources.IconsPositions.name,
+            AllResources.SelectedIconIndex.name,
+            AllResources.GroupZoneEndRadios.name,
+            AllResources.Frame.name,
+        ),
+        textures = emptyMap(),
+        code =
+        """
+#version 100
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+#define MAX_ICONS 100
+uniform vec2 GroupsPositions[MAX_ICONS];
+uniform int SelectedGroupIndex;
+uniform int Frame;
+uniform float GroupZoneStartRadios;
+uniform float GroupZoneEndRadios;
+
+#define adjust vec2(0.0, -40.0)
+#define sr 100.0
+#define spacing 10.0
+#define dotSize 10.0
+
+
+
+void main() {
+
+    float rep = 5.0;
+
+    vec2 center = GroupsPositions[SelectedGroupIndex] + adjust;
+    float selectionDist = distance(gl_FragCoord.xy, center);
+    float isInGroupZone;
+    if (selectionDist > GroupZoneStartRadios - 100.0 && selectionDist < GroupZoneEndRadios + 100.0) {
+        // Smooth interpolation from 0.0 to 1.0 based on the distance to the zone boundary
+        isInGroupZone = smoothstep(GroupZoneStartRadios - 100.0, GroupZoneStartRadios, selectionDist);
+        isInGroupZone *= 1.0 - smoothstep(GroupZoneEndRadios, GroupZoneEndRadios + 100.0, selectionDist);
+    } else {
+        isInGroupZone = 0.0; // Outside the group zone
+    }
+    float tr = (1.0 - smoothstep(0.0, 1.0, sin(float(Frame) * 0.01 - selectionDist * 0.01)*1.2)) * isInGroupZone;
+
+    vec2 uv = (gl_FragCoord.xy / rep);
+
+    // Define the angle of rotation in radians
+    float angleR = 1.0;
+    float angleG = 2.0;
+    float angleB = 3.0;
+    // Calculate sine and cosine of the angle
+    float s = sin(angleR);
+    float c = cos(angleR);
+    mat2 rotationMatrixR = mat2(c, -s, s, c);
+    s = sin(angleG);
+    c = cos(angleG);
+    mat2 rotationMatrixG = mat2(c, -s, s, c);
+    s = sin(angleB);
+    c = cos(angleB);
+    mat2 rotationMatrixB = mat2(c, -s, s, c);
+
+    // Rotate the UV coordinates
+    vec2 uvR = rotationMatrixR * uv + vec2(float(Frame) * 0.01, float(Frame) * 0.02);
+    vec2 uvG = rotationMatrixG * uv + vec2(float(Frame) * 0.02, float(Frame) * 0.01);
+    vec2 uvB = rotationMatrixB * uv + vec2(float(Frame) * 0.00, float(Frame) * 0.01);
+
+    vec2 gridCellPosR = floor(uvR / spacing) * spacing;
+    vec2 gridCellPosG = floor(uvG / spacing) * spacing;
+    vec2 gridCellPosB = floor(uvB / spacing) * spacing;
+
+    vec2 dotCenterR = gridCellPosR + 0.5 * spacing;
+    vec2 dotCenterG = gridCellPosG + 0.5 * spacing;
+    vec2 dotCenterB = gridCellPosB + 0.5 * spacing;
+
+    float distanceToCenterR = distance(uvR, dotCenterR);
+    float distanceToCenterG = distance(uvG, dotCenterG);
+    float distanceToCenterB = distance(uvB, dotCenterB);
+
+    vec3 color = vec3(0.0);
+
+    if (distanceToCenterR < dotSize * tr) { color.r = 1.0; }
+    if (distanceToCenterG < dotSize * tr) { color.g = 1.0; }
+    if (distanceToCenterB < dotSize * tr) { color.b = 1.0; }
+
+    gl_FragColor = vec4(color, 1.0);
+}
+""",
+    ),
+
     ShaderData(
         name = "track cursor",
         resourcesAsked = setOf(
@@ -73,7 +171,7 @@ void main() {
         ),
         textures = emptyMap(),
         code =
-        """
+"""
 #version 100
 
 #ifdef GL_ES
@@ -84,7 +182,7 @@ precision mediump float;
 
 uniform vec2 u_resolution;
 uniform vec2 TouchPosition;
-uniform vec2[MAX_ICONS] IconsPositions;
+uniform vec2 IconsPositions[MAX_ICONS];
 uniform int IconsCount;
 
 void main() {
@@ -110,6 +208,94 @@ void main() {
     gl_FragColor = color;
 }
 """
+    ),
+
+
+    ShaderData(
+        name = "group zone",
+        resourcesAsked = setOf(
+            AllResources.GroupsPositions.name,
+            AllResources.GroupsCount.name,
+            AllResources.SelectedGroupIndex.name,
+            AllResources.GroupZoneStartRadios.name,
+            AllResources.GroupZoneEndRadios.name,
+            AllResources.LabelYLimits.name,
+            AllResources.SelectedIconIndex.name,
+        ),
+        textures = emptyMap(),
+        code =
+        """
+#version 100
+#ifdef GL_ES
+precision mediump float;
+#endif
+#define MAX_ICONS 100
+uniform vec2 GroupsPositions[MAX_ICONS];
+uniform vec2 LabelYLimits;
+uniform int GroupsCount;
+uniform int SelectedGroupIndex;
+uniform int SelectedIconIndex;
+uniform float GroupZoneStartRadios;
+uniform float GroupZoneEndRadios;
+
+#define adjust vec2(0.0, -40.0)
+#define sr 100.0
+
+void main() {
+    float selectionDist = distance(gl_FragCoord.xy, GroupsPositions[SelectedGroupIndex] + adjust);
+    int isInGroupZone = 0;
+    int isInLabelZone = 0;
+    if(selectionDist > GroupZoneStartRadios-100.0 && selectionDist < GroupZoneEndRadios+100.0 && gl_FragCoord.y < GroupsPositions[0].y + 100.0  && gl_FragCoord.y > GroupsPositions[GroupsCount-1].y - 100.0){
+        isInGroupZone = 1; }
+    if(gl_FragCoord.y < LabelYLimits.x && gl_FragCoord.y > LabelYLimits.y){
+        isInLabelZone = 1; }
+
+    if(SelectedGroupIndex == -1){
+        // todo something repetitive
+        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+        return;
+    }
+
+    float mdist = 10000000.;
+    int ci;
+    for(int i=0; i<GroupsCount; ++i){
+        float d = distance(gl_FragCoord.xy, GroupsPositions[i] + adjust);
+        if (d<mdist){
+            mdist = d;
+            ci = i;
+        }
+    }
+
+    if(ci == SelectedGroupIndex){
+        if(mdist < sr){
+            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+            return;
+        }
+    }
+    if(ci < SelectedGroupIndex && mdist < sr){
+        gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
+        return;
+    }
+    if(ci > SelectedGroupIndex && mdist < sr){
+        gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
+        return;
+    }
+    if(isInGroupZone == 1){
+        if(isInLabelZone == 1 && SelectedIconIndex != -1){
+            gl_FragColor = vec4(0.8, 0.8, 0.8, 1.0);
+            return;
+        }
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    }
+    else{
+        if(isInLabelZone == 1 && SelectedIconIndex != -1){
+            gl_FragColor = vec4(0.8, 0.8, 0.8, 1.0);
+            return;
+        }
+        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+    }
+}
+""",
     ),
 
     ShaderData(
@@ -139,46 +325,6 @@ void main() {
     vec4 color = insideCircle * vec4(0.5, 0.5, 0.5, 1.0);
 
     gl_FragColor = color;
-}
-"""
-    )
-)
-
-val DefaultShaders = listOf(
-    ShaderData(
-        name = "voronoi apps",
-        textures = mapOf(),
-        code =
-"""
-
-vec3 randomColor(int value) {
-    // color for cursor
-    if (value == -1){return vec3(.0);}
-    // Use a hash function to ensure the same input produces the same output color
-    float r = fract(sin(float(value) * 12.9898));
-    float g = fract(sin(float(value) * 78.233));
-    float b = fract(sin(float(value) * 45.7269));
-
-    return vec3(r, g, b);
-}
-
-void main() {
-    float dist = distance(u_mouse, gl_FragCoord.xy);
-    float t_dist = dist;
-    int closest = -1;
-
-    for (int i = 0; i < MAX_ICONS; ++i) {
-        if (u_positions_X[i] == -10000.0)
-            break;
-
-        t_dist = distance(vec2(u_positions_X[i], u_positions_Y[i]), gl_FragCoord.xy);
-        if (t_dist < dist) {
-            dist = t_dist;
-            closest = i;
-        }
-    }
-
-    gl_FragColor = vec4(randomColor(closest), 1.0);
 }
 """
     )

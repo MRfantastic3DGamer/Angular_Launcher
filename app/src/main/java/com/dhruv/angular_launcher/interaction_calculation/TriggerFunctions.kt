@@ -49,7 +49,7 @@ object TriggerFunctions {
 
     fun Drag(context: Context, dragAmount: Offset) {
         c_fingerPosition += dragAmount
-        HapticsHelper.setFingerSpeed(MathUtils.calculateDistance(dragAmount, Offset.Zero).absoluteValue)
+        HapticsHelper.setFingerSpeed(MathUtils.distance(dragAmount, Offset.Zero).absoluteValue)
         AccessibleScreenValues.updateScreenData(c_fingerPosition, dragAmount)
         FluidCursorValues.updateTouchPosition(c_fingerPosition)
         ThemeDatabase.getViewModel(context).addData(AllResources.TouchPosition.name, floatArrayOf(c_fingerPosition.x, ScreenUtils.fromDown(c_fingerPosition.y)))

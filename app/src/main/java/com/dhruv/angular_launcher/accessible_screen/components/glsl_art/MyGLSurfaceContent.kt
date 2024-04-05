@@ -74,6 +74,13 @@ fun MyGLSurfaceContent(
             AllResources.TouchStartPositions,
             AllResources.IconsPositions,
             AllResources.IconsCount,
+            AllResources.SelectedIconIndex,
+            AllResources.GroupsPositions,
+            AllResources.GroupsCount,
+            AllResources.SelectedGroupIndex,
+            AllResources.GroupZoneStartRadios,
+            AllResources.GroupZoneEndRadios,
+            AllResources.LabelYLimits,
             AllResources.Resolution -> {}
 
             // from functions

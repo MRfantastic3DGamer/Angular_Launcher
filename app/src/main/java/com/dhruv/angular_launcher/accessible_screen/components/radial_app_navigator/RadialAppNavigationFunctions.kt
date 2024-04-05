@@ -189,7 +189,7 @@ object RadialAppNavigationFunctions {
 
         fun getResult (posOffset: Offset): Int {
 
-            val dist  = MathUtils.calculateDistance(mid, posOffset)
+            val dist  = MathUtils.distance(mid, posOffset)
             val angle = MathUtils.calculateAngle(posOffset, mid + Offset(-50f,0f), anchor + Offset(-50f,0f))
 
 
@@ -236,7 +236,7 @@ object RadialAppNavigationFunctions {
         var bestDist = Float.MAX_VALUE
         var best = -1
         allOffsets.forEachIndexed{ i, it ->
-            val dist = MathUtils.calculateDistance(touchOffset, it)
+            val dist = MathUtils.distance(touchOffset, it)
             if (dist < range) {
                 if (dist < bestDist) {
                     bestDist = dist
@@ -254,7 +254,7 @@ object RadialAppNavigationFunctions {
     ): Map<Int,Float> {
         val selectionVals = mutableMapOf<Int, Float>()
         allOffsets.forEachIndexed{ i, it ->
-            val dist = MathUtils.calculateDistance(touchOffset, it)
+            val dist = MathUtils.distance(touchOffset, it)
             if (dist < range) {
                 selectionVals[i] = 1 - dist / range
             }

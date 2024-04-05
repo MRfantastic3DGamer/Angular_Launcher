@@ -22,6 +22,7 @@ import com.dhruv.angular_launcher.core.database.room.models.getIconStyles
 import com.dhruv.angular_launcher.core.resources.AllResources
 import com.dhruv.angular_launcher.data.enums.SelectionMode
 import com.dhruv.angular_launcher.haptics.HapticsHelper
+import com.dhruv.angular_launcher.utils.MathUtils.distance
 import com.dhruv.angular_launcher.utils.ScreenUtils
 
 @Composable
@@ -55,8 +56,18 @@ fun RadialAppNavigation (vm: RadialAppNavigatorVM){
         vm.sliderHeight,
         themeVM.currTheme.sliderWidth.dp
     )
-    val usedOffsets = iconPositionsCompute.offsets
 
+    val usedOffsets = iconPositionsCompute.offsets
+    if (usedOffsets.size > 0) {
+        themeVM.addData(
+            AllResources.GroupZoneStartRadios.name,
+            distance(vm.center, usedOffsets.first())
+        )
+        themeVM.addData(
+            AllResources.GroupZoneEndRadios.name,
+            distance(vm.center, usedOffsets.last())
+        )
+    }
     if (vm.shouldSelectApp){
         // region selecting app
         vm.prevSelectionIndex = vm.selectionIndex

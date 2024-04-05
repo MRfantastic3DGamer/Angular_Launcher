@@ -29,4 +29,5 @@ object ScreenUtils {
     fun fromRight(dp: Dp): Dp = fToDp(screenWidth) - dp
     fun fromDown(f: Float): Float  = screenHeight - f
     fun fromDown(dp: Dp): Dp  = fToDp(screenHeight) - dp
+    fun ShaderOffset(offset: Offset): FloatArray = floatArrayOf(offset.x, fromDown(offset.y))
 }

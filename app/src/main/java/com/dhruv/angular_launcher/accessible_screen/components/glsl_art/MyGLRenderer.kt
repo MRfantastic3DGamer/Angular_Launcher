@@ -41,6 +41,7 @@ class MyGLRenderer(
     private val uniformValues: MutableMap<String, Any> = mutableMapOf()
 
     private var frame = 0
+    private var resolution = floatArrayOf(0f,0f)
 
     fun PrepareData(key: String, value: Any){
         uniformValues[key] = value
@@ -57,13 +58,30 @@ class MyGLRenderer(
     }
 
     override fun onDrawFrame(gl: GL10?) {
-        println("uniformValues: $uniformValues")
+//        println("uniformKeys: ${
+//            uniformValues.keys
+//        }")
+//        println("uniformVals: ${
+//            uniformValues.values.map { if (it is List<*>) it.size else it.toString() }
+//        }")
+//        if (uniformValues.containsKey(AllResources.GroupsPositions.name)){
+//            println((uniformValues[AllResources.GroupsPositions.name] as List<FloatArray>).map { " ${it[0]},${it[1]} " })
+//            if (uniformValues.containsKey(AllResources.SelectedGroupIndex.name)) {
+//                println(
+//                    (uniformValues[AllResources.GroupsPositions.name] as List<FloatArray>).getOrElse(
+//                        (uniformValues[AllResources.SelectedGroupIndex.name] as Int),
+//                        { floatArrayOf() }).map { it.toString() })
+//            }
+//        }
         GLES20.glDisable(GL10.GL_DITHER)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
 
-        if (uniformValues.containsKey(AllResources.Frame.name)){
+        if (uniformLocations.containsKey(AllResources.Frame.name)){
             GLES20.glUniform1i(uniformLocations[AllResources.Frame.name]!!, frame)
             frame += 1
+        }
+        if (uniformLocations.containsKey(AllResources.Resolution.name)){
+            GLES20.glUniform2f(uniformLocations[AllResources.Resolution.name]!!, resolution[0], resolution[1])
         }
         uniformLocations.forEach{(key, location) ->
             location?.let { l ->
@@ -101,6 +119,28 @@ class MyGLRenderer(
                             GLES20.glUniform2f(l + i, offset.x, offset.y)
                         }
                     }
+                    if (len > 0 && value[0] is FloatArray) {
+                        if ((value[0] as FloatArray).size == 1)
+                            for (i in 0 until  min(len, 100)) {
+                                val v = value[i] as FloatArray
+                                GLES20.glUniform1f(l + i, v[0])
+                            }
+                        if ((value[0] as FloatArray).size == 2)
+                            for (i in 0 until  min(len, 100)) {
+                                val v = value[i] as FloatArray
+                                GLES20.glUniform2f(l + i, v[0], v[1])
+                            }
+                        if ((value[0] as FloatArray).size == 3)
+                            for (i in 0 until  min(len, 100)) {
+                                val v = value[i] as FloatArray
+                                GLES20.glUniform3f(l + i, v[0], v[1], v[2])
+                            }
+                        if ((value[0] as FloatArray).size == 4)
+                            for (i in 0 until  min(len, 100)) {
+                                val v = value[i] as FloatArray
+                                GLES20.glUniform4f(l + i, v[0], v[1], v[2], v[3])
+                            }
+                    }
                 }
             }
         }
@@ -109,6 +149,7 @@ class MyGLRenderer(
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
+        resolution = floatArrayOf(width.toFloat(), height.toFloat())
         GLES20.glViewport(0, 0, width, height)
     }
 

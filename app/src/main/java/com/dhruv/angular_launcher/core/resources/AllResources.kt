@@ -17,12 +17,13 @@ enum class AllResources{
     TouchStartPositions,                // implemented
     IconsPositions,                     // implemented
     IconsCount,                         // implemented
-    SelectedIconIndex,                  // not implemented
-    GroupsPositions,                    // not implemented
-    GroupsCount,                        // not implemented
-    SelectedGroupIndex,                 // not implemented
-    GroupZoneStartRadios,               // not implemented
-    GroupZoneEndRadios,                 // not implemented
+    SelectedIconIndex,                  // implemented
+    GroupsPositions,                    // implemented
+    GroupsCount,                        // implemented
+    SelectedGroupIndex,                 // implemented
+    GroupZoneStartRadios,               // implemented
+    GroupZoneEndRadios,                 // implemented
+    LabelYLimits,                       // implemented
     Resolution,                         // implemented
 
     // from functions

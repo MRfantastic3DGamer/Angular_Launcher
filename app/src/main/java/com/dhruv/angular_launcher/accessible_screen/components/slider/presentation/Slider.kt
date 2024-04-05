@@ -146,7 +146,6 @@ fun Slider (
         currentSelection = currentFuzzySelection,
         shift = ScreenUtils.dpToF(theme.sidePadding.dp)
     )
-    themeVM.addData(AllResources.GroupsPositions.name, groupIconOffsets)
 
     AnimatedVisibility(
         visible = groupsAvailable && vm.visible,
@@ -160,5 +159,13 @@ fun Slider (
             selectionMode = vm.selectionMode,
             offsets = groupIconOffsets
         )
+    }
+
+    if (groupsAvailable && vm.visible){
+        themeVM.addData(AllResources.GroupsPositions.name, groupIconOffsets.map { ScreenUtils.ShaderOffset(it) })
+        themeVM.addData(AllResources.GroupsCount.name, groupIconOffsets.size)
+    }
+    else{
+        themeVM.addData(AllResources.SelectedGroupIndex.name, -1)
     }
 }

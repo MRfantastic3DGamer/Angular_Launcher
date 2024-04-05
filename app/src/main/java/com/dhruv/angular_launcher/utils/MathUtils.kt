@@ -42,7 +42,7 @@ object MathUtils {
         return angleDegrees
     }
 
-    fun calculateDistance(a: Offset, b: Offset): Float{
+    fun distance(a: Offset, b: Offset): Float{
         val X = b.x - a.x
         val Y = b.y - a.y
         return sqrt((X*X) + (Y*Y))

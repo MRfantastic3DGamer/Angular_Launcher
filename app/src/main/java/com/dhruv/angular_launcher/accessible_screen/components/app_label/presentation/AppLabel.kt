@@ -24,6 +24,8 @@ import com.dhruv.angular_launcher.accessible_screen.components.app_label.AppLabe
 import com.dhruv.angular_launcher.accessible_screen.components.app_label.data.AppLabelValue
 import com.dhruv.angular_launcher.core.appIcon.StaticAppIcon
 import com.dhruv.angular_launcher.core.database.room.AppDatabase
+import com.dhruv.angular_launcher.core.database.room.ThemeDatabase
+import com.dhruv.angular_launcher.core.resources.AllResources
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import kotlin.math.roundToInt
 
@@ -32,6 +34,7 @@ fun AppLabel (vm: AppLabelVM) {
     val context = LocalContext.current
     val position by animateIntOffsetAsState(targetValue = vm.offset.round(), label = "app label")
     val DBVM = AppDatabase.getViewModel(context)
+    val themeVM = ThemeDatabase.getViewModel(context)
     val apps = DBVM.apps.collectAsState(initial = emptyList()).value
 
     val iconJiggle by animateFloatAsState(
@@ -44,6 +47,8 @@ fun AppLabel (vm: AppLabelVM) {
         vm.iconJiggleTrigger = false
     }
 //    DebugLayerValues.addString("icon jiggle (${vm.iconJiggleTrigger}): $iconJiggle", "icon jiggle")
+
+    themeVM.addData(AllResources.LabelYLimits.name, floatArrayOf(ScreenUtils.fromDown(position.y.toFloat()), ScreenUtils.fromDown(position.y.toFloat()) - vm.height))
 
     if (AppLabelValue.useLaunchTrigger()) {
         val launchIntent = context.packageManager.getLaunchIntentForPackage(vm.prevPkg)

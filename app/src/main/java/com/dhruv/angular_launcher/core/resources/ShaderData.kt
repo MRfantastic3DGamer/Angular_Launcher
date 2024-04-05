@@ -48,7 +48,7 @@ void main() {
 """
 ) {
     companion object {
-        private const val DELIMITER = "|"
+        private const val DELIMITER = "|#|"
         private const val EMPTY = "EMPTY"
 
         fun fromString(str: String): ShaderData {
