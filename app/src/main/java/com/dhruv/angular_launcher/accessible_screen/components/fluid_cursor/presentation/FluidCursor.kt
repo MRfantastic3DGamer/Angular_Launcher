@@ -10,7 +10,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import com.dhruv.angular_launcher.accessible_screen.components.fluid_cursor.FluidCursorVM
-import com.dhruv.angular_launcher.debug.DebugLayerValues
 
 @Composable
 fun FluidCursor (vm: FluidCursorVM){
@@ -19,11 +18,11 @@ fun FluidCursor (vm: FluidCursorVM){
 
 //    vm.updateShaderCursorPos(targetPos.x, targetPos.y)
 
-    DebugLayerValues.addString("touchPos", vm.touchPos.toString())
-    DebugLayerValues.addString("selectedGroupOffset", vm.selectedGroupOffset.toString())
-    DebugLayerValues.addString("selectedIconOffset", vm.selectedIconOffset.toString())
+//    DebugLayerValues.addString("touchPos", vm.touchPos.toString())
+//    DebugLayerValues.addString("selectedGroupOffset", vm.selectedGroupOffset.toString())
+//    DebugLayerValues.addString("selectedIconOffset", vm.selectedIconOffset.toString())
 
-    DebugLayerValues.addString("targetPos", targetPos.toString())
+//    DebugLayerValues.addString("targetPos", targetPos.toString())
 
 //    println("touch pos${vm.touchPos}, selectedGroup pos${vm.selectedGroupOffset}, selectedIcon pos${vm.selectedIconOffset}")
 

@@ -28,6 +28,11 @@ class PreferencesManager private constructor(context: Context) {
         editor.putString(key, value)
         editor.apply()
     }
+    fun saveData(key: String, value: Boolean) {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean(key, value)
+        editor.apply()
+    }
     fun saveData(key: String, value: Int) {
         val editor = sharedPreferences.edit()
         editor.putInt(key, value)
@@ -71,7 +76,7 @@ class PreferencesManager private constructor(context: Context) {
         return sharedPreferences.getInt(key, defaultValue)
     }
     fun getData(key: String, defaultValue: Boolean): Boolean {
-        return sharedPreferences.getString(key, defaultValue.toString()).toBoolean()
+        return sharedPreferences.getBoolean(key, defaultValue)
     }
     fun getData(key: String, defaultValue: Long): Long {
         return sharedPreferences.getString(key, defaultValue.toString())?.toLong() ?: defaultValue

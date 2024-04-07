@@ -13,7 +13,8 @@ import java.lang.Integer.min
 import kotlin.math.max
 
 class OnboardingVM(
-    val endOnboarding:()->Unit
+    val endOnboarding:()->Unit,
+    complete: Boolean
 ): ViewModel() {
 
     var currentPage by mutableIntStateOf(0)
@@ -31,7 +32,7 @@ class OnboardingVM(
 //    Manifest.permission.READ_EXTERNAL_STORAGE
 //    ) == PackageManager.PERMISSION_GRANTED
 
-    var onBoardingComplete: Boolean by mutableStateOf(searchIfOnboardingIsComplete())
+    var onBoardingComplete: Boolean by mutableStateOf(complete)
 
     fun goBack(){
         currentPage = max( 0, currentPage-1 )

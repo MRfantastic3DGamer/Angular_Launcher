@@ -80,9 +80,6 @@ class MyGLRenderer(
             GLES20.glUniform1i(uniformLocations[AllResources.Frame.name]!!, frame)
             frame += 1
         }
-        if (uniformLocations.containsKey(AllResources.Resolution.name)){
-            GLES20.glUniform2f(uniformLocations[AllResources.Resolution.name]!!, resolution[0], resolution[1])
-        }
         uniformLocations.forEach{(key, location) ->
             location?.let { l ->
                 val value = uniformValues.getOrDefault(key, null)
@@ -182,8 +179,6 @@ class MyGLRenderer(
         }
 
         shaderData.resourcesAsked.forEach { uniformLocations[it] = GLES20.glGetUniformLocation(program, it) }
-        println("IconsPositions: ${uniformLocations[AllResources.IconsPositions.name]}")
-        println("GroupsPositions: ${uniformLocations[AllResources.GroupsPositions.name]}")
     }
 
     private fun loadShader(type: Int, shaderCode: String): Int {

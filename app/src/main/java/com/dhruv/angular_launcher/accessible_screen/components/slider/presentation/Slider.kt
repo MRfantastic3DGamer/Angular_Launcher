@@ -161,8 +161,17 @@ fun Slider (
         )
     }
 
-    if (groupsAvailable && vm.visible){
-        themeVM.addData(AllResources.GroupsPositions.name, groupIconOffsets.map { ScreenUtils.ShaderOffset(it) })
+    if (groupsAvailable && vm.visible) {
+        themeVM.addData(
+            AllResources.GroupsPositioning.name,
+            groupIconOffsets.map {
+                floatArrayOf(
+                    vm.sliderPos.x,
+                    ScreenUtils.fromDown(vm.sliderPos.y),
+                    height / allOptions.size,
+                    ScreenUtils.dpToF(theme.sidePadding.dp)
+                )
+            })
         themeVM.addData(AllResources.GroupsCount.name, groupIconOffsets.size)
     }
     else{

@@ -12,6 +12,9 @@ import com.dhruv.angular_launcher.core.resources.GetCharging
 import com.dhruv.angular_launcher.core.resources.GetDarkMode
 import com.dhruv.angular_launcher.core.resources.GetDateTime
 import com.dhruv.angular_launcher.core.resources.GetVolume
+import com.dhruv.angular_launcher.debug.DebugLayerValues
+import com.dhruv.angular_launcher.utils.MathUtils
+import com.dhruv.angular_launcher.utils.ScreenUtils
 import com.dhruv.shader_test.opengl_renderer.ui.MyGLSurfaceView
 import com.mutualmobile.composesensors.rememberAccelerometerSensorState
 import com.mutualmobile.composesensors.rememberAmbientTemperatureSensorState
@@ -75,13 +78,15 @@ fun MyGLSurfaceContent(
             AllResources.IconsPositions,
             AllResources.IconsCount,
             AllResources.SelectedIconIndex,
-            AllResources.GroupsPositions,
-            AllResources.GroupsCount,
             AllResources.SelectedGroupIndex,
+            AllResources.GroupsPositioning,
+            AllResources.GroupsCount,
             AllResources.GroupZoneStartRadios,
             AllResources.GroupZoneEndRadios,
-            AllResources.LabelYLimits,
-            AllResources.Resolution -> {}
+            AllResources.LabelYLimits -> {}
+            AllResources.Resolution -> {
+                renderer.PrepareData(AllResources.Resolution.name, floatArrayOf(ScreenUtils.screenWidth, ScreenUtils.screenHeight))
+            }
 
             // from functions
             AllResources.Battery -> {
@@ -102,54 +107,76 @@ fun MyGLSurfaceContent(
             // by sensors
             AllResources.Accelerometer -> {
                 renderer.PrepareData(AllResources.Accelerometer.name, floatArrayOf(AccelerometerState.xForce, AccelerometerState.yForce, AccelerometerState.zForce))
+                DebugLayerValues.addString("Accelerometer", "${AccelerometerState.xForce}, ${AccelerometerState.yForce}, ${AccelerometerState.zForce}")
             }
             AllResources.MagneticField -> {
                 renderer.PrepareData(AllResources.MagneticField.name, floatArrayOf(MagneticFieldState.xStrength, MagneticFieldState.yStrength, MagneticFieldState.zStrength))
+                DebugLayerValues.addString("MagneticField", "${MagneticFieldState.xStrength}, ${MagneticFieldState.yStrength}, ${MagneticFieldState.zStrength}")
             }
             AllResources.Gyroscope -> {
                 renderer.PrepareData(AllResources.Gyroscope.name, floatArrayOf(GyroscopeState.xRotation, GyroscopeState.yRotation, GyroscopeState.zRotation))
+                DebugLayerValues.addString("Gyroscope", "${GyroscopeState.xRotation}, ${GyroscopeState.yRotation}, ${GyroscopeState.zRotation}")
             }
             AllResources.Light -> {
                 renderer.PrepareData(AllResources.Light.name, floatArrayOf(LightState.illuminance))
+                DebugLayerValues.addString("Light", "${LightState.illuminance}")
             }
             AllResources.Proximity -> {
                 renderer.PrepareData(AllResources.Proximity.name, floatArrayOf(ProximityState.sensorDistance))
+                DebugLayerValues.addString("Proximity", "${ProximityState.sensorDistance}")
             }
             AllResources.Gravity -> {
                 renderer.PrepareData(AllResources.Gravity.name, floatArrayOf(GravityState.xForce, GravityState.yForce, GravityState.zForce))
+                DebugLayerValues.addString("Gravity", "${GravityState.xForce}, ${GravityState.yForce}, ${GravityState.zForce}")
             }
             AllResources.RotationVector -> {
                 renderer.PrepareData(AllResources.RotationVector.name, floatArrayOf(RotationVectorState.vectorX, RotationVectorState.vectorY, RotationVectorState.vectorZ))
+                DebugLayerValues.addString("RotationVector", "${RotationVectorState.vectorX}, ${RotationVectorState.vectorY}, ${RotationVectorState.vectorZ}")
+            }
+            AllResources.RotationAngles -> {
+                val angles = MathUtils.rotationVectorToEulerAngles(floatArrayOf(RotationVectorState.vectorX, RotationVectorState.vectorY, RotationVectorState.vectorZ))
+                renderer.PrepareData(AllResources.RotationAngles.name, floatArrayOf(angles[0], angles[1], angles[2]))
+                DebugLayerValues.addString("RotationAngles", "${angles[0]}, ${angles[1]}, ${angles[2]}")
             }
             AllResources.RelativeHumidity -> {
                 renderer.PrepareData(AllResources.RelativeHumidity.name, floatArrayOf(RelativeHumidityState.absoluteHumidity.toFloat(), RelativeHumidityState.relativeHumidity, RelativeHumidityState.dewPointTemperature.toFloat(), RelativeHumidityState.actualTemp))
+                DebugLayerValues.addString("RelativeHumidity", "${RelativeHumidityState.absoluteHumidity}, ${RelativeHumidityState.relativeHumidity}, ${RelativeHumidityState.dewPointTemperature}, ${RelativeHumidityState.actualTemp}")
             }
             AllResources.AmbientTemperature -> {
                 renderer.PrepareData(AllResources.AmbientTemperature.name, AmbientTemperatureState.temperature)
+                DebugLayerValues.addString("AmbientTemperature", "${AmbientTemperatureState.temperature}")
             }
             AllResources.GameRotationVector -> {
                 renderer.PrepareData(AllResources.GameRotationVector.name, floatArrayOf(GameRotationVectorState.vectorX, GameRotationVectorState.vectorY, GameRotationVectorState.vectorZ))
+                DebugLayerValues.addString("GameRotationVector", "${GameRotationVectorState.vectorX}, ${GameRotationVectorState.vectorY}, ${GameRotationVectorState.vectorZ}")
             }
             AllResources.GeomagneticRotationVector -> {
                 renderer.PrepareData(AllResources.GeomagneticRotationVector.name, floatArrayOf(GeomagneticRotationVectorState.vectorX, GeomagneticRotationVectorState.vectorY, GeomagneticRotationVectorState.vectorZ))
+                DebugLayerValues.addString("GeomagneticRotationVector", "${GeomagneticRotationVectorState.vectorX}, ${GeomagneticRotationVectorState.vectorY}, ${GeomagneticRotationVectorState.vectorZ}")
             }
             AllResources.HeartRate -> {
                 renderer.PrepareData(AllResources.HeartRate.name, HeartRateState.heartRate)
+                DebugLayerValues.addString("HeartRate", "${HeartRateState.heartRate}")
             }
             AllResources.StationaryDetect -> {
                 renderer.PrepareData(AllResources.StationaryDetect.name, StationaryDetectState.isDeviceStationary)
+                DebugLayerValues.addString("StationaryDetect", "${StationaryDetectState.isDeviceStationary}")
             }
             AllResources.MotionDetect -> {
                 renderer.PrepareData(AllResources.MotionDetect.name, MotionDetectState.isDeviceInMotion)
+                DebugLayerValues.addString("MotionDetect", "${MotionDetectState.isDeviceInMotion}")
             }
             AllResources.HeartBeat -> {
                 renderer.PrepareData(AllResources.HeartBeat.name, HeartBeatState.isConfidentPeak)
+                DebugLayerValues.addString("HeartBeat", "${HeartBeatState.isConfidentPeak}")
             }
             AllResources.LowLatencyOffBodyDetect -> {
                 renderer.PrepareData(AllResources.LowLatencyOffBodyDetect.name, LowLatencyOffBodyDetectState.isDeviceOnBody)
+                DebugLayerValues.addString("LowLatencyOffBodyDetect", "${LowLatencyOffBodyDetectState.isDeviceOnBody}")
             }
             AllResources.HingeAngle -> {
                 renderer.PrepareData(AllResources.HingeAngle.name, floatArrayOf(HingeAngleState.angle))
+                DebugLayerValues.addString("HingeAngle", "${HingeAngleState.angle}")
             }
 //            AllResources.Heading -> {
 //                renderer.PrepareData(AllResources.Heading.name, floatArrayOf(HeadingState.degrees))

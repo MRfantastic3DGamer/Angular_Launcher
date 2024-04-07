@@ -18,7 +18,7 @@ enum class AllResources{
     IconsPositions,                     // implemented
     IconsCount,                         // implemented
     SelectedIconIndex,                  // implemented
-    GroupsPositions,                    // implemented
+    GroupsPositioning,                  // implemented
     GroupsCount,                        // implemented
     SelectedGroupIndex,                 // implemented
     GroupZoneStartRadios,               // implemented
@@ -41,6 +41,7 @@ enum class AllResources{
     Proximity,                    //
     Gravity,                      //
     RotationVector,               //
+    RotationAngles,               //
     RelativeHumidity,             //
     AmbientTemperature,           //
     GameRotationVector,           //

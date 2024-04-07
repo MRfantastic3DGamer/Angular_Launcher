@@ -13,9 +13,11 @@ import androidx.compose.ui.graphics.Color
 import com.dhruv.angular_launcher.accessible_screen.AccessibleScreenVM
 import com.dhruv.angular_launcher.accessible_screen.presentation.AccessibleScreen
 import com.dhruv.angular_launcher.core.database.apps_data.AppsIconsDataValues
+import com.dhruv.angular_launcher.core.database.prefferences.PreferencesManager
 import com.dhruv.angular_launcher.core.database.room.AppDatabase
 import com.dhruv.angular_launcher.core.database.room.ThemeDatabase
 import com.dhruv.angular_launcher.core.database.room.models.getIconPositioningSchemes
+import com.dhruv.angular_launcher.debug.DebugLayer
 import com.dhruv.angular_launcher.debug.DebugLayerVM
 import com.dhruv.angular_launcher.onboarding.Onboarding
 import com.dhruv.angular_launcher.onboarding.OnboardingVM
@@ -48,7 +50,10 @@ class MainActivity : ComponentActivity() {
             val settingsVM by remember { mutableStateOf(SettingsVM()) }
             val onboardingVM by remember { mutableStateOf(OnboardingVM(endOnboarding = {
                 settingsVM.exitSettings(context, themeVM.currTheme.getIconPositioningSchemes())
-            })) }
+                PreferencesManager.getInstance(context).saveData("onboardingComplete", true)
+            },
+                PreferencesManager.getInstance(context).getData("onboardingComplete", false)
+            )) }
 
             val screenVM: AccessibleScreenVM by viewModels<AccessibleScreenVM>()
             AppDatabase.getInstance(context)
@@ -66,7 +71,7 @@ class MainActivity : ComponentActivity() {
                             Onboarding(vm = onboardingVM)
                         }
                     }
-//                    DebugLayer(vm = debugLayerVM)
+                    DebugLayer(vm = debugLayerVM)
                 }
             }
         }

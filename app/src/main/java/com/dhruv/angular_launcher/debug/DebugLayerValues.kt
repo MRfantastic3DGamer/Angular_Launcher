@@ -20,9 +20,9 @@ object DebugLayerValues {
     val GetPoints: LiveData<List<Offset>>
         get() = points
 
-    fun addString (value: String, key: String){
+    fun addString (key: String, value: String){
         stringsMap[key] = value
-        strings.value = stringsMap.map { "${it.key}: ${it.value}" }
+        strings.value = stringsMap.map { "${it.key}: \n${it.value.split(",").joinToString("\n")}" }
     }
     fun addLine (value: Pair<Offset,Offset>, key: String){
         linesMap[key] = value

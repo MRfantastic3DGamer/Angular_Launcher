@@ -2,6 +2,7 @@ package com.dhruv.angular_launcher.utils
 
 import androidx.compose.ui.geometry.Offset
 import kotlin.math.PI
+import kotlin.math.asin
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.exp
@@ -159,5 +160,25 @@ object MathUtils {
      */
     fun gaussian(x: Float, a: Float, k: Float): Float {
         return exp(-((x - a).pow(2) / (2 * k.pow(2))))
+    }
+
+    fun rotationVectorToEulerAngles(rotationVec: FloatArray): FloatArray {
+        require(rotationVec.size == 3) { "Rotation vector must have 3 elements" }
+
+        // Normalize the rotation vector
+        val length = sqrt(rotationVec[0] * rotationVec[0] + rotationVec[1] * rotationVec[1] + rotationVec[2] * rotationVec[2])
+        val normalizedRotationVec = FloatArray(3) { rotationVec[it] / length }
+
+        // Calculate the quaternion components
+        val qw = cos(length / 2.0)
+        val axis = FloatArray(3) { sin(length / 2.0f) * normalizedRotationVec[it] }
+
+        // Convert quaternion to Euler angles
+        val roll = atan2(2.0 * (qw * axis[0] + axis[1] * axis[2]), 1.0 - 2.0 * (axis[0] * axis[0] + axis[1] * axis[1])).toFloat()
+        val pitch = asin(2.0 * (qw * axis[1] - axis[2] * axis[0])).toFloat()
+        val yaw = atan2(2.0 * (qw * axis[2] + axis[0] * axis[1]), 1.0 - 2.0 * (axis[1] * axis[1] + axis[2] * axis[2])).toFloat()
+
+        // Return Euler angles in radians
+        return floatArrayOf(roll, pitch, yaw)
     }
 }
