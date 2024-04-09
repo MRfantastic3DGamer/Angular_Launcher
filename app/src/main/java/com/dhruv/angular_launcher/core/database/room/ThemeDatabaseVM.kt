@@ -1,6 +1,6 @@
 package com.dhruv.angular_launcher.core.database.room
 
-import android.content.res.Resources
+import android.content.ContentResolver
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -26,8 +26,8 @@ class ThemeDatabaseVM(
 
     var renderer: MyGLRenderer? by mutableStateOf(null)
 
-    fun prepareRenderer(resources: Resources){
-        renderer = MyGLRenderer(resources, currTheme.getShader())
+    fun prepareRenderer(contentResolver: ContentResolver){
+        renderer = MyGLRenderer(contentResolver, currTheme.getShader())
     }
 
     fun addData(key: String, value: Any) {
@@ -41,35 +41,35 @@ class ThemeDatabaseVM(
                 viewModelScope.launch(Dispatchers.IO) {
                     currTheme = currTheme.setShader(uiEvent.shaderData)
                     themeDataDao.update(currTheme)
-                    prepareRenderer(uiEvent.resources)
+                    prepareRenderer(uiEvent.contentResolver)
                 }
             }
             is ThemeUIEvent.ApplyTheme -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     PreferencesManager.getInstance(uiEvent.context).saveData("theme_id", uiEvent.id)
                     currTheme = themeDataDao.getThemeById(uiEvent.id)
-                    prepareRenderer(uiEvent.resources)
+                    prepareRenderer(uiEvent.contentResolver)
                 }
             }
             is ThemeUIEvent.SaveTheme -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     themeDataDao.insert(uiEvent.data)
                     currTheme = uiEvent.data
-                    prepareRenderer(uiEvent.resources)
+                    prepareRenderer(uiEvent.contentResolver)
                 }
             }
             is ThemeUIEvent.UpdateCurrentTheme -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     themeDataDao.update(uiEvent.data)
                     currTheme = uiEvent.data
-                    prepareRenderer(uiEvent.resources)
+                    prepareRenderer(uiEvent.contentResolver)
                 }
             }
             is ThemeUIEvent.SaveCopyTheme -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     themeDataDao.insert(uiEvent.data.getCopy())
                     currTheme = uiEvent.data
-                    prepareRenderer(uiEvent.resources)
+                    prepareRenderer(uiEvent.contentResolver)
                 }
             }
             is ThemeUIEvent.DeleteTheme -> {

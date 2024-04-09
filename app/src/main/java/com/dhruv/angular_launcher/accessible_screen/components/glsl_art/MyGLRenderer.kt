@@ -1,13 +1,13 @@
 package com.dhruv.angular_launcher.accessible_screen.components.glsl_art
-import android.content.res.Resources
+import android.content.ContentResolver
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.GLUtils
 import androidx.compose.ui.geometry.Offset
 import com.dhruv.angular_launcher.core.resources.AllResources
 import com.dhruv.angular_launcher.core.resources.ShaderData
+import com.dhruv.angular_launcher.core.resources.textureBitmaps
 import com.dhruv.angular_launcher.utils.ScreenUtils
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -18,7 +18,7 @@ import kotlin.math.min
 const val MAX_ICONS = 100
 
 class MyGLRenderer(
-    private val resources: Resources,
+    private val contentResolver: ContentResolver,
     val shaderData: ShaderData,
 ) : GLSurfaceView.Renderer {
     private var textureHandle: Int = 0
@@ -40,6 +40,8 @@ class MyGLRenderer(
     private val uniformLocations: MutableMap<String, Int?> = mutableMapOf()
     private val uniformValues: MutableMap<String, Any> = mutableMapOf()
 
+    private val textures = shaderData.textureBitmaps(contentResolver)
+
     private var frame = 0
     private var resolution = floatArrayOf(0f,0f)
 
@@ -49,11 +51,11 @@ class MyGLRenderer(
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
-        loadTextures(
-            shaderData.textures.map {
-                BitmapFactory.decodeResource(resources, it.value)
-            }
-        )
+//        loadTextures(
+//            shaderData.textures.map {
+//                BitmapFactory.decodeResource(resources, it.value)
+//            }
+//        )
         setupShader()
     }
 
@@ -167,6 +169,26 @@ class MyGLRenderer(
         }
     }
 
+    private fun loadTexture(bitmap: Bitmap) {
+        // Load the bitmap from drawable
+
+        val textures = IntArray(1)
+        GLES20.glGenTextures(1, textures, 0)
+        textureHandle = textures[0]
+
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle)
+
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST)
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST)
+
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE)
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE)
+
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+
+        bitmap.recycle()
+    }
+
     private fun setupShader() {
         val vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode)
         val fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode)
@@ -197,7 +219,9 @@ class MyGLRenderer(
         val textureCoordHandle = GLES20.glGetAttribLocation(program, "aTexCoord")
         GLES20.glEnableVertexAttribArray(textureCoordHandle)
 
-        val texturesUniformHandle = shaderData.textures.map { it.key to GLES20.glGetUniformLocation(program, it.key) }.toMap()
+        val texturesUniformHandle = textures.map { (name, texture) ->
+            name to GLES20.glGetUniformLocation(program, name)
+        }.toMap()
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle)

@@ -21,14 +21,14 @@ fun Slider (
     vibration: MutableState<VibrationData>,
 ) {
     val context = LocalContext.current
-    val resources = context.resources
+    val contentResolver = context.contentResolver
     val vm = remember { ThemeDatabase.getViewModel(context) }
     val state = vm.currTheme
 
     LazyColumn{
         item {
             LabelForFloat(key = "width", min = 10f, value = state.sliderWidth, max = 100f) {
-                vm.onUIInput(ThemeUIEvent.UpdateCurrentTheme(resources, state.copy(sliderWidth = it)))
+                vm.onUIInput(ThemeUIEvent.UpdateCurrentTheme(contentResolver, state.copy(sliderWidth = it)))
             }
         }
 
@@ -37,7 +37,7 @@ fun Slider (
                 0 to Pair("adaptive", "height set according to number of groups"),
                 1 to Pair("constant", "have a constant height"),
             )) {
-                vm.onUIInput( ThemeUIEvent.UpdateCurrentTheme(resources, state.copy(heightMode = it)))
+                vm.onUIInput( ThemeUIEvent.UpdateCurrentTheme(contentResolver, state.copy(heightMode = it)))
             }
         }
 
@@ -45,12 +45,12 @@ fun Slider (
             when (state.heightMode) {
                 0 -> {
                     LabelForFloat(key = "group slider height", min = 1f, value = state.perGroupSliderHeight, max = 100f) {
-                        vm.onUIInput( ThemeUIEvent.UpdateCurrentTheme(resources, state.copy(perGroupSliderHeight = it)))
+                        vm.onUIInput( ThemeUIEvent.UpdateCurrentTheme(contentResolver, state.copy(perGroupSliderHeight = it)))
                     }
                 }
                 1 -> {
                     LabelForFloat(key = "constant slider height", min = 10f, value = state.constantSliderHeight, max = 100f) {
-                        vm.onUIInput( ThemeUIEvent.UpdateCurrentTheme(resources, state.copy(constantSliderHeight = it)))
+                        vm.onUIInput( ThemeUIEvent.UpdateCurrentTheme(contentResolver, state.copy(constantSliderHeight = it)))
                     }
                 }
                 else -> {}
@@ -62,12 +62,12 @@ fun Slider (
         }
         item {
             LabelForFloat(key = "top limit", min = 0f, value = state.topSliderLimit, max = 100f) {
-                vm.onUIInput( ThemeUIEvent.UpdateCurrentTheme(resources, state.copy(topSliderLimit = it)))
+                vm.onUIInput( ThemeUIEvent.UpdateCurrentTheme(contentResolver, state.copy(topSliderLimit = it)))
             }
         }
         item {
             LabelForFloat(key = "bottom limit", min = 0f, value = state.downSliderLimit, max = 100f) {
-                vm.onUIInput( ThemeUIEvent.UpdateCurrentTheme(resources, state.copy(downSliderLimit = it)))
+                vm.onUIInput( ThemeUIEvent.UpdateCurrentTheme(contentResolver, state.copy(downSliderLimit = it)))
             }
         }
 

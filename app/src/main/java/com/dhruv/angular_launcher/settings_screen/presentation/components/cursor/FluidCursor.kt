@@ -19,7 +19,7 @@ fun FluidCursor (
 ) {
 
     val context = LocalContext.current
-    val resources = context.resources
+    val contentResolver = context.contentResolver
     val vm = remember { ThemeDatabase.getViewModel(context) }
     val theme = vm.currTheme
     LazyColumn() {
@@ -38,7 +38,7 @@ fun FluidCursor (
             LabelForFloat(key = "free radius", min = 0f, value = theme.freeRadius, max = 100f) {
                 vm.onUIInput(
                     ThemeUIEvent.UpdateCurrentTheme(
-                        resources,
+                        contentResolver,
                         theme.copy(freeRadius = it)
                     )
                 )
@@ -52,7 +52,7 @@ fun FluidCursor (
             ) {
                 vm.onUIInput(
                     ThemeUIEvent.UpdateCurrentTheme(
-                        resources,
+                        contentResolver,
                         theme.copy(appStuckRadius = it)
                     )
                 )
@@ -66,7 +66,7 @@ fun FluidCursor (
             ) {
                 vm.onUIInput(
                     ThemeUIEvent.UpdateCurrentTheme(
-                        resources,
+                        contentResolver,
                         theme.copy(sliderStuckRadius = it)
                     )
                 )
@@ -85,7 +85,7 @@ fun FluidCursor (
             ) {
                 vm.onUIInput(
                     ThemeUIEvent.UpdateCurrentTheme(
-                        resources,
+                        contentResolver,
                         theme.copy(cursorSlidingMode = it)
                     )
                 )

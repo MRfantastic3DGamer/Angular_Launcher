@@ -31,7 +31,7 @@ import com.dhruv.angular_launcher.settings_screen.presentation.SettingsScreen
 fun AccessibleScreen(mainScreenVM: AccessibleScreenVM, settingsVM: SettingsVM) {
 
     val context = LocalContext.current
-    val resources = context.resources
+    val contentResolver = context.contentResolver
 //    var renderer by remember { mutableStateOf(MyGLRenderer(resources, PrefValues.t_shader)) }
 
     val themeVM by remember { mutableStateOf(ThemeDatabase.getViewModel(context)) }
@@ -60,7 +60,7 @@ fun AccessibleScreen(mainScreenVM: AccessibleScreenVM, settingsVM: SettingsVM) {
             true -> {
                 SettingsScreen(vm = settingsVM, exitSettings = {
                     settingsVM.exitSettings(it, themeVM.currTheme.getIconPositioningSchemes())
-                    themeVM.renderer = themeVM.currTheme.getRenderer(resources)
+                    themeVM.renderer = themeVM.currTheme.getRenderer(contentResolver)
                 })
             }
 

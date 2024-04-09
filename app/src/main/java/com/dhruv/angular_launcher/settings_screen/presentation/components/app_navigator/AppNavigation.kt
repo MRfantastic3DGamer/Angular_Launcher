@@ -24,7 +24,7 @@ fun AppNavigation (
 ){
 
     val context = LocalContext.current
-    val resources = context.resources
+    val contentResolver = context.contentResolver
     val vm = remember { ThemeDatabase.getViewModel(context) }
     val theme = vm.currTheme
     // look
@@ -37,7 +37,7 @@ fun AppNavigation (
             LabelForIconStyle(key = "unfocused icon style", style = iconStyles[0]) {
                 vm.onUIInput(
                     ThemeUIEvent.UpdateCurrentTheme(
-                        resources,
+                        contentResolver,
                         theme.copy(navigationIconStyle = it.toString())
                     )
                 )
@@ -45,7 +45,7 @@ fun AppNavigation (
             LabelForIconStyle(key = "focused icon style", style = iconStyles[1]) {
                 vm.onUIInput(
                     ThemeUIEvent.UpdateCurrentTheme(
-                        resources,
+                        contentResolver,
                         theme.copy(navigationSelectedIconStyle = it.toString())
                     )
                 )
@@ -55,7 +55,7 @@ fun AppNavigation (
             LabelForIconsPositioningScheme(key = "option 1", state = schemes[0]) {
                 vm.onUIInput(
                     ThemeUIEvent.UpdateCurrentTheme(
-                        resources,
+                        contentResolver,
                         theme.copy(iconsPositioningScheme1 = it.toString())
                     )
                 )
@@ -65,7 +65,7 @@ fun AppNavigation (
             LabelForIconsPositioningScheme(key = "option 2", state = schemes[1]) {
                 vm.onUIInput(
                     ThemeUIEvent.UpdateCurrentTheme(
-                        resources,
+                        contentResolver,
                         theme.copy(iconsPositioningScheme2 = it.toString())
                     )
                 )
@@ -75,7 +75,7 @@ fun AppNavigation (
             LabelForIconsPositioningScheme(key = "option 3", state = schemes[2]) {
                 vm.onUIInput(
                     ThemeUIEvent.UpdateCurrentTheme(
-                        resources,
+                        contentResolver,
                         theme.copy(iconsPositioningScheme3 = it.toString())
                     )
                 )
@@ -85,7 +85,7 @@ fun AppNavigation (
             LabelForIconsPositioningScheme(key = "option 4", state = schemes[3]) {
                 vm.onUIInput(
                     ThemeUIEvent.UpdateCurrentTheme(
-                        resources,
+                        contentResolver,
                         theme.copy(iconsPositioningScheme4 = it.toString())
                     )
                 )
@@ -95,7 +95,7 @@ fun AppNavigation (
             LabelForIconsPositioningScheme(key = "option 5", state = schemes[4]) {
                 vm.onUIInput(
                     ThemeUIEvent.UpdateCurrentTheme(
-                        resources,
+                        contentResolver,
                         theme.copy(iconsPositioningScheme5 = it.toString())
                     )
                 )

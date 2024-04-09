@@ -44,7 +44,7 @@ typealias themeIdAndName = Pair<Int?, String>
 fun Theme (
 ) {
     val context = LocalContext.current
-    val resources = context.resources
+    val contentResolver = context.contentResolver
     val vm = remember { ThemeDatabase.getViewModel(context) }
     val themes: List<themeIdAndName> = vm.themes.collectAsState(initial = emptyList()).value.map { Pair(it._id, it.name) }
     val state = vm.currTheme
@@ -70,7 +70,7 @@ fun Theme (
                                 .width(200.dp)
                                 .height(100.dp)
                                 .clip(RoundedCornerShape(16.dp))
-                                .clickable { vm.onUIInput(ThemeUIEvent.SaveShaderToCurrentTheme(resources, it)) }
+                                .clickable { vm.onUIInput(ThemeUIEvent.SaveShaderToCurrentTheme(contentResolver, it)) }
                         ) {
                             H3(text = it.name)
                         }
@@ -88,7 +88,7 @@ fun Theme (
                 Card (
                     modifier = Modifier
                         .clickable {
-                            vm.onUIInput(ThemeUIEvent.ApplyTheme(context, resources, it.first ?: 0))
+                            vm.onUIInput(ThemeUIEvent.ApplyTheme(context, contentResolver, it.first ?: 0))
                         }
                 ) {
                     Row(
@@ -107,7 +107,7 @@ fun Theme (
             item {
                 Spacer(modifier = Modifier.height(10.dp))
                 Button(onClick = {
-                    vm.onUIInput(ThemeUIEvent.SaveCopyTheme(resources, vm.currTheme))
+                    vm.onUIInput(ThemeUIEvent.SaveCopyTheme(contentResolver, vm.currTheme))
                 }) {
                     Text(text = "Save")
                 }

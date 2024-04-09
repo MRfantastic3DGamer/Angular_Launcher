@@ -1,5 +1,9 @@
 package com.dhruv.angular_launcher.core.resources
 
+import android.content.ContentResolver
+import android.graphics.ImageDecoder
+import android.net.Uri
+
 data class ShaderData(
     val name: String = "blob apps",
     val resourcesAsked: Set<String> = setOf(
@@ -7,7 +11,7 @@ data class ShaderData(
         AllResources.IconsPositions.name,
         AllResources.IconsCount.name,
     ),
-    val textures: Map<String, Int> = emptyMap(),
+    val textures: List<String> = emptyList(),
     val code: String =
 """
 #version 100
@@ -50,6 +54,8 @@ void main() {
     companion object {
         private const val DELIMITER = "|#|"
         private const val EMPTY = "EMPTY"
+        private const val SEP = "#!#"
+
 
         fun fromString(str: String): ShaderData {
             val parts = str.split(DELIMITER)
@@ -58,14 +64,10 @@ void main() {
             val name = parts[0]
             val resourcesStr = parts[1]
             val resourcesAsked = if (resourcesStr == EMPTY) emptySet() else
-                resourcesStr.split(",").toSet()
+                resourcesStr.split(SEP).toSet()
             val texturesStr = parts[2]
-            val textures = if (texturesStr == EMPTY) emptyMap() else {
-                texturesStr.split(",").map { texture ->
-                    val (key, value) = texture.split("=")
-                    key to value.toInt()
-                }.toMap()
-            }
+            val textures = if (texturesStr == EMPTY) emptyList() else
+                texturesStr.split(SEP).toList()
 
             val code = parts[3]
             return ShaderData(name, resourcesAsked, textures, code)
@@ -73,11 +75,14 @@ void main() {
     }
 
     override fun toString(): String {
-        val resourcesStr = if (resourcesAsked.isEmpty()) EMPTY else
-            resourcesAsked.joinToString(",") { it }
-        val texturesStr = if (textures.isEmpty()) EMPTY else {
-            textures.entries.joinToString(",") { "${it.key}=${it.value}" }
-        }
+        val resourcesStr = if (resourcesAsked.isEmpty()) EMPTY else resourcesAsked.joinToString(SEP)
+        val texturesStr = if (textures.isEmpty()) EMPTY else textures.joinToString(SEP)
         return "$name$DELIMITER$resourcesStr$DELIMITER$texturesStr$DELIMITER$code"
     }
+}
+
+fun ShaderData.textureBitmaps(contentResolver: ContentResolver) = textures.mapIndexed { i, uri ->
+    val source = ImageDecoder.createSource(contentResolver, Uri.parse(uri))
+    val bitmap = ImageDecoder.decodeBitmap(source)
+    "TEX$i" to bitmap
 }

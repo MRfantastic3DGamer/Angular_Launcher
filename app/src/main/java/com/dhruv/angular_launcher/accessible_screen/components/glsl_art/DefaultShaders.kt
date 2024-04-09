@@ -19,7 +19,6 @@ val ShadersFor_GettingBasicDataToDrawStuff = listOf(
             AllResources.RotationAngles.name,
             AllResources.Volume.name,
         ),
-        textures = emptyMap(),
         code =
 """
 #version 100
@@ -61,7 +60,6 @@ void main() {
             AllResources.TouchPosition.name,
             AllResources.TouchStartPositions.name,
         ),
-        textures = emptyMap(),
         code =
         """
 #version 100
@@ -118,7 +116,6 @@ void main() {
             AllResources.SelectedGroupIndex.name,
             AllResources.GroupsCount.name,
         ),
-        textures = emptyMap(),
         code =
 """
 #version 100
@@ -184,7 +181,6 @@ void main() {
             AllResources.SelectedIconIndex.name,
             AllResources.TouchPosition.name,
         ),
-        textures = emptyMap(),
         code =
         """
 #version 100
@@ -269,7 +265,6 @@ void main() {
             AllResources.TouchPosition.name,
             AllResources.Frame.name,
         ),
-        textures = emptyMap(),
         code =
         """
 #version 100
@@ -375,7 +370,6 @@ void main() {
             AllResources.RotationAngles.name,
             AllResources.Volume.name,
         ),
-        textures = emptyMap(),
         code =
         """
 #version 100
