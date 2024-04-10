@@ -14,11 +14,7 @@ val ShadersFor_GettingBasicDataToDrawStuff = listOf(
 
     ShaderData(
         name = "test",
-        resourcesAsked = setOf(
-            AllResources.Resolution.name,
-            AllResources.RotationAngles.name,
-            AllResources.Volume.name,
-        ),
+        resourcesAsked = setOf(),
         code =
 """
 #version 100
@@ -28,28 +24,12 @@ precision highp float;
 precision mediump float;
 #endif
 
-uniform vec2 Resolution;
-uniform vec3 RotationAngles;
-uniform float Volume;
-
-#define tilt RotationAngles.y
+varying vec2 vTexCoord;
+uniform sampler2D TEX0;
 
 void main() {
-    // Calculate the distance of each fragment from the line
-    float y = gl_FragCoord.y - (gl_FragCoord.x * tan(tilt));
-    float distanceFromLine = abs(y);
-
-    // Define the width of the line
-    float lineWidth = 5.0;
-    float height = Resolution.y * Volume;
-    float center = Resolution.x * 0.5;
-
-    // Set the color based on the distance from the line
-    float alpha = smoothstep(0.0, lineWidth, distanceFromLine);
-    vec3 color = mix(vec3(0.0), vec3(1.0), step((gl_FragCoord.x - center) * tan(tilt) * 2.0 + height, gl_FragCoord.y));
-
-    // Output the color
-    gl_FragColor = vec4(color, alpha);
+    vec4 color = texture2D(TEX0, vTexCoord);
+    gl_FragColor = color;
 }
 """,
     ),

@@ -52,7 +52,7 @@ fun Shader() {
     var name by remember { mutableStateOf(TextFieldValue(currentTheme.getShader().name)) }
     var code by remember { mutableStateOf(TextFieldValue(currentTheme.getShader().code)) }
     var resourcesAsked by remember { mutableStateOf(currentTheme.getShader().resourcesAsked) }
-    var textures by remember { mutableStateOf(setOf<String>()) }
+    var textures by remember { mutableStateOf(currentTheme.getShader().textures.toSet()) }
 
     val selectImage = rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) { data ->
         data?.let { uri ->
@@ -127,19 +127,19 @@ fun Shader() {
                     val uri = Uri.parse(it)
                     contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
+                val newShader = currentTheme.getShader().copy(
+                    name = name.text,
+                    resourcesAsked = resourcesAsked,
+                    textures = textures.toList(),
+                    code = code.text,
+                )
                 themeVM.onUIInput(
                     ThemeUIEvent.UpdateCurrentTheme(
                         contentResolver,
-                        themeVM.currTheme.setShader(
-                            currentTheme.getShader().copy(
-                                name = name.text,
-                                resourcesAsked = resourcesAsked,
-                                textures = textures.toList(),
-                                code = code.text,
-                            )
-                        )
+                        themeVM.currTheme.setShader( newShader )
                     )
                 )
+                println(newShader.toString())
             },
             Modifier
                 .align(Alignment.BottomEnd)

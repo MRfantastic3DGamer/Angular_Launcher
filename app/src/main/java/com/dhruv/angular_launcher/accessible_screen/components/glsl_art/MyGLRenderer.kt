@@ -15,14 +15,10 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 import kotlin.math.min
 
-const val MAX_ICONS = 100
-
 class MyGLRenderer(
-    private val contentResolver: ContentResolver,
+    contentResolver: ContentResolver,
     val shaderData: ShaderData,
 ) : GLSurfaceView.Renderer {
-    private var textureHandle: Int = 0
-    private lateinit var bitmap: Bitmap
 
     private val vertexShaderCode =
 "attribute vec4 aPosition;" +
@@ -40,7 +36,8 @@ class MyGLRenderer(
     private val uniformLocations: MutableMap<String, Int?> = mutableMapOf()
     private val uniformValues: MutableMap<String, Any> = mutableMapOf()
 
-    private val textures = shaderData.textureBitmaps(contentResolver)
+    private val textures: List<Pair<String, Bitmap>> = shaderData.textureBitmaps(contentResolver)
+    private val textureIds: IntArray = IntArray(textures.size)
 
     private var frame = 0
     private var resolution = floatArrayOf(0f,0f)
@@ -51,30 +48,44 @@ class MyGLRenderer(
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
-//        loadTextures(
-//            shaderData.textures.map {
-//                BitmapFactory.decodeResource(resources, it.value)
-//            }
-//        )
         setupShader()
+        loadTextures()
+    }
+
+    private fun setupShader() {
+        val vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode)
+        val fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode)
+
+        program = GLES20.glCreateProgram().also {
+            GLES20.glAttachShader(it, vertexShader)
+            GLES20.glAttachShader(it, fragmentShader)
+            GLES20.glLinkProgram(it)
+        }
+
+        shaderData.resourcesAsked.forEach { uniformLocations[it] = GLES20.glGetUniformLocation(program, it) }
+        textures.forEach { (name, bitmap) -> uniformLocations[name] = GLES20.glGetUniformLocation(program, name) }
+    }
+
+    private fun loadShader(type: Int, shaderCode: String): Int {
+        return GLES20.glCreateShader(type).also { shader ->
+            GLES20.glShaderSource(shader, shaderCode)
+            GLES20.glCompileShader(shader)
+        }
+    }
+
+    private fun loadTextures() {
+        GLES20.glGenTextures(textures.size, textureIds, 0) // Generate texture IDs
+
+        for (i in textures.indices) {
+            val bitmap = textures[i].second
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[i])
+            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR)
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR)
+        }
     }
 
     override fun onDrawFrame(gl: GL10?) {
-//        println("uniformKeys: ${
-//            uniformValues.keys
-//        }")
-//        println("uniformVals: ${
-//            uniformValues.values.map { if (it is List<*>) it.size else it.toString() }
-//        }")
-//        if (uniformValues.containsKey(AllResources.GroupsPositions.name)){
-//            println((uniformValues[AllResources.GroupsPositions.name] as List<FloatArray>).map { " ${it[0]},${it[1]} " })
-//            if (uniformValues.containsKey(AllResources.SelectedGroupIndex.name)) {
-//                println(
-//                    (uniformValues[AllResources.GroupsPositions.name] as List<FloatArray>).getOrElse(
-//                        (uniformValues[AllResources.SelectedGroupIndex.name] as Int),
-//                        { floatArrayOf() }).map { it.toString() })
-//            }
-//        }
         GLES20.glDisable(GL10.GL_DITHER)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
 
@@ -84,130 +95,83 @@ class MyGLRenderer(
         }
         uniformLocations.forEach{(key, location) ->
             location?.let { l ->
-                val value = uniformValues.getOrDefault(key, null)
-                if (value is Float) GLES20.glUniform1f(l, value)
-                if (value is FloatArray) {
-                    when (value.size) {
-                        1 -> {GLES20.glUniform1f(l, value[0])}
-                        2 -> {GLES20.glUniform2f(l, value[0], value[1])}
-                        3 -> {GLES20.glUniform3f(l, value[0], value[1], value[2])}
-                        4 -> {GLES20.glUniform4f(l, value[0], value[1], value[2], value[3])}
-                        else -> {}
-                    }
-                }
-                if (value is Int) GLES20.glUniform1i(l, value)
-                if (value is IntArray) {
-                    when (value.size) {
-                        1 -> {GLES20.glUniform1i(l, value[0])}
-                        2 -> {GLES20.glUniform2i(l, value[0], value[1])}
-                        3 -> {GLES20.glUniform3i(l, value[0], value[1], value[2])}
-                        4 -> {GLES20.glUniform4i(l, value[0], value[1], value[2], value[3])}
-                        6 -> {
-                            GLES20.glUniform3i(l, value[0], value[1], value[2])
-                            GLES20.glUniform3i(l+3, value[3], value[4], value[5])
-                        }
-                        else -> {}
-                    }
-                }
-                if (value is Boolean) GLES20.glUniform1i(l, if (value) 1 else 0)
-                if (value is List<*>) {
-                    val len = value.size
-                    if (len > 0 && value[0] is Offset) {
-                        for (i in 0 until  min(len, 100)) {
-                            val offset = value[i] as Offset
-                            GLES20.glUniform2f(l + i, offset.x, offset.y)
-                        }
-                    }
-                    if (len > 0 && value[0] is FloatArray) {
-                        if ((value[0] as FloatArray).size == 1)
-                            for (i in 0 until  min(len, 100)) {
-                                val v = value[i] as FloatArray
-                                GLES20.glUniform1f(l + i, v[0])
-                            }
-                        if ((value[0] as FloatArray).size == 2)
-                            for (i in 0 until  min(len, 100)) {
-                                val v = value[i] as FloatArray
-                                GLES20.glUniform2f(l + i, v[0], v[1])
-                            }
-                        if ((value[0] as FloatArray).size == 3)
-                            for (i in 0 until  min(len, 100)) {
-                                val v = value[i] as FloatArray
-                                GLES20.glUniform3f(l + i, v[0], v[1], v[2])
-                            }
-                        if ((value[0] as FloatArray).size == 4)
-                            for (i in 0 until  min(len, 100)) {
-                                val v = value[i] as FloatArray
-                                GLES20.glUniform4f(l + i, v[0], v[1], v[2], v[3])
-                            }
-                    }
+                uniformValues.getOrDefault(key, null)?.let { value ->
+                    insertData(l, value)
                 }
             }
         }
 
+        for (i in textures.indices) {
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + i)
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[i])
+            GLES20.glUniform1i(GLES20.glGetUniformLocation(program, textures[i].first), i)
+            println("name: ${textures[i].first} location: ${GLES20.glGetUniformLocation(program, textures[i].first)}, id: ${textureIds[i]}")
+        }
         drawTexture()
+    }
+
+    private fun insertData(l: Int, value: Any){
+        if (value is Float) GLES20.glUniform1f(l, value)
+        if (value is FloatArray) {
+            when (value.size) {
+                1 -> {GLES20.glUniform1f(l, value[0])}
+                2 -> {GLES20.glUniform2f(l, value[0], value[1])}
+                3 -> {GLES20.glUniform3f(l, value[0], value[1], value[2])}
+                4 -> {GLES20.glUniform4f(l, value[0], value[1], value[2], value[3])}
+                else -> {}
+            }
+        }
+        if (value is Int) GLES20.glUniform1i(l, value)
+        if (value is IntArray) {
+            when (value.size) {
+                1 -> {GLES20.glUniform1i(l, value[0])}
+                2 -> {GLES20.glUniform2i(l, value[0], value[1])}
+                3 -> {GLES20.glUniform3i(l, value[0], value[1], value[2])}
+                4 -> {GLES20.glUniform4i(l, value[0], value[1], value[2], value[3])}
+                6 -> {
+                    GLES20.glUniform3i(l, value[0], value[1], value[2])
+                    GLES20.glUniform3i(l+3, value[3], value[4], value[5])
+                }
+                else -> {}
+            }
+        }
+        if (value is Boolean) GLES20.glUniform1i(l, if (value) 1 else 0)
+        if (value is List<*>) {
+            val len = value.size
+            if (len > 0 && value[0] is Offset) {
+                for (i in 0 until  min(len, 100)) {
+                    val offset = value[i] as Offset
+                    GLES20.glUniform2f(l + i, offset.x, offset.y)
+                }
+            }
+            if (len > 0 && value[0] is FloatArray) {
+                if ((value[0] as FloatArray).size == 1)
+                    for (i in 0 until  min(len, 100)) {
+                        val v = value[i] as FloatArray
+                        GLES20.glUniform1f(l + i, v[0])
+                    }
+                if ((value[0] as FloatArray).size == 2)
+                    for (i in 0 until  min(len, 100)) {
+                        val v = value[i] as FloatArray
+                        GLES20.glUniform2f(l + i, v[0], v[1])
+                    }
+                if ((value[0] as FloatArray).size == 3)
+                    for (i in 0 until  min(len, 100)) {
+                        val v = value[i] as FloatArray
+                        GLES20.glUniform3f(l + i, v[0], v[1], v[2])
+                    }
+                if ((value[0] as FloatArray).size == 4)
+                    for (i in 0 until  min(len, 100)) {
+                        val v = value[i] as FloatArray
+                        GLES20.glUniform4f(l + i, v[0], v[1], v[2], v[3])
+                    }
+            }
+        }
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         resolution = floatArrayOf(width.toFloat(), height.toFloat())
         GLES20.glViewport(0, 0, width, height)
-    }
-
-    private fun loadTextures(bitmaps: List<Bitmap>) {
-        val textures = (1..bitmaps.size).toList().toIntArray()
-        GLES20.glGenTextures(bitmaps.size, textures, 0)
-        textures.forEachIndexed { index, textureHandle ->
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle)
-
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST)
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST)
-
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE)
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE)
-
-            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
-            bitmaps[index].recycle()
-        }
-    }
-
-    private fun loadTexture(bitmap: Bitmap) {
-        // Load the bitmap from drawable
-
-        val textures = IntArray(1)
-        GLES20.glGenTextures(1, textures, 0)
-        textureHandle = textures[0]
-
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle)
-
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST)
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST)
-
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE)
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE)
-
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
-
-        bitmap.recycle()
-    }
-
-    private fun setupShader() {
-        val vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode)
-        val fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode)
-        println(fragmentShaderCode)
-
-        program = GLES20.glCreateProgram().also {
-            GLES20.glAttachShader(it, vertexShader)
-            GLES20.glAttachShader(it, fragmentShader)
-            GLES20.glLinkProgram(it)
-        }
-
-        shaderData.resourcesAsked.forEach { uniformLocations[it] = GLES20.glGetUniformLocation(program, it) }
-    }
-
-    private fun loadShader(type: Int, shaderCode: String): Int {
-        return GLES20.glCreateShader(type).also { shader ->
-            GLES20.glShaderSource(shader, shaderCode)
-            GLES20.glCompileShader(shader)
-        }
     }
 
     private fun drawTexture() {
@@ -218,14 +182,6 @@ class MyGLRenderer(
 
         val textureCoordHandle = GLES20.glGetAttribLocation(program, "aTexCoord")
         GLES20.glEnableVertexAttribArray(textureCoordHandle)
-
-        val texturesUniformHandle = textures.map { (name, texture) ->
-            name to GLES20.glGetUniformLocation(program, name)
-        }.toMap()
-
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle)
-        texturesUniformHandle.forEach { (key, uniformLocation) -> GLES20.glUniform1i(uniformLocation, 0) }
 
         // Define vertices and texture coordinates here and pass them to OpenGL ES buffers
         // Example vertices and texture coordinates
