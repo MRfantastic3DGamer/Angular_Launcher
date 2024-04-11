@@ -1,6 +1,7 @@
 package com.dhruv.angular_launcher.core.database.room
 
 import android.content.ContentResolver
+import android.content.res.Resources
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 
 class ThemeDatabaseVM(
     private val themeDataDao: ThemeDataDao,
+    private val resources: Resources,
 ): ViewModel() {
     val themes = themeDataDao.getAllThemes()
 
@@ -27,7 +29,7 @@ class ThemeDatabaseVM(
     var renderer: MyGLRenderer? by mutableStateOf(null)
 
     fun prepareRenderer(contentResolver: ContentResolver){
-        renderer = MyGLRenderer(contentResolver, currTheme.getShader())
+        renderer = MyGLRenderer(contentResolver, resources, currTheme.getShader())
     }
 
     fun addData(key: String, value: Any) {

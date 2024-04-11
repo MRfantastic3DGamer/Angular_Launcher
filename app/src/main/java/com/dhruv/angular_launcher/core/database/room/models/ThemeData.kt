@@ -1,6 +1,6 @@
 package com.dhruv.angular_launcher.core.database.room.models
 
-import android.content.ContentResolver
+import android.content.Context
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.dhruv.angular_launcher.accessible_screen.components.glsl_art.MyGLRenderer
@@ -94,4 +94,4 @@ fun ThemeData.getSliderHeight(items: Int): Float = when (heightMode) {
     else -> {0f}
 }
 
-fun ThemeData.getRenderer(contentResolver: ContentResolver): MyGLRenderer = MyGLRenderer(contentResolver, getShader())
+fun ThemeData.getRenderer(context: Context): MyGLRenderer = MyGLRenderer(context.contentResolver, context.resources, getShader())

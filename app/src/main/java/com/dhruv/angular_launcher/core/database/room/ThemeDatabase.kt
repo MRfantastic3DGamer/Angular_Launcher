@@ -48,7 +48,7 @@ abstract class ThemeDatabase : RoomDatabase(){
         fun getViewModel(context: Context): ThemeDatabaseVM {
             return (VIEWMODEL ?: synchronized(this){
                 val instance = getInstance(context)
-                val vm = ThemeDatabaseVM(instance.themeDataDao())
+                val vm = ThemeDatabaseVM(instance.themeDataDao(), context.resources)
                 VIEWMODEL = vm
                 vm
             })

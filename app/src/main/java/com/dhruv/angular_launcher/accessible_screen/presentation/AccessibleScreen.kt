@@ -60,7 +60,7 @@ fun AccessibleScreen(mainScreenVM: AccessibleScreenVM, settingsVM: SettingsVM) {
             true -> {
                 SettingsScreen(vm = settingsVM, exitSettings = {
                     settingsVM.exitSettings(it, themeVM.currTheme.getIconPositioningSchemes())
-                    themeVM.renderer = themeVM.currTheme.getRenderer(contentResolver)
+                    themeVM.renderer = themeVM.currTheme.getRenderer(context)
                 })
             }
 

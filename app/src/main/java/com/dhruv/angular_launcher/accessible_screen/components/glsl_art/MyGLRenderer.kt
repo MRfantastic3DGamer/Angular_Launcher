@@ -1,10 +1,12 @@
 package com.dhruv.angular_launcher.accessible_screen.components.glsl_art
 import android.content.ContentResolver
-import android.graphics.Bitmap
+import android.content.res.Resources
+import android.graphics.BitmapFactory
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.GLUtils
 import androidx.compose.ui.geometry.Offset
+import com.dhruv.angular_launcher.R
 import com.dhruv.angular_launcher.core.resources.AllResources
 import com.dhruv.angular_launcher.core.resources.ShaderData
 import com.dhruv.angular_launcher.core.resources.textureBitmaps
@@ -17,8 +19,10 @@ import kotlin.math.min
 
 class MyGLRenderer(
     contentResolver: ContentResolver,
+    val resources: Resources,
     val shaderData: ShaderData,
 ) : GLSurfaceView.Renderer {
+
 
     private val vertexShaderCode =
 "attribute vec4 aPosition;" +
@@ -33,11 +37,12 @@ class MyGLRenderer(
 
     private var program: Int = 0
 
+    private val textures = shaderData.textureBitmaps(contentResolver)
+    private val textureResources = intArrayOf(R.drawable.noise_cracks_5_8, R.drawable.noise_gabor_1_4)
+    private var texturesHandle: IntArray = IntArray(textureResources.size)
+
     private val uniformLocations: MutableMap<String, Int?> = mutableMapOf()
     private val uniformValues: MutableMap<String, Any> = mutableMapOf()
-
-    private val textures: List<Pair<String, Bitmap>> = shaderData.textureBitmaps(contentResolver)
-    private val textureIds: IntArray = IntArray(textures.size)
 
     private var frame = 0
     private var resolution = floatArrayOf(0f,0f)
@@ -48,47 +53,12 @@ class MyGLRenderer(
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
+        loadTexture()
         setupShader()
-        loadTextures()
-    }
-
-    private fun setupShader() {
-        val vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode)
-        val fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode)
-
-        program = GLES20.glCreateProgram().also {
-            GLES20.glAttachShader(it, vertexShader)
-            GLES20.glAttachShader(it, fragmentShader)
-            GLES20.glLinkProgram(it)
-        }
-
-        shaderData.resourcesAsked.forEach { uniformLocations[it] = GLES20.glGetUniformLocation(program, it) }
-        textures.forEach { (name, bitmap) -> uniformLocations[name] = GLES20.glGetUniformLocation(program, name) }
-    }
-
-    private fun loadShader(type: Int, shaderCode: String): Int {
-        return GLES20.glCreateShader(type).also { shader ->
-            GLES20.glShaderSource(shader, shaderCode)
-            GLES20.glCompileShader(shader)
-        }
-    }
-
-    private fun loadTextures() {
-        GLES20.glGenTextures(textures.size, textureIds, 0) // Generate texture IDs
-
-        for (i in textures.indices) {
-            val bitmap = textures[i].second
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[i])
-            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR)
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR)
-        }
     }
 
     override fun onDrawFrame(gl: GL10?) {
-        GLES20.glDisable(GL10.GL_DITHER)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
-
         if (uniformLocations.containsKey(AllResources.Frame.name)){
             GLES20.glUniform1i(uniformLocations[AllResources.Frame.name]!!, frame)
             frame += 1
@@ -99,13 +69,6 @@ class MyGLRenderer(
                     insertData(l, value)
                 }
             }
-        }
-
-        for (i in textures.indices) {
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + i)
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIds[i])
-            GLES20.glUniform1i(GLES20.glGetUniformLocation(program, textures[i].first), i)
-            println("name: ${textures[i].first} location: ${GLES20.glGetUniformLocation(program, textures[i].first)}, id: ${textureIds[i]}")
         }
         drawTexture()
     }
@@ -174,6 +137,42 @@ class MyGLRenderer(
         GLES20.glViewport(0, 0, width, height)
     }
 
+    private fun loadTexture() {
+        // Load the bitmaps from resources
+        GLES20.glGenTextures(textureResources.size, texturesHandle, 0) // Generate texture handles for two textures
+
+        textureResources.forEachIndexed { i, image ->
+            val bitmap = BitmapFactory.decodeResource(resources, image)
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texturesHandle[i])
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST)
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST)
+            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+            bitmap.recycle()
+        }
+    }
+
+    private fun setupShader() {
+        val vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode)
+        val fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode)
+
+        program = GLES20.glCreateProgram().also {
+            GLES20.glAttachShader(it, vertexShader)
+            GLES20.glAttachShader(it, fragmentShader)
+            GLES20.glLinkProgram(it)
+        }
+
+        shaderData.resourcesAsked.forEach { uniformLocations[it] = GLES20.glGetUniformLocation(program, it) }
+        textures.forEach { (name, bitmap) -> uniformLocations[name] = GLES20.glGetUniformLocation(program, name) }
+    }
+
+    private fun loadShader(type: Int, shaderCode: String): Int {
+        return GLES20.glCreateShader(type).also { shader ->
+            GLES20.glShaderSource(shader, shaderCode)
+            GLES20.glCompileShader(shader)
+        }
+    }
+
     private fun drawTexture() {
         GLES20.glUseProgram(program)
 
@@ -183,7 +182,15 @@ class MyGLRenderer(
         val textureCoordHandle = GLES20.glGetAttribLocation(program, "aTexCoord")
         GLES20.glEnableVertexAttribArray(textureCoordHandle)
 
+        texturesHandle.forEachIndexed { index, handle ->
+            val textureUniformHandle1 = GLES20.glGetUniformLocation(program, "Tex$index")
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + index)
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texturesHandle[index])
+            GLES20.glUniform1i(textureUniformHandle1, index)
+        }
+
         // Define vertices and texture coordinates here and pass them to OpenGL ES buffers
+
         // Example vertices and texture coordinates
         val vertices = floatArrayOf(
             -1.0f, 1.0f,  // top left
