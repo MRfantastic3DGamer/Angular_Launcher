@@ -1,2 +1,3 @@
 # Angular_Launcher
-An android launcher that gives you access to every application in only one click Along with a GLSL editor to fully customize the look of your phone.
+
+An Android launcher providing one-click access to all applications, along with a robust GLSL editor that allows full customization of the phone's look and feel by accessing all system data.
